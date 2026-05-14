@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — Mega-Package Index v2.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06080d; --carbon:#0e1119; --pit:#171b27;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8; --ink-2:#cdd1d9; --muted:#8a8f9e;
+  --chevy-red:#da1a2e; --chevy-yellow:#ffc72c; --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf; --f1-amber:#ff6b00; --f1-cyan:#00e5ff; --start-green:#00d26a;
+  --good:#23d18b; --warn:#ff9500;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--void);
+  background-image:
+    radial-gradient(1200px 600px at 80% -5%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(255,107,0,.05), transparent 70%),
+    linear-gradient(180deg,#04060a 0%, var(--void) 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+::selection{background:var(--f1-amber);color:#1a0f00}
+
+.topbar{position:sticky;top:0;z-index:50;background:rgba(6,8,13,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1480px;margin:0 auto;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#222837,#0c0e14);border:1px solid var(--line-strong);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.18em;color:var(--f1-cyan)}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:2px;font-weight:700}
+.ver{font-family:var(--mono);font-size:10px;letter-spacing:.18em;padding:5px 12px;border-radius:999px;background:rgba(0,229,255,.08);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.22);text-transform:uppercase;font-weight:700}
+
+.shell{max-width:1480px;margin:0 auto;padding:0 32px}
+
+/* hero */
+.hero{padding:80px 0 60px;position:relative;overflow:hidden}
+.hero-flag{display:inline-flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2);margin-bottom:24px}
+.hero-flag .pill{padding:4px 10px;border-radius:999px;background:rgba(218,26,46,.16);color:#ffb0ba;border:1px solid rgba(218,26,46,.4);font-weight:700;font-size:10.5px}
+.hero-flag .pill.amber{background:rgba(255,107,0,.16);color:#ffc193;border-color:rgba(255,107,0,.4)}
+.hero-flag .pill.champagne{background:rgba(200,178,115,.14);color:#e9d8a8;border-color:rgba(200,178,115,.4)}
+.hero-flag .pill.cyan{background:rgba(0,229,255,.12);color:#9beeff;border-color:rgba(0,229,255,.4)}
+h1.hero{font-family:var(--serif);font-weight:900;font-size:clamp(48px,7vw,92px);line-height:.95;letter-spacing:-.035em;margin:0 0 24px;max-width:18ch}
+h1.hero em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+h1.hero .amber{color:var(--f1-amber)}
+.hero-lead{font-size:19px;line-height:1.55;color:var(--ink-2);max-width:62ch;margin-bottom:36px}
+
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;text-decoration:none;transition:all .2s ease}
+.btn:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--f1-amber),#ff8a3d);color:#1a0f00;border-color:rgba(255,107,0,.5);box-shadow:0 12px 36px rgba(255,107,0,.3)}
+.btn.cyan{background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);color:#001a1f;border-color:rgba(0,229,255,.5);box-shadow:0 12px 36px rgba(0,229,255,.3)}
+
+/* stats strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:50px}
+.stat{padding:20px 22px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-left:3px solid var(--stat-c, var(--f1-cyan))}
+.stat[data-c="amber"]{--stat-c:var(--f1-amber)}
+.stat[data-c="cyan"]{--stat-c:var(--f1-cyan)}
+.stat[data-c="champagne"]{--stat-c:var(--cad-champagne)}
+.stat[data-c="green"]{--stat-c:var(--good)}
+.stat .v{font-family:var(--serif);font-weight:700;font-size:36px;line-height:1;letter-spacing:-.02em;color:var(--stat-c)}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:8px}
+.stat .d{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.45}
+
+/* section */
+.section{padding:60px 0;border-top:1px solid var(--line)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--accent, var(--f1-cyan));font-weight:700;margin-bottom:14px}
+.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}
+h2.section{font-family:var(--serif);font-weight:700;font-size:clamp(32px,4vw,52px);line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+h2.section em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+p.section{font-size:16px;color:var(--ink-2);max-width:62ch;line-height:1.6;margin-bottom:30px}
+
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.card-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+
+.doc-card{
+  padding:22px;border-radius:14px;
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  transition:transform .2s ease,border-color .2s ease;
+  display:flex;flex-direction:column;gap:10px;
+}
+.doc-card:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--c, var(--f1-cyan));opacity:.7}
+.doc-card[data-c="red"]{--c:var(--chevy-red)}
+.doc-card[data-c="yellow"]{--c:var(--chevy-yellow)}
+.doc-card[data-c="champagne"]{--c:var(--cad-champagne)}
+.doc-card[data-c="teal"]{--c:var(--buick-teal)}
+.doc-card[data-c="amber"]{--c:var(--f1-amber)}
+.doc-card[data-c="cyan"]{--c:var(--f1-cyan)}
+.doc-card:hover{transform:translateY(-2px);border-color:var(--line-strong)}
+.doc-card .ttag{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c, var(--f1-cyan));font-weight:700}
+.doc-card h4{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:-.01em;line-height:1.15;color:var(--ink)}
+.doc-card p{font-size:13px;color:var(--ink-2);line-height:1.55;flex:1}
+.doc-card .path{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;padding:6px 10px;border-radius:6px;background:rgba(0,0,0,.3);border:1px solid var(--line);display:inline-block;width:fit-content}
+.doc-card .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.doc-card .meta span{font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-2);letter-spacing:.06em}
+
+/* export tile */
+.export-tile{
+  padding:24px;border-radius:18px;
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  border:1px solid var(--line);
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;overflow:hidden;
+}
+.export-tile:before{content:"";position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right, var(--tc, var(--f1-cyan))22, transparent 70%);opacity:.6}
+.export-tile[data-tc="cyan"]{--tc:rgba(0,229,255,.4)}
+.export-tile[data-tc="amber"]{--tc:rgba(255,107,0,.4)}
+.export-tile[data-tc="green"]{--tc:rgba(35,209,139,.4)}
+.export-tile[data-tc="champagne"]{--tc:rgba(200,178,115,.4)}
+.export-tile h4{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:-.015em;position:relative;z-index:2}
+.export-tile p{font-size:13.5px;color:var(--ink-2);line-height:1.5;flex:1;position:relative;z-index:2}
+.export-tile .open{position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:700;padding:9px 14px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--line-strong);width:fit-content}
+.export-tile .open:hover{background:rgba(255,255,255,.12)}
+.export-tile .logo{position:absolute;top:18px;right:22px;z-index:2;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* download */
+.download-banner{margin-top:40px;padding:32px 36px;border-radius:18px;background:linear-gradient(135deg,rgba(255,107,0,.08),rgba(0,229,255,.06));border:1px solid var(--line-strong);display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap;position:relative;overflow:hidden}
+.download-banner:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--chevy-red),var(--chevy-yellow),var(--cad-champagne),var(--buick-teal),var(--f1-cyan),var(--f1-amber))}
+.download-banner .text h3{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:-.015em;margin-bottom:8px}
+.download-banner .text p{font-size:14.5px;color:var(--ink-2);line-height:1.5;max-width:60ch}
+.download-banner .meta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:8px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0;color:var(--muted);font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;text-align:center}
+
+a{color:var(--f1-cyan);text-decoration:none}
+
+@media (max-width:1100px){
+  .card-grid,.card-grid.cols-2,.card-grid.cols-4,.stats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:700px){
+  .card-grid,.card-grid.cols-2,.card-grid.cols-4,.stats{grid-template-columns:1fr}
+  .shell{padding:0 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">NAMA</div>
+      <div>
+        <div class="brand-name">NAMA Pit Wall</div>
+        <div class="brand-sub">Mega-Package · v2.4</div>
+      </div>
+    </div>
+    <span class="ver">52 files · 644 KB</span>
+  </div>
+</div>
+
+<main class="shell">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-flag">
+    <span class="pill">Mega-package</span>
+    <span class="pill amber">52 files</span>
+    <span class="pill champagne">PRD → code → deploy</span>
+    <span class="pill cyan">Export-ready</span>
+  </div>
+  <h1 class="hero">
+    One trusted substrate.<br>
+    <em>Every</em> spec, doc, design,<br>
+    schema, and <span class="amber">runnable scaffold.</span>
+  </h1>
+  <p class="hero-lead">
+    The complete NAMA Pit Wall mega-package. PRD, PRD-FAQ, MRD, personas, architecture, ADRs, design spec, brand tokens, OpenAPI, Postgres DDL, runnable React + Vite + TypeScript starter code, deployment guide, and per-platform export instructions for Replit, Lovable, Claude Code, and OpenAI Codex.
+  </p>
+  <div class="hero-cta">
+    <a class="btn primary" href="#download">Download package (tar.gz)</a>
+    <a class="btn cyan" href="#docs">Browse the docs</a>
+    <a class="btn" href="#exports">Export to a coding tool</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat" data-c="cyan">
+      <div class="v">52</div>
+      <div class="l">Files in package</div>
+      <div class="d">Docs · code · schemas · brand · runbooks · export guides</div>
+    </div>
+    <div class="stat" data-c="amber">
+      <div class="v">~28k</div>
+      <div class="l">Words of documentation</div>
+      <div class="d">PRD · FAQ · MRD · personas · architecture · design · 5 ADRs · runbooks</div>
+    </div>
+    <div class="stat" data-c="champagne">
+      <div class="v">22</div>
+      <div class="l">Postgres tables, 14 endpoints</div>
+      <div class="d">Validated OpenAPI 3.1 spec · DDL with seed data · 66 indexes</div>
+    </div>
+    <div class="stat" data-c="green">
+      <div class="v">9</div>
+      <div class="l">React components, runnable</div>
+      <div class="d">D3 quantile fan · seat picker · 15-min race · Agent Studio · all typed</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCS -->
+<section class="section" id="docs">
+  <span class="eyebrow">01 · Written specs</span>
+  <h2 class="section">Read the <em>specs.</em></h2>
+  <p class="section">Eight written specs covering everything from the 1-line vision to the full-blast PRD. Read top-down by audience role.</p>
+
+  <div class="card-grid">
+    <div class="doc-card" data-c="amber">
+      <span class="ttag">Read first</span>
+      <h4>README</h4>
+      <p>Top-level entry. Project structure, quick-start, reading order by audience.</p>
+      <span class="path">README.md</span>
+      <div class="meta"><span>~1,200 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">For sponsors</span>
+      <h4>Executive Summary</h4>
+      <p>1-page brief. Problem, vision, ask, top risks, success metrics, why-now, decision window.</p>
+      <span class="path">EXEC_SUMMARY.md</span>
+      <div class="meta"><span>~800 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">For product</span>
+      <h4>Product Requirements</h4>
+      <p>Full PRD. 18 functional requirements, 10 non-functional, user stories per persona, success metrics, open decisions.</p>
+      <span class="path">PRD.md</span>
+      <div class="meta"><span>~3,200 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">For product</span>
+      <h4>PRD-FAQ · Working-Backwards</h4>
+      <p>Amazon-style. Press release as if launched. Internal FAQ (12 questions). External FAQ (6).</p>
+      <span class="path">PRD_FAQ.md</span>
+      <div class="meta"><span>~3,600 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="amber">
+      <span class="ttag">For market sizing</span>
+      <h4>Market Requirements</h4>
+      <p>MRD. 12 numbered MRs, competitive analysis, buyer/user analysis, market sizing, GTM, 8 honest risks.</p>
+      <span class="path">MRD.md</span>
+      <div class="meta"><span>~5,200 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="teal">
+      <span class="ttag">For design + UX</span>
+      <h4>Personas</h4>
+      <p>Five detailed persona deep-dives. Ramzi · Krisztina · Jim · Govinda · Don. Backgrounds, day-in-life, AI crews, decision rights, quotes, success metrics.</p>
+      <span class="path">PERSONAS.md</span>
+      <div class="meta"><span>~5,700 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">For engineers</span>
+      <h4>Architecture</h4>
+      <p>4-layer stack. Operating principles. Process engine. Access API + events. Trust + decision rights. Observability.</p>
+      <span class="path">ARCHITECTURE.md</span>
+      <div class="meta"><span>~4,400 words</span><span>Markdown · ASCII diagrams</span></div>
+    </div>
+    <div class="doc-card" data-c="red">
+      <span class="ttag">For designers</span>
+      <h4>Design Spec</h4>
+      <p>Brand + UX + interaction system. Color tokens, typography, motion, component patterns, accessibility, brand voice.</p>
+      <span class="path">DESIGN_SPEC.md</span>
+      <div class="meta"><span>~3,800 words</span><span>Markdown</span></div>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">For planning</span>
+      <h4>Roadmap</h4>
+      <p>v2.4 → v3.0 → v3.5 horizons. Phased rollout. Staffing gap callout. Decision dates.</p>
+      <span class="path">ROADMAP.md</span>
+      <div class="meta"><span>~900 words</span><span>Markdown</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE DECISIONS -->
+<section class="section">
+  <span class="eyebrow">02 · Architecture decisions</span>
+  <h2 class="section">Five <em>locked</em> decisions.</h2>
+  <p class="section">ADRs in Michael Nygard format. Each one names the alternative we rejected and why. These are the architectural guardrails the system will live by.</p>
+
+  <div class="card-grid">
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">ADR-001</span>
+      <h4>One trusted substrate</h4>
+      <p>All writes through one Layer A. Rejects federated and SharePoint-of-truth alternatives.</p>
+      <span class="path">docs/adr/ADR-001-…md</span>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">ADR-002</span>
+      <h4>Five-seat persona model</h4>
+      <p>Fixed 5 seats with API-enforced decision rights. Rejects free-form roles and super-user.</p>
+      <span class="path">docs/adr/ADR-002-…md</span>
+    </div>
+    <div class="doc-card" data-c="amber">
+      <span class="ttag">ADR-003</span>
+      <h4>HIBT replay-prompt-ledger</h4>
+      <p>≥98% replay determinism as hard NFR. Append-only; corrections by reference.</p>
+      <span class="path">docs/adr/ADR-003-…md</span>
+    </div>
+    <div class="doc-card" data-c="red">
+      <span class="ttag">ADR-004</span>
+      <h4>NAMA-certified agent gate</h4>
+      <p>5-category eval gate. GovOps owns. Rejects shadow-mode-only as permanent state.</p>
+      <span class="path">docs/adr/ADR-004-…md</span>
+    </div>
+    <div class="doc-card" data-c="yellow">
+      <span class="ttag">ADR-005</span>
+      <h4>Dual cadence (15-min + monthly)</h4>
+      <p>Two clocks, one substrate. Calls out mid-cycle overlap as highest-risk implementation area.</p>
+      <span class="path">docs/adr/ADR-005-…md</span>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND ARTIFACTS -->
+<section class="section">
+  <span class="eyebrow">03 · Brand artifacts</span>
+  <h2 class="section">Brand <em>tokens</em> + pitch + one-pager.</h2>
+  <p class="section">Design tokens in two formats, the 12-slide cinematic pitch deck, and the printable executive one-pager. Drop-in ready for any tool that consumes design tokens.</p>
+
+  <div class="card-grid cols-2">
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">CSS · JSON</span>
+      <h4>Design Tokens (2 formats)</h4>
+      <p>Color palette, typography, radii, shadows, motion. Identical content in CSS custom properties and JSON for tools (Style Dictionary, Tokens Studio, etc.).</p>
+      <span class="path">brand/tokens.css · brand/tokens.json</span>
+    </div>
+    <div class="doc-card" data-c="amber">
+      <span class="ttag">HTML</span>
+      <h4>12-slide Pitch Deck</h4>
+      <p>Cinematic sponsor-review deck. Arrow keys / swipe / dots / Esc to navigate. Cover, problem, vision, architecture, seats, workbench, race, S&OP, agent studio, pole position, roadmap, close.</p>
+      <span class="path">brand/pitch_deck.html</span>
+      <div class="meta"><span>50 KB</span><span>Standalone HTML</span></div>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">HTML · letter portrait</span>
+      <h4>Executive One-Pager</h4>
+      <p>Printable single-sheet. Hero · problem · vision · architecture · 15-min race · monthly cycle · roadmap · the ask. Print-color-adjust: exact.</p>
+      <span class="path">brand/one_pager.html</span>
+      <div class="meta"><span>25 KB</span><span>Printable</span></div>
+    </div>
+    <div class="doc-card" data-c="teal">
+      <span class="ttag">HIBT log</span>
+      <h4>Build Provenance</h4>
+      <p>HIBT_LOG. Every meaningful build action with timestamp, actor, action, output. AIGovOps Foundation compliant.</p>
+      <span class="path">docs/HIBT_LOG.md</span>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNICAL ARTIFACTS -->
+<section class="section">
+  <span class="eyebrow">04 · Technical artifacts</span>
+  <h2 class="section">API contract + <em>data model</em> + runnable code.</h2>
+  <p class="section">Everything an engineering team needs to start building tomorrow. OpenAPI is validated. SQL has seed data. Components are typed and structured.</p>
+
+  <div class="card-grid cols-2">
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">OpenAPI 3.1</span>
+      <h4>Planning Access API</h4>
+      <p>14 endpoints across v2.4 baseline + v3.0 additions. 34 schemas. 9 OAuth scopes. Full request/response examples. Validates cleanly.</p>
+      <span class="path">docs/api/openapi.yaml</span>
+      <div class="meta"><span>2,743 lines</span><span>OpenAPI 3.1</span></div>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">Postgres 15+</span>
+      <h4>Database Schema</h4>
+      <p>22 tables (v2.4 baseline + v3.0 additions). 66 indexes. 3 triggers. Seed data: 6 users, 5 reason codes, 1 forecast set, 7 agents.</p>
+      <span class="path">docs/schema/schema.sql</span>
+      <div class="meta"><span>884 lines</span><span>Idempotent DDL</span></div>
+    </div>
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">React + Vite + TS</span>
+      <h4>Runnable starter code</h4>
+      <p>Frontend scaffold. 9 components (PitWall, ForecastFan with D3, SeatPicker, TelemetryStrip, SurfaceRing, ActivityFeed, RaceFlow, AgentStudio, HandoffToast). Typed. Mock data. <code>npm install && npm run dev</code>.</p>
+      <span class="path">src/</span>
+      <div class="meta"><span>9 components</span><span>TypeScript strict</span></div>
+    </div>
+    <div class="doc-card" data-c="yellow">
+      <span class="ttag">k8s + Helm</span>
+      <h4>Deployment guide</h4>
+      <p>Environment matrix · feature flags · secrets · capacity · observability · 4 runbooks · pre-flight checklist.</p>
+      <span class="path">docs/deployment/DEPLOY.md</span>
+    </div>
+  </div>
+
+  <div style="margin-top:18px">
+    <div class="card-grid cols-4">
+      <div class="doc-card" data-c="amber">
+        <span class="ttag">Runbook · P2</span>
+        <h4>Budget breach</h4>
+        <p>Per-seat budget exceeded. Symptom · causes · mitigation · investigation · permanent fix · escalation.</p>
+      </div>
+      <div class="doc-card" data-c="amber">
+        <span class="ttag">Runbook · P2</span>
+        <h4>Latency spike</h4>
+        <p>p95 latency breach. Provider degradation · queue depth · prompt pack growth.</p>
+      </div>
+      <div class="doc-card" data-c="red">
+        <span class="ttag">Runbook · P1</span>
+        <h4>Replay drift</h4>
+        <p>Replay determinism &lt; 98%. Model version changes · prompt pack drift · source data changes.</p>
+      </div>
+      <div class="doc-card" data-c="amber">
+        <span class="ttag">Runbook · P2</span>
+        <h4>Calibration drift</h4>
+        <p>SME-confirmation rate drops. Domain shift · workload audit · weight recalibration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPORT GUIDES -->
+<section class="section" id="exports">
+  <span class="eyebrow">05 · Export to a coding tool</span>
+  <h2 class="section">Pick your <em>coding tool.</em></h2>
+  <p class="section">Each export guide is engineered for that platform's strengths. Replit gets a one-click clone. Lovable gets a bootstrap prompt. Claude Code gets context-priority. OpenAI Codex gets a `.codexrc`.</p>
+
+  <div class="card-grid cols-2">
+    <div class="export-tile" data-tc="green">
+      <span class="logo">Replit</span>
+      <h4>Export to Replit</h4>
+      <p>One-click clone with `.replit` config, AI Agent prompt, Database setup, deployment paths. Run command and webview port pre-wired.</p>
+      <a class="open" href="EXPORT_REPLIT.md">Read guide →</a>
+    </div>
+    <div class="export-tile" data-tc="amber">
+      <span class="logo">Lovable</span>
+      <h4>Export to Lovable</h4>
+      <p>Engineered bootstrap prompt that gives Lovable design tokens, layout, sample data, build sequence, and "what done looks like" in one shot.</p>
+      <a class="open" href="EXPORT_LOVABLE.md">Read guide →</a>
+    </div>
+    <div class="export-tile" data-tc="cyan">
+      <span class="logo">Claude Code</span>
+      <h4>Export to Claude Code</h4>
+      <p>Onboarding prompt that primes Claude with the architecture, ADRs, and locked decisions before any task. Plus `.clauderc` config recommendations.</p>
+      <a class="open" href="EXPORT_CLAUDE_CODE.md">Read guide →</a>
+    </div>
+    <div class="export-tile" data-tc="champagne">
+      <span class="logo">OpenAI Codex</span>
+      <h4>Export to OpenAI Codex</h4>
+      <p>Hierarchical context loading. Task templates for common refactors. Guardrails baked into `.codexrc`. Session-end checklist.</p>
+      <a class="open" href="EXPORT_OPENAI_CODEX.md">Read guide →</a>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="section" id="download">
+  <span class="eyebrow">06 · Download</span>
+  <h2 class="section">Take the <em>whole</em> package.</h2>
+  <div class="download-banner">
+    <div class="text">
+      <h3>nama-pit-wall-mega-package.tar.gz</h3>
+      <p>The complete package: 52 files across docs, brand artifacts, technical specs, runnable starter code, and per-platform export guides. Untar and you're ready to ship.</p>
+      <div class="meta">644 KB uncompressed · 151 KB compressed · MIT license · v2.4 · 2026-05-12</div>
+    </div>
+    <a class="btn primary" href="[[FILE_tu57qiu3]]">Download tar.gz</a>
+  </div>
+</section>
+
+<!-- COMPANION ARTIFACTS -->
+<section class="section">
+  <span class="eyebrow">07 · Companion artifacts in this thread</span>
+  <h2 class="section">What we've shipped <em>so far.</em></h2>
+  <p class="section">The mega-package collects the canonical docs. The live artifacts in this thread are interactive demos of the same system. Browse them for the full Pit Wall experience.</p>
+
+  <div class="card-grid">
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">Webpage · v3</span>
+      <h4>v2.4 Interactive App</h4>
+      <p>The full Pit Wall application. Five-seat picker with full workspace swap. D3 quantile fan. 15-minute race with baton-pass and pit-to-driver radio. Agent Studio.</p>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">Slides · v1</span>
+      <h4>12-slide Pitch Deck</h4>
+      <p>Cinematic sponsor deck. Same content as `brand/pitch_deck.html` in the package.</p>
+    </div>
+    <div class="doc-card" data-c="amber">
+      <span class="ttag">Webpage · v1</span>
+      <h4>Executive One-Pager</h4>
+      <p>Printable letter-portrait. Same as `brand/one_pager.html` in the package.</p>
+    </div>
+    <div class="doc-card" data-c="red">
+      <span class="ttag">Video · 720p</span>
+      <h4>Cinematic Teaser</h4>
+      <p>6-second pull-back through the pit wall command center.</p>
+    </div>
+    <div class="doc-card" data-c="cyan">
+      <span class="ttag">Webpage · v3</span>
+      <h4>End-to-end Demo + Agent Studio</h4>
+      <p>15-scene walkthrough with chapter picker and audio-synced narration. Agent Studio with message bus, work queue, and persona-agent relationship map.</p>
+    </div>
+    <div class="doc-card" data-c="champagne">
+      <span class="ttag">Audio · WAV</span>
+      <h4>Demo Narration</h4>
+      <p>~3 minutes. Charon voice. Auto-syncs to scene playback in the demo.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  NAMA Pit Wall · v2.4 · 2026-05-12 · One planning brain. Many surfaces. Human judgment preserved.
+</footer>
+
+</body>
+</html>

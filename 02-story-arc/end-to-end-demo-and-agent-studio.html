@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — End-to-End Demo + Agent Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06080d;
+  --carbon:#0e1119;
+  --pit:#171b27;
+  --pit-2:#1f2433;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf;
+  --buick-platinum:#d8dce0;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --risk:#ff453a;
+  --good:#23d18b;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --accent:var(--f1-cyan);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  background-image:
+    radial-gradient(1200px 600px at 80% -5%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(255,107,0,.05), transparent 70%),
+    linear-gradient(180deg, #04060a 0%, var(--void) 100%);
+}
+img{display:block;max-width:100%}
+::selection{background:var(--f1-amber);color:#1a0f00}
+
+/* ════════════════════ topbar ════════════════════ */
+.topbar{
+  position:sticky;top:0;z-index:80;
+  background:rgba(6,8,13,.85);
+  backdrop-filter:saturate(140%) blur(14px);
+  -webkit-backdrop-filter:saturate(140%) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1480px;margin:0 auto;
+  padding:14px 24px;
+  display:flex;justify-content:space-between;align-items:center;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{
+  width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,#222837 0%, #0c0e14 100%);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:10px;
+  letter-spacing:.18em;color:var(--f1-cyan);
+}
+.brand-text{display:flex;flex-direction:column;gap:2px}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;line-height:1}
+.brand-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+.view-toggle{display:flex;gap:4px;background:rgba(255,255,255,.04);padding:4px;border-radius:12px;border:1px solid var(--line)}
+.view-toggle button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  padding:9px 16px;border-radius:8px;border:0;
+  background:transparent;color:var(--ink-2);cursor:pointer;
+  transition:background .2s ease, color .2s ease;
+}
+.view-toggle button.active{background:var(--f1-cyan);color:#001a1f;box-shadow:0 6px 18px rgba(0,229,255,.32)}
+.view-toggle button:hover:not(.active){color:var(--ink);background:rgba(255,255,255,.06)}
+
+.status-strip{display:flex;gap:14px;font-family:var(--mono);font-size:10.5px;color:var(--ink-2);align-items:center}
+.status-strip .dot{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good);animation:pulse 2s ease-in-out infinite}
+.status-strip .lbl{color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.status-strip .val{font-weight:700;color:var(--ink);letter-spacing:.04em}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ════════════════════ views ════════════════════ */
+.view{display:none;animation:fade-in .5s ease}
+.view.active{display:block}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DEMO REEL VIEW
+   ═══════════════════════════════════════════════════════════════════ */
+
+.demo-shell{position:relative;min-height:calc(100vh - 66px)}
+.demo-stage{
+  position:relative;
+  height:calc(100vh - 280px);
+  min-height:520px;
+  overflow:hidden;
+}
+
+/* ─── chapter bar ─── */
+.demo-chapters{
+  padding:14px 24px;
+  background:rgba(6,8,13,.94);
+  border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;
+  position:relative;
+}
+.demo-chapters .chap-label{
+  position:absolute;top:-8px;left:24px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;
+  padding:0 6px;background:var(--void);
+}
+.chapter{
+  padding:10px 14px 14px;border-radius:10px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+  cursor:pointer;
+  transition:background .2s ease, border-color .2s ease, transform .2s ease;
+  position:relative;overflow:hidden;
+  min-width:0;
+}
+.chapter:hover{background:rgba(255,255,255,.05);border-color:var(--line-strong);transform:translateY(-1px)}
+.chapter.active{
+  background:linear-gradient(180deg, rgba(255,107,0,.1), rgba(255,107,0,.02));
+  border-color:var(--f1-amber);
+  box-shadow:0 0 0 1px var(--f1-amber), 0 12px 32px rgba(255,107,0,.18);
+}
+.chapter.played{
+  background:rgba(0,229,255,.04);
+  border-color:rgba(0,229,255,.28);
+}
+.chapter .chap-num{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;
+}
+.chapter.active .chap-num{color:var(--f1-amber)}
+.chapter.played .chap-num{color:var(--f1-cyan)}
+.chapter .chap-title{
+  font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em;
+  margin-top:4px;line-height:1.1;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.chapter.active .chap-title em{font-style:italic;color:var(--f1-amber)}
+.chapter .chap-meta{
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+  letter-spacing:.1em;margin-top:5px;display:flex;justify-content:space-between;gap:6px;
+}
+.chapter .chap-meta .scenes{text-transform:uppercase;font-weight:700}
+.chapter .chap-meta .duration{color:var(--muted-2)}
+.chapter .chap-progress{
+  position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,.05);
+}
+.chapter .chap-progress .fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg, var(--f1-cyan), var(--f1-amber));
+  transition:width .15s linear;
+}
+.chapter.active .chap-progress .fill{
+  box-shadow:0 0 8px rgba(255,107,0,.45);
+}
+.chapter.played .chap-progress .fill{
+  width:100% !important;
+  background:linear-gradient(90deg, rgba(0,229,255,.6), rgba(0,229,255,.3));
+  box-shadow:none;
+}
+
+@media (max-width: 980px){
+  .demo-chapters{grid-template-columns:repeat(3, 1fr)}
+  .demo-stage{height:calc(100vh - 360px);min-height:500px}
+}
+@media (max-width: 640px){
+  .demo-chapters{grid-template-columns:repeat(2, 1fr);padding:12px 14px;gap:8px}
+  .chapter{padding:8px 10px 12px}
+  .chapter .chap-title{font-size:13px}
+  .demo-stage{height:calc(100vh - 420px);min-height:440px}
+}
+
+.scene{
+  position:absolute;inset:0;
+  opacity:0;visibility:hidden;
+  transition:opacity .65s ease, visibility .65s ease;
+  display:flex;flex-direction:column;
+  padding:40px 60px 30px;
+}
+.scene.active{opacity:1;visibility:visible}
+
+.scene-bg{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(180deg, rgba(6,8,13,.55) 0%, rgba(6,8,13,.82) 60%, var(--void) 100%);
+}
+.scene-bg.cinematic{
+  background:
+    linear-gradient(180deg, rgba(6,8,13,.6) 0%, rgba(6,8,13,.82) 60%, var(--void) 100%),
+    var(--bg-image) center/cover no-repeat;
+}
+.scene-bg:after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(800px 400px at 75% 30%, rgba(255,107,0,.1), transparent 60%),
+    radial-gradient(800px 400px at 20% 60%, rgba(0,229,255,.08), transparent 70%);
+  mix-blend-mode:screen;
+}
+
+.scene-inner{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+
+.scene-header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.scene-chip{
+  display:flex;flex-direction:column;gap:6px;
+}
+.scene-chip .num{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.scene-chip .num .of{color:var(--muted-2)}
+.scene-chip .clock{
+  font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:.06em;
+  padding:6px 14px;border-radius:10px;
+  background:rgba(0,0,0,.5);border:1px solid var(--line-strong);
+  color:var(--f1-amber);text-shadow:0 0 12px rgba(255,107,0,.5);
+  display:inline-block;width:fit-content;
+}
+
+.scene-baton{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 14px;border-radius:10px;
+  background:rgba(0,0,0,.5);border:1px solid var(--baton-c, var(--f1-cyan));
+  box-shadow:0 0 0 1px var(--baton-c, var(--f1-cyan)), 0 0 24px rgba(0,229,255,.18);
+}
+.scene-baton .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.scene-baton .seat{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--baton-c, var(--f1-cyan));letter-spacing:.04em}
+
+.scene-body{display:grid;grid-template-columns:1.3fr 0.9fr;gap:36px;align-items:center;flex:1;padding:20px 0}
+.scene-body.center{grid-template-columns:1fr;text-align:center}
+
+.scene-headline{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(38px,5.2vw,72px);
+  line-height:1.02;letter-spacing:-.025em;
+  margin-bottom:18px;max-width:18ch;
+}
+.scene-headline em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.scene-headline .amber{color:var(--f1-amber)}
+.scene-headline .cyan{color:var(--f1-cyan)}
+.scene-headline .red{color:var(--chevy-red)}
+
+.scene-narration{
+  font-size:17px;line-height:1.55;color:var(--ink-2);max-width:60ch;
+}
+.scene-narration strong{color:var(--ink);font-weight:600}
+
+.scene-side{display:flex;flex-direction:column;gap:14px}
+
+/* scene cards (small UI snapshots) */
+.snap{
+  padding:16px 18px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(20,24,34,.95), rgba(14,17,25,.95));
+  border:1px solid var(--line-strong);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  backdrop-filter:blur(10px);
+}
+.snap-head{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+}
+.snap-title{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.snap-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.snap-icon{
+  width:24px;height:24px;border-radius:6px;
+  background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.32);
+  display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--f1-cyan);
+}
+.snap-icon.amber{background:rgba(255,107,0,.12);border-color:rgba(255,107,0,.32);color:var(--f1-amber)}
+.snap-icon.red{background:rgba(218,26,46,.12);border-color:rgba(218,26,46,.32);color:#ff8a99}
+.snap-icon.champagne{background:rgba(200,178,115,.12);border-color:rgba(200,178,115,.32);color:var(--cad-champagne)}
+.snap-icon.teal{background:rgba(127,176,191,.16);border-color:rgba(127,176,191,.4);color:var(--buick-teal)}
+.snap-icon.yellow{background:rgba(255,199,44,.12);border-color:rgba(255,199,44,.32);color:var(--chevy-yellow)}
+.snap-body{font-size:13px;color:var(--ink-2);line-height:1.55}
+.snap-body strong{color:var(--ink)}
+.snap-body .mono{font-family:var(--mono);font-size:11.5px;color:var(--ink)}
+.snap-meta{
+  display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;
+}
+.snap-meta span{padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.snap-meta span.good{color:var(--good);border-color:rgba(35,209,139,.32);background:rgba(35,209,139,.08)}
+.snap-meta span.warn{color:var(--warn);border-color:rgba(255,149,0,.32);background:rgba(255,149,0,.08)}
+.snap-meta span.amber{color:var(--f1-amber);border-color:rgba(255,107,0,.32);background:rgba(255,107,0,.08)}
+
+.agent-callout{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:12px;
+  background:linear-gradient(90deg, rgba(0,229,255,.08), rgba(0,229,255,.02));
+  border:1px solid rgba(0,229,255,.32);
+}
+.agent-callout .ai-dot{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg, #003540, #0a4a55);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:11px;color:var(--f1-cyan);
+  flex-shrink:0;border:1px solid rgba(0,229,255,.5);
+}
+.agent-callout .ai-body{flex:1}
+.agent-callout .ai-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--f1-cyan);letter-spacing:.06em}
+.agent-callout .ai-desc{font-size:12.5px;color:var(--ink-2);margin-top:3px;line-height:1.45}
+
+/* scene chrome */
+.scene-foot{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
+  margin-top:18px;
+}
+.scene-telemetry{
+  display:flex;gap:8px;flex-wrap:wrap;font-family:var(--mono);
+}
+.tel-pill{
+  font-family:var(--mono);font-size:10px;
+  padding:5px 11px;border-radius:8px;
+  background:rgba(0,0,0,.4);border:1px solid var(--line);
+  color:var(--ink-2);letter-spacing:.06em;display:flex;align-items:center;gap:6px;
+}
+.tel-pill .v{color:var(--ink);font-weight:700}
+.tel-pill.good .v{color:var(--good)}
+.tel-pill.warn .v{color:var(--warn)}
+.tel-pill.amber .v{color:var(--f1-amber)}
+.tel-pill.cyan .v{color:var(--f1-cyan)}
+.tel-pill .pip{width:5px;height:5px;border-radius:50%;background:var(--good);box-shadow:0 0 6px var(--good)}
+.tel-pill.warn .pip{background:var(--warn);box-shadow:0 0 6px var(--warn)}
+.tel-pill.amber .pip{background:var(--f1-amber);box-shadow:0 0 6px var(--f1-amber)}
+
+/* ─── controls + progress ─── */
+.demo-controls{
+  position:relative;
+  padding:16px 24px;
+  border-top:1px solid var(--line);
+  background:rgba(6,8,13,.95);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;gap:18px;
+}
+.demo-progress{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,.04);
+}
+.demo-progress .bar{
+  height:100%;
+  background:linear-gradient(90deg, var(--f1-cyan), var(--f1-amber));
+  width:0%;
+  transition:width .1s linear;
+  box-shadow:0 0 10px rgba(255,107,0,.4);
+}
+
+.demo-ctrl-btn{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1px solid var(--line-strong);
+  color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:14px;
+  transition:all .2s ease;
+}
+.demo-ctrl-btn:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+.demo-ctrl-btn:active{transform:scale(.96)}
+.demo-ctrl-btn.primary{
+  width:56px;height:56px;
+  background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);color:#001a1f;
+  border-color:rgba(0,229,255,.5);box-shadow:0 8px 24px rgba(0,229,255,.4);
+}
+.demo-ctrl-btn.primary:hover{box-shadow:0 12px 32px rgba(0,229,255,.55)}
+.demo-ctrl-btn.amber{background:linear-gradient(135deg,var(--f1-amber),#ff8a3d);color:#1a0f00;border-color:rgba(255,107,0,.5);box-shadow:0 8px 24px rgba(255,107,0,.4)}
+
+.demo-scene-info{
+  flex:1;
+  display:flex;flex-direction:column;gap:3px;
+  min-width:0;
+}
+.demo-scene-title{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.demo-scene-meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+
+.demo-dots{display:flex;gap:5px;align-items:center;padding:0 6px;flex-wrap:wrap;max-width:380px}
+.demo-dot{
+  width:9px;height:9px;border-radius:50%;
+  background:rgba(255,255,255,.18);
+  cursor:pointer;transition:all .2s ease;
+}
+.demo-dot.active{background:var(--f1-amber);box-shadow:0 0 8px var(--f1-amber);width:24px;border-radius:5px}
+.demo-dot.played{background:rgba(255,107,0,.5)}
+.demo-dot:hover:not(.active){background:rgba(255,255,255,.4)}
+
+.demo-toggle{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:700;
+  cursor:pointer;
+  user-select:none;
+}
+.demo-toggle .switch{
+  width:34px;height:18px;border-radius:9px;
+  background:rgba(255,255,255,.1);
+  position:relative;transition:background .2s ease;
+}
+.demo-toggle .switch:after{
+  content:"";position:absolute;top:2px;left:2px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--ink-2);transition:transform .2s ease, background .2s ease;
+}
+.demo-toggle.on .switch{background:var(--f1-cyan)}
+.demo-toggle.on .switch:after{transform:translateX(16px);background:#001a1f}
+.demo-toggle.narration{padding-left:10px;border-left:1px solid var(--line);margin-left:2px}
+.demo-toggle.narration.on .switch{background:var(--f1-amber)}
+.demo-toggle.narration.on .switch:after{background:#1a0f00}
+.demo-toggle.narration .icon{display:inline-block;margin-right:2px}
+@media (max-width:760px){
+  .demo-toggle.narration{padding-left:0;border-left:0;margin-left:0}
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AGENT STUDIO VIEW
+   ═══════════════════════════════════════════════════════════════════ */
+
+.studio{padding:30px 40px 80px;max-width:1480px;margin:0 auto}
+.studio-head{margin-bottom:30px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
+.studio-head h2{font-family:var(--serif);font-weight:700;font-size:42px;letter-spacing:-.02em;line-height:1.02}
+.studio-head h2 em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.studio-head p{color:var(--ink-2);font-size:15px;max-width:62ch;margin-top:10px;line-height:1.55}
+.studio-head .right{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.studio-head .stat{
+  text-align:center;padding:10px 18px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+}
+.studio-head .stat .v{font-family:var(--mono);font-weight:700;font-size:22px;color:var(--ink);letter-spacing:-.01em;line-height:1}
+.studio-head .stat .v.cyan{color:var(--f1-cyan)}
+.studio-head .stat .v.amber{color:var(--f1-amber)}
+.studio-head .stat .v.good{color:var(--good)}
+.studio-head .stat .l{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-top:5px}
+
+/* main 3-panel layout */
+.studio-grid{
+  display:grid;
+  grid-template-columns:280px 1fr 340px;
+  gap:20px;
+  margin-bottom:40px;
+}
+.panel{
+  background:linear-gradient(180deg, var(--carbon), var(--pit));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;
+  padding-bottom:12px;border-bottom:1px solid var(--line);
+}
+.panel-head h3{font-family:var(--serif);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.panel-head .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:700;margin-top:2px}
+.panel-head .badge{
+  font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:999px;
+  background:rgba(0,229,255,.1);color:var(--f1-cyan);
+  border:1px solid rgba(0,229,255,.32);font-weight:700;letter-spacing:.06em;
+}
+
+/* ─── agent roster ─── */
+.agent-list{display:grid;gap:10px}
+.agent{
+  padding:14px 14px;border-radius:12px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.agent.busy{border-color:rgba(0,229,255,.32);background:rgba(0,229,255,.04)}
+.agent.busy:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg, transparent, var(--f1-cyan), transparent);
+  animation:agent-pulse 2s ease-in-out infinite;
+}
+@keyframes agent-pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.agent-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.04em;line-height:1.2}
+.agent-ver{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:3px;letter-spacing:.06em}
+.agent-task{font-size:11.5px;color:var(--ink-2);margin-top:8px;line-height:1.45}
+.agent-status{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+}
+.agent-status.busy{color:var(--f1-cyan)}
+.agent-status.idle{color:var(--muted)}
+.agent-status .pip{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor}
+.agent-status.busy .pip{animation:pulse 1.4s ease-in-out infinite}
+
+/* ─── message bus ─── */
+.bus-stage{
+  position:relative;
+  height:520px;
+  background:radial-gradient(circle at 50% 50%, rgba(0,229,255,.04), transparent 70%);
+  border-radius:14px;
+  overflow:hidden;
+}
+.bus-svg{position:absolute;inset:0;width:100%;height:100%}
+.bus-legend{
+  display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;
+}
+.bus-legend .lg{display:inline-flex;align-items:center;gap:6px}
+.bus-legend .sw{width:10px;height:10px;border-radius:50%}
+.bus-legend .sw.research{background:var(--f1-cyan)}
+.bus-legend .sw.flag{background:var(--f1-amber)}
+.bus-legend .sw.review{background:var(--cad-champagne)}
+.bus-legend .sw.commit{background:var(--good)}
+.bus-legend .sw.guardrail{background:var(--chevy-red)}
+
+/* ─── work queue ─── */
+.queue-list{display:grid;gap:10px}
+.queue-card{
+  padding:14px;border-radius:12px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+  border-left:3px solid var(--queue-c, var(--f1-cyan));
+  transition:all .3s ease;
+}
+.queue-card.approving{border-color:var(--good);background:rgba(35,209,139,.05);transform:translateX(8px);opacity:.6}
+.queue-card.rejecting{border-color:var(--risk);background:rgba(255,69,58,.05);transform:translateX(-8px);opacity:.6}
+.queue-card[data-c="cyan"]{--queue-c:var(--f1-cyan)}
+.queue-card[data-c="amber"]{--queue-c:var(--f1-amber)}
+.queue-card[data-c="champagne"]{--queue-c:var(--cad-champagne)}
+.queue-card[data-c="teal"]{--queue-c:var(--buick-teal)}
+.queue-card[data-c="red"]{--queue-c:var(--chevy-red)}
+.qc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.qc-agent{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--queue-c, var(--f1-cyan));font-weight:700}
+.qc-persona{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.qc-action{font-family:var(--serif);font-weight:600;font-size:14px;letter-spacing:-.005em;margin-bottom:6px;line-height:1.25}
+.qc-evidence{font-size:11.5px;color:var(--ink-2);line-height:1.5;margin-bottom:10px}
+.qc-evidence strong{color:var(--ink)}
+.qc-actions{display:flex;gap:6px}
+.qc-btn{
+  flex:1;padding:7px 10px;border-radius:7px;font-family:var(--sans);font-weight:600;font-size:11px;
+  border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--ink);cursor:pointer;
+  letter-spacing:.02em;transition:all .2s ease;
+}
+.qc-btn:hover{background:rgba(255,255,255,.1)}
+.qc-btn.approve{background:rgba(35,209,139,.1);color:var(--good);border-color:rgba(35,209,139,.32)}
+.qc-btn.approve:hover{background:rgba(35,209,139,.2)}
+.qc-btn.reject{background:rgba(255,69,58,.08);color:var(--risk);border-color:rgba(255,69,58,.32)}
+.qc-btn.reject:hover{background:rgba(255,69,58,.15)}
+.qc-btn.edit{background:rgba(255,107,0,.08);color:var(--f1-amber);border-color:rgba(255,107,0,.32)}
+.queue-empty{
+  padding:30px;text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+}
+
+/* ─── persona-agent relationship map ─── */
+.relationship{
+  margin-top:40px;
+  padding:30px;border-radius:18px;
+  background:
+    radial-gradient(900px 400px at 50% 0%, rgba(255,107,0,.05), transparent 65%),
+    linear-gradient(180deg, var(--carbon), var(--pit));
+  border:1px solid var(--line);
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
+.relationship h3{font-family:var(--serif);font-weight:700;font-size:32px;letter-spacing:-.02em;line-height:1.05;margin-bottom:8px}
+.relationship h3 em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.relationship .tagline{font-size:15px;color:var(--ink-2);max-width:62ch;line-height:1.55;margin-bottom:30px}
+.relationship .tagline strong{color:var(--ink);font-weight:600}
+
+.persona-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.persona-col{
+  padding:18px 16px;border-radius:14px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+  border-top:3px solid var(--pc, var(--f1-cyan));
+  display:flex;flex-direction:column;gap:14px;
+}
+.persona-col[data-p="leadership"]{--pc:var(--cad-champagne)}
+.persona-col[data-p="analyst"]{--pc:var(--f1-cyan)}
+.persona-col[data-p="sme"]{--pc:var(--buick-teal)}
+.persona-col[data-p="ops"]{--pc:var(--chevy-yellow)}
+.persona-col[data-p="govops"]{--pc:var(--chevy-red)}
+
+.persona-head{text-align:center}
+.persona-emoji{
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(255,255,255,.04);border:1px solid var(--pc);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:14px;color:var(--pc);
+  margin:0 auto 8px;
+  box-shadow:0 0 0 1px var(--pc), 0 0 24px var(--pc-glow, rgba(0,229,255,.16));
+}
+.persona-col[data-p="leadership"] .persona-emoji{box-shadow:0 0 0 1px var(--cad-champagne), 0 0 24px rgba(200,178,115,.16)}
+.persona-col[data-p="analyst"] .persona-emoji{box-shadow:0 0 0 1px var(--f1-cyan), 0 0 24px rgba(0,229,255,.16)}
+.persona-col[data-p="sme"] .persona-emoji{box-shadow:0 0 0 1px var(--buick-teal), 0 0 24px rgba(127,176,191,.16)}
+.persona-col[data-p="ops"] .persona-emoji{box-shadow:0 0 0 1px var(--chevy-yellow), 0 0 24px rgba(255,199,44,.16)}
+.persona-col[data-p="govops"] .persona-emoji{box-shadow:0 0 0 1px var(--chevy-red), 0 0 24px rgba(218,26,46,.16)}
+.persona-name{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em;margin-bottom:2px}
+.persona-role{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pc, var(--f1-cyan));font-weight:700}
+
+.crew-divider{
+  text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--muted);font-weight:700;
+  margin-top:4px;padding-top:8px;border-top:1px dashed var(--line);
+}
+.crew{display:grid;gap:6px}
+.crew-item{
+  padding:8px 10px;border-radius:8px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  display:flex;align-items:center;gap:8px;
+}
+.crew-item .dot{
+  width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg, rgba(0,229,255,.18), rgba(0,229,255,.04));
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;color:var(--f1-cyan);
+  flex-shrink:0;border:1px solid rgba(0,229,255,.3);
+}
+.crew-item .name{font-family:var(--mono);font-size:10px;color:var(--ink);letter-spacing:.04em;line-height:1.2}
+.crew-item .role{font-family:var(--mono);font-size:8.5px;color:var(--muted);margin-top:2px;letter-spacing:.06em}
+.crew-item .text{flex:1;min-width:0}
+
+.magnify-line{
+  margin-top:24px;
+  padding:18px 22px;border-radius:14px;
+  background:linear-gradient(90deg, rgba(255,107,0,.08), rgba(255,107,0,.0));
+  border:1px solid rgba(255,107,0,.32);
+  border-left:3px solid var(--f1-amber);
+  font-family:var(--serif);font-style:italic;font-weight:500;font-size:18px;
+  color:var(--ink);line-height:1.45;
+}
+.magnify-line strong{color:var(--f1-amber);font-weight:700;font-style:normal;font-family:var(--sans);letter-spacing:.04em;font-size:14px;text-transform:uppercase;display:block;margin-bottom:6px}
+
+/* ─── market intelligence feed ─── */
+.mkt-feed{
+  margin-top:30px;
+  padding:24px;border-radius:16px;
+  background:linear-gradient(180deg, var(--carbon), var(--pit));
+  border:1px solid var(--line);
+}
+.mkt-feed h3{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.015em;margin-bottom:6px}
+.mkt-feed h3 em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.mkt-feed .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:16px}
+.feed-stream{display:grid;gap:6px;max-height:340px;overflow:hidden;mask-image:linear-gradient(180deg, transparent 0%, black 8%, black 90%, transparent 100%)}
+.feed-item{
+  padding:10px 14px;border-radius:10px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  animation:feed-in .5s ease;
+}
+.feed-item .agent-pill{
+  font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:6px;
+  background:rgba(0,229,255,.1);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.32);
+  font-weight:700;letter-spacing:.06em;white-space:nowrap;
+}
+.feed-item .agent-pill.amber{background:rgba(255,107,0,.1);color:var(--f1-amber);border-color:rgba(255,107,0,.32)}
+.feed-item .agent-pill.champagne{background:rgba(200,178,115,.1);color:var(--cad-champagne);border-color:rgba(200,178,115,.32)}
+.feed-item .agent-pill.teal{background:rgba(127,176,191,.14);color:var(--buick-teal);border-color:rgba(127,176,191,.32)}
+.feed-item .text{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.feed-item .text strong{color:var(--ink)}
+.feed-item .text .mono{font-family:var(--mono);font-size:11px}
+.feed-item .ts{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;white-space:nowrap}
+@keyframes feed-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+/* ════════════════════ responsive ════════════════════ */
+@media (max-width: 1180px){
+  .studio-grid{grid-template-columns:1fr;gap:14px}
+  .persona-row{grid-template-columns:repeat(2,1fr)}
+  .scene-body{grid-template-columns:1fr;gap:24px}
+  .scene-headline{font-size:clamp(32px,4.6vw,52px)}
+}
+@media (max-width: 760px){
+  .scene{padding:24px 22px 20px}
+  .topbar-inner{padding:12px 16px;flex-wrap:wrap}
+  .studio{padding:20px 16px 60px}
+  .persona-row{grid-template-columns:1fr}
+  .status-strip{display:none}
+  .scene-foot{flex-direction:column;align-items:flex-start}
+  .demo-controls{padding:12px 14px;gap:10px;flex-wrap:wrap}
+  .demo-dots{order:99;width:100%;max-width:none;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ topbar ═══════════════════ -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">NAMA</div>
+      <div class="brand-text">
+        <div class="brand-name">NAMA Pit Wall</div>
+        <div class="brand-sub">Demo · Agent Studio · v2.4</div>
+      </div>
+    </div>
+    <div class="view-toggle">
+      <button class="active" data-view="demo">Demo Reel</button>
+      <button data-view="studio">Agent Studio</button>
+    </div>
+    <div class="status-strip">
+      <span class="dot"></span>
+      <span><span class="lbl">Live</span> <span class="val" id="live-msg-rate">12 msg/min</span></span>
+      <span><span class="lbl">Queue</span> <span class="val" id="live-queue-count">5 awaiting</span></span>
+      <span><span class="lbl">Agents</span> <span class="val">7 active</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     DEMO REEL VIEW
+     ════════════════════════════════════════════════════ -->
+<div class="view view-demo active" id="view-demo">
+  <div class="demo-shell">
+
+    <!-- ═══ chapter picker ═══ -->
+    <div class="demo-chapters" id="demo-chapters" role="navigation" aria-label="Demo chapters">
+      <span class="chap-label">Chapters</span>
+      <!-- populated by JS -->
+    </div>
+
+    <div class="demo-stage" id="demo-stage">
+
+      <!-- ═══ Scene 1: Cold open ═══ -->
+      <section class="scene active" data-scene="0" data-duration="6500" data-title="Cold open · Tuesday 14:02 ET">
+        <div class="scene-bg cinematic" style="--bg-image:url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png')"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>01</strong> <span class="of">/ 15</span> · Cold open</div>
+              <div class="clock">00:00</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--f1-amber)">
+              <span class="lbl">Status</span><span class="seat">Wall is quiet</span>
+            </div>
+          </div>
+          <div class="scene-body center">
+            <div>
+              <h1 class="scene-headline">One planning brain.<br><em>Many</em> surfaces.<br><span class="amber">Lights out.</span></h1>
+              <p class="scene-narration" style="margin:0 auto;max-width:54ch">Tuesday 14:02 ET. The NAMA Pit Wall is humming. 14 people are on the wall. Q3 Trucks plan-of-record is committed at <strong>v2026.05A</strong>. Forecast accuracy MAPE: 8.2%. <strong>Then a signal arrives.</strong></p>
+            </div>
+          </div>
+          <div class="scene-foot">
+            <div class="scene-telemetry">
+              <span class="tel-pill good"><span class="pip"></span>POR <span class="v">v2026.05A</span></span>
+              <span class="tel-pill"><span class="pip"></span>MAPE <span class="v good">8.2%</span></span>
+              <span class="tel-pill"><span class="pip"></span>Live <span class="v cyan">14</span></span>
+              <span class="tel-pill"><span class="pip"></span>SLA <span class="v good">2.4s</span></span>
+            </div>
+            <div class="scene-telemetry"><span class="tel-pill"><span class="pip"></span>Lap timer <span class="v amber">00:00 / 15:00</span></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 2: Signal arrives ═══ -->
+      <section class="scene" data-scene="1" data-duration="7000" data-title="Signal arrives · Ops takes the baton">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>02</strong> <span class="of">/ 15</span> · The trigger</div>
+              <div class="clock">00:42</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--chevy-yellow)">
+              <span class="lbl">Baton</span><span class="seat">Ops · IT</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;margin-bottom:14px">Anomaly · Min 0–2</p>
+              <h1 class="scene-headline">Texas dealer pulse <em>just</em> shifted.</h1>
+              <p class="scene-narration"><strong>workbench-anomaly-v3.5</strong> flags drift on incentive elasticity. Confidence on Q3 Trucks drops <strong>High → Medium</strong>. Teams + Outlook + PBI tiles flash an urgent-revision badge. <strong>Ops takes the baton.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Anomaly detected</div><div class="snap-sub">Workbench · 14:02:11</div></div>
+                  <div class="snap-icon amber">⚠</div>
+                </div>
+                <div class="snap-body">Incentive-elasticity coefficient outside historical 95% CI on <strong>Silverado HD</strong>. Drift score <span class="mono">0.41 · watch</span>.</div>
+                <div class="snap-meta"><span class="amber">Drift 0.41</span><span>Confidence High → Medium</span></div>
+              </div>
+              <div class="agent-callout">
+                <div class="ai-dot">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name">workbench-anomaly-v3.5</div>
+                  <div class="ai-desc">Flagged the drift, routed to Ops, suggested pipeline freshness check on Avista cross-shop index.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 3: Ops responds ═══ -->
+      <section class="scene" data-scene="2" data-duration="7000" data-title="Ops investigates · guardrail auto-pauses">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>03</strong> <span class="of">/ 15</span> · Pipeline check</div>
+              <div class="clock">01:14</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--chevy-yellow)">
+              <span class="lbl">Baton</span><span class="seat">Ops · IT</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--chevy-yellow);font-weight:700;margin-bottom:14px">Pit-crew chief · Govinda C.</p>
+              <h1 class="scene-headline">Avista is <span class="amber">stale.</span><br>The guardrail catches it.</h1>
+              <p class="scene-narration">Govinda checks the pipeline grid. Avista cross-shop index hasn't refreshed in <strong>38 minutes</strong>. <strong>guardrail-classifier-v1.4</strong> already auto-paused PBI publish to prevent stale-state broadcast. <strong>No bad data ships.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Pipeline health</div><div class="snap-sub">Ops Control · 14:02:54</div></div>
+                  <div class="snap-icon yellow">○</div>
+                </div>
+                <div class="snap-body">
+                  <strong>5 of 6 pipelines green.</strong> 1 amber: <span class="mono">avista · cross_shop_index</span> stale 38m · SLA 30m.
+                  <br><br>PBI exec_trucks_tile <strong>auto-paused</strong> by guardrail.
+                </div>
+                <div class="snap-meta"><span class="warn">1 amber</span><span class="warn">PBI paused</span><span class="good">Retry queued</span></div>
+              </div>
+              <div class="agent-callout" style="border-color:rgba(255,107,0,.32);background:linear-gradient(90deg,rgba(255,107,0,.08),rgba(255,107,0,.0))">
+                <div class="ai-dot" style="background:linear-gradient(135deg,#2b1a05,#4a2d0d);color:var(--f1-amber);border-color:rgba(255,107,0,.5)">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name" style="color:var(--f1-amber)">guardrail-classifier-v1.4</div>
+                  <div class="ai-desc">Auto-paused PBI publish · classified as <span class="mono">stale-source</span> · awaiting Ops signoff to retry.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 4: Ops signs off, hands to Analyst ═══ -->
+      <section class="scene" data-scene="3" data-duration="6500" data-title="Pipelines green · hand-off to Analyst">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>04</strong> <span class="of">/ 15</span> · Hand-off radio</div>
+              <div class="clock">02:48</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--f1-cyan)">
+              <span class="lbl">Baton</span><span class="seat">Analyst → Krisztina</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;margin-bottom:14px">📻 Radio · pit-to-driver</p>
+              <h1 class="scene-headline">Ops <em>→</em> Analyst.<br>The baton passes.</h1>
+              <p class="scene-narration"><strong>Avista retried · green</strong>. Pipelines healthy. Anomaly pack staged. Drift 0.41 flagged for human review.<br><br>Govinda signs release-readiness. <strong>Krisztina inherits the lap.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap" style="border-color:var(--f1-amber);box-shadow:0 0 0 1px var(--f1-amber), 0 30px 80px rgba(0,0,0,.55)">
+                <div class="snap-head">
+                  <div><div class="snap-title" style="color:var(--f1-amber)">Hand-off radio</div><div class="snap-sub">14:02 → 14:05 ET</div></div>
+                  <div class="snap-icon amber">📻</div>
+                </div>
+                <div class="snap-body">
+                  <p style="color:var(--good);font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:6px">✓ Completed</p>
+                  Pipelines green except avista (paused &amp; retrying) · anomaly pack staged · drift 0.41 flagged for human review.
+                  <p style="color:var(--f1-amber);font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin:10px 0 6px">→ Next</p>
+                  Open compare mode · scan baseline vs consensus · stage a structured override with reason code.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 5: Analyst opens Workbench ═══ -->
+      <section class="scene" data-scene="4" data-duration="7000" data-title="Workbench opens · PA agent has prepped">
+        <div class="scene-bg cinematic" style="--bg-image:url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png')"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>05</strong> <span class="of">/ 15</span> · Forecast Workbench</div>
+              <div class="clock">03:22</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--f1-cyan)">
+              <span class="lbl">Baton</span><span class="seat">Analyst · Krisztina</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-cyan);font-weight:700;margin-bottom:14px">Race engineer · Krisztina G.</p>
+              <h1 class="scene-headline">PA agent <em>already</em> prepped the workspace.</h1>
+              <p class="scene-narration">When Krisztina opens the Pit Wall, her <strong>personal-assistant-agent-v4.1</strong> has done the toil: 3 file comparisons surfaced, 1 cleaning suggestion, 2 validation flags. She didn't ask. <strong>Time spent so far: 0 keystrokes.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">FS-2026Q3-NA-TRK-001</div><div class="snap-sub">U.S. Full-Size Trucks</div></div>
+                  <div class="snap-icon">◐</div>
+                </div>
+                <div class="snap-body" style="font-family:var(--serif);font-weight:700;font-size:32px;line-height:1;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px">312,400<span style="color:var(--muted);font-size:14px;font-family:var(--mono);font-weight:400;margin-left:8px">units</span></div>
+                <div class="snap-body">P10/P90: <span class="mono">287.6k / 338.9k</span> · Confidence <span class="mono" style="color:var(--warn)">0.71 medium</span></div>
+                <div class="snap-meta"><span>Owner K. Gilezan</span><span>Freshness 42m</span></div>
+              </div>
+              <div class="agent-callout">
+                <div class="ai-dot">PA</div>
+                <div class="ai-body">
+                  <div class="ai-name">personal-assistant-agent-v4.1</div>
+                  <div class="ai-desc"><strong>Already prepped:</strong> compared 3 source files vs prior cycle · flagged Silverado HD anomaly · drafted 2 validation notes. Staging-only writes.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 6: Compare mode & inspection ═══ -->
+      <section class="scene" data-scene="5" data-duration="7000" data-title="Compare mode · anomaly under the lens">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>06</strong> <span class="of">/ 15</span> · Diagnosis</div>
+              <div class="clock">04:08</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--f1-cyan)">
+              <span class="lbl">Baton</span><span class="seat">Analyst · Krisztina</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-cyan);font-weight:700;margin-bottom:14px">Race-engineer pattern</p>
+              <h1 class="scene-headline">Compare mode. The <em>elasticity</em> coefficient is <span class="amber">off.</span></h1>
+              <p class="scene-narration">Krisztina toggles compare. Last cycle's baseline overlays today's. The Silverado HD line drifts late June — timing matches the May Avista cross-shop signal Jim Kyle flagged last cycle. <strong>The signal kept coming back.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Compare mode active</div><div class="snap-sub">Workbench · 14:08</div></div>
+                  <div class="snap-icon">⇄</div>
+                </div>
+                <div class="snap-body">Q3 baseline drifts <strong>-2.1k units</strong> below prior cycle's run-rate on Silverado HD. Pattern matches May Avista signal that surfaced as a challenge last cycle and was deferred.</div>
+                <div class="snap-meta"><span class="amber">Ghost-issue · recurring</span><span>Cycles open: 3</span></div>
+              </div>
+              <div class="agent-callout" style="border-color:rgba(200,178,115,.32);background:linear-gradient(90deg,rgba(200,178,115,.08),transparent)">
+                <div class="ai-dot" style="background:linear-gradient(135deg,#1f1c12,#3d3725);color:var(--cad-champagne);border-color:rgba(200,178,115,.5)">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name" style="color:var(--cad-champagne)">ghost-lap-svc · preview from v3.0</div>
+                  <div class="ai-desc">Recurring challenge: <span class="mono">jim_kyle × R-18 × silverado_hd</span> · 3 consecutive cycles. The wall is showing us a pattern we kept dismissing.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 7: Override staged ═══ -->
+      <section class="scene" data-scene="6" data-duration="6500" data-title="Override staged · reason R-18 · HIBT logged">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>07</strong> <span class="of">/ 15</span> · Override</div>
+              <div class="clock">05:14</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--f1-cyan)">
+              <span class="lbl">Baton</span><span class="seat">Analyst · Krisztina</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-cyan);font-weight:700;margin-bottom:14px">Structured override</p>
+              <h1 class="scene-headline">Override staged.<br><span class="cyan">Lineage</span> preserved.</h1>
+              <p class="scene-narration">Krisztina drops Silverado HD <strong>-2.1k units</strong>. Reason code <strong>R-18 · Competitive launch</strong>. Evidence link: <span class="mono">/MIA/dealer-pulse-week19.pptx</span>. Net delta vs baseline: <strong>-8.2k</strong>. <strong>HIBT writes the lineage</strong>.</p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Override draft</div><div class="snap-sub">Staging path · HIBT logged</div></div>
+                  <div class="snap-icon">✎</div>
+                </div>
+                <div class="snap-body">
+                  <strong>Silverado HD · Q3 2026</strong><br>
+                  Current: <span class="mono">87,400</span> → New: <span class="mono" style="color:var(--f1-cyan)">85,300</span><br>
+                  Reason: <span class="mono">R-18 · Competitive launch</span><br>
+                  Confidence: <span class="mono">Medium</span>
+                </div>
+                <div class="snap-meta"><span class="good">Lineage preserved</span><span>HIBT entry hibt_q3_001</span></div>
+              </div>
+              <div class="agent-callout">
+                <div class="ai-dot">HIBT</div>
+                <div class="ai-body">
+                  <div class="ai-name">replay-prompt-ledger-v2.0</div>
+                  <div class="ai-desc">Override action immutably logged. Replay-from-source available. Action ID: <span class="mono">hibt_q3_001</span>.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 8: SME challenge ═══ -->
+      <section class="scene" data-scene="7" data-duration="7000" data-title="Jim Kyle challenges via Teams">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>08</strong> <span class="of">/ 15</span> · The challenge</div>
+              <div class="clock">06:21</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--buick-teal)">
+              <span class="lbl">Baton</span><span class="seat">SME · Jim Kyle</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--buick-teal);font-weight:700;margin-bottom:14px">MIA · trackside spotter</p>
+              <h1 class="scene-headline">"You're <em>not</em> down<br>far enough."</h1>
+              <p class="scene-narration">Teams adaptive card lands in Jim Kyle's queue. He's seen the Texas pulse all week. He pushes back in <strong>under 90 seconds</strong>: <em>"Sierra HD cross-shop is also pulling. -2.1k underestimates. Recommend -3.4k."</em></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap" style="border-color:rgba(127,176,191,.32)">
+                <div class="snap-head">
+                  <div><div class="snap-title">Challenge raised</div><div class="snap-sub">Teams card · 06:21</div></div>
+                  <div class="snap-icon teal">⚐</div>
+                </div>
+                <div class="snap-body">
+                  <strong>Jim Kyle:</strong> <em>"Texas dealer pulse is softer than the model — Sierra HD cross-shop is pulling volume from Silverado HD. Reason R-18, evidence in /MIA/dealer-pulse-week19. Recommend deeper cut: <span class="mono">-3.4k</span>."</em>
+                </div>
+                <div class="snap-meta"><span class="warn">Challenge open · 87s</span><span class="amber">SME confidence: high</span></div>
+              </div>
+              <div class="agent-callout" style="border-color:rgba(127,176,191,.32);background:linear-gradient(90deg,rgba(127,176,191,.08),transparent)">
+                <div class="ai-dot" style="background:linear-gradient(135deg,#0c1e23,#1d3b44);color:var(--buick-teal);border-color:rgba(127,176,191,.5)">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name" style="color:var(--buick-teal)">intake-agent-v1.9</div>
+                  <div class="ai-desc">Auto-tagged <span class="mono">dealer-pulse-week19.pptx</span> · attached to Number Object NO-TRK-Q3-001 · routed to Jim's challenge thread.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 9: Glean research ═══ -->
+      <section class="scene" data-scene="8" data-duration="7000" data-title="Glean copilot does deterministic Q&A">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>09</strong> <span class="of">/ 15</span> · Market intelligence</div>
+              <div class="clock">07:43</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--buick-teal)">
+              <span class="lbl">Baton</span><span class="seat">SME · Jim Kyle</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--buick-teal);font-weight:700;margin-bottom:14px">Agent research · deterministic Q&amp;A</p>
+              <h1 class="scene-headline">"What's the <em>historical</em> pull rate?"</h1>
+              <p class="scene-narration">Jim asks Glean: <em>"When Silverado/Sierra HD incentives diverge by &gt;$500, what's the historical cross-shop pull rate?"</em> Glean returns a deterministic answer with <strong>4 source citations</strong>, freshness chip, and replay link. <strong>Not a chat. A trusted Q&amp;A.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Glean Q&amp;A result</div><div class="snap-sub">Trusted forecast copilot</div></div>
+                  <div class="snap-icon">G</div>
+                </div>
+                <div class="snap-body">
+                  <em>"In 9 of the last 11 quarters where Silverado/Sierra HD incentive divergence exceeded $500, the lower-incentive nameplate lost <strong>4.2–6.8%</strong> of consensus volume to the higher-incentive sibling."</em>
+                </div>
+                <div class="snap-meta"><span class="good">4 sources</span><span>Freshness 4m</span><span>Replay available</span></div>
+              </div>
+              <div class="agent-callout">
+                <div class="ai-dot">G</div>
+                <div class="ai-body">
+                  <div class="ai-name">glean-copilot-v2.7</div>
+                  <div class="ai-desc">Deterministic answer from forecast-set v2026.05A · sources: NAMA Q2 retro · MIA pulse Q1 · Avista cross-shop white paper · 2024 incentive lessons.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 10: Second-Opinion fires ═══ -->
+      <section class="scene" data-scene="9" data-duration="7500" data-title="Second-Opinion Agent fires · MDS 0.42">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>10</strong> <span class="of">/ 15</span> · Adversarial review</div>
+              <div class="clock">09:02</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--buick-teal)">
+              <span class="lbl">Baton</span><span class="seat">SME · Jim Kyle</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;margin-bottom:14px">v3.0 preview · second-opinion-svc-v1.0</p>
+              <h1 class="scene-headline">A second agent <em>disagrees</em>. MDS <span class="amber">0.42</span>.</h1>
+              <p class="scene-narration">Auto-trigger fires at pre-Gate-3. <strong>second-opinion-svc-v1.0</strong> runs with bear-case framing and divergent source weights. Result: -3.8k cut on Silverado HD. <strong>Material disagreement score 0.42</strong> · routes to Jim for confirmation. The wall is converging on the right answer.</p>
+            </div>
+            <div class="scene-side">
+              <div class="snap" style="border-color:var(--f1-amber);box-shadow:0 0 0 1px var(--f1-amber), 0 30px 80px rgba(0,0,0,.55)">
+                <div class="snap-head">
+                  <div><div class="snap-title">Second-opinion · disagree</div><div class="snap-sub">MDS 0.42 · routed to MIA</div></div>
+                  <div class="snap-icon amber">⚡</div>
+                </div>
+                <div class="snap-body">
+                  <strong>Primary:</strong> 312.4k · <strong>Second:</strong> <span class="mono" style="color:var(--f1-amber)">308.6k</span> · Δ <span class="mono">-3.8k</span><br><br>
+                  <strong>Top divergent factor:</strong> <span class="mono">texas_dealer_pulse</span> (weight 0.34, MIA category)<br>
+                  <strong>Source overlap:</strong> <span class="mono">33%</span>
+                </div>
+                <div class="snap-meta"><span class="amber">MDS 0.42 · above threshold</span><span class="amber">Route → Jim Kyle</span></div>
+              </div>
+              <div class="agent-callout" style="border-color:rgba(255,107,0,.32);background:linear-gradient(90deg,rgba(255,107,0,.08),transparent)">
+                <div class="ai-dot" style="background:linear-gradient(135deg,#2b1a05,#4a2d0d);color:var(--f1-amber);border-color:rgba(255,107,0,.5)">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name" style="color:var(--f1-amber)">second-opinion-svc-v1.0</div>
+                  <div class="ai-desc">Divergent framing (bear-case) + different source weights produced -3.8k delta. Agreement is not validation — but neither is disagreement. <strong>Jim's judgment decides.</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 11: Consensus forms ═══ -->
+      <section class="scene" data-scene="10" data-duration="6500" data-title="Consensus forms · Krisztina + Jim align">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>11</strong> <span class="of">/ 15</span> · Consensus</div>
+              <div class="clock">10:37</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--cad-champagne)">
+              <span class="lbl">Baton</span><span class="seat">→ Leadership</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--good);font-weight:700;margin-bottom:14px">Adversarial-but-positive · resolved</p>
+              <h1 class="scene-headline">Krisztina + Jim align.<br><em>Scenario B.</em></h1>
+              <p class="scene-narration">Both agents flagged the same direction. Both humans agree on the magnitude. Krisztina restages: <strong>Silverado HD -3.4k</strong>, matching Jim's number, supported by Glean's historical pull-rate. Scenario B (+$1,500 incentive · 324.8k consensus) is now <strong>pre-S&amp;OP ready</strong>.</p>
+            </div>
+            <div class="scene-side">
+              <div class="snap" style="border-color:var(--good)">
+                <div class="snap-head">
+                  <div><div class="snap-title">Scenario B · recommended</div><div class="snap-sub">3 scenarios staged · 2 aligned</div></div>
+                  <div class="snap-icon" style="background:rgba(35,209,139,.14);border-color:rgba(35,209,139,.32);color:var(--good)">✓</div>
+                </div>
+                <div class="snap-body">
+                  <strong>+$1,500 incentive · 324.8k units</strong><br>
+                  Override applied: Silverado HD <span class="mono" style="color:var(--good)">-3.4k</span> (matches Jim's recommendation)<br>
+                  Krisztina + Jim aligned · MIA confirmed
+                </div>
+                <div class="snap-meta"><span class="good">Pre-S&amp;OP ready</span><span class="good">+3.9% vs base</span><span>Ramzi review queued</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 12: Leadership commits ═══ -->
+      <section class="scene" data-scene="11" data-duration="7000" data-title="Ramzi commits Scenario B · plan-of-record v2026.05B">
+        <div class="scene-bg cinematic" style="--bg-image:url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/b43d2e97-122d-4778-8961-ac9b9a46ae22.png')"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>12</strong> <span class="of">/ 15</span> · The commit</div>
+              <div class="clock">11:58</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--cad-champagne)">
+              <span class="lbl">Baton</span><span class="seat">Leadership · Ramzi</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cad-champagne);font-weight:700;margin-bottom:14px">Race director · sponsor seat</p>
+              <h1 class="scene-headline">"Promote <em>Scenario B.</em><br>Ship the brief."</h1>
+              <p class="scene-narration">Ramzi reads the approval card. Scenario B has agent + analyst + SME alignment. Exec brief is pre-drafted by <strong>narrative-drafter-v2.3</strong>. He edits a line, signs, commits. <strong>Plan-of-record v2026.05B is live.</strong></p>
+            </div>
+            <div class="scene-side">
+              <div class="snap" style="border-color:var(--cad-champagne);box-shadow:0 0 0 1px var(--cad-champagne), 0 30px 80px rgba(0,0,0,.55)">
+                <div class="snap-head">
+                  <div><div class="snap-title">Plan-of-record</div><div class="snap-sub">v2026.05B · Committed 11:58</div></div>
+                  <div class="snap-icon champagne">✓</div>
+                </div>
+                <div class="snap-body">
+                  <strong>U.S. Full-Size Trucks · Q3 2026</strong><br>
+                  Consensus: <span class="mono" style="color:var(--cad-champagne);font-weight:700">324,800 units</span><br>
+                  Scenario B · +$1,500 incentive<br>
+                  Sign-off: Ramzi A. · 11:58 ET
+                </div>
+                <div class="snap-meta"><span class="good">Committed</span><span>HIBT immutable</span><span>Broadcast queued</span></div>
+              </div>
+              <div class="agent-callout" style="border-color:rgba(200,178,115,.32);background:linear-gradient(90deg,rgba(200,178,115,.08),transparent)">
+                <div class="ai-dot" style="background:linear-gradient(135deg,#1f1c12,#3d3725);color:var(--cad-champagne);border-color:rgba(200,178,115,.5)">AI</div>
+                <div class="ai-body">
+                  <div class="ai-name" style="color:var(--cad-champagne)">narrative-drafter-v2.3</div>
+                  <div class="ai-desc">Pre-drafted exec brief · 1 line edited by Ramzi · 47-recipient broadcast queued for Outlook + Teams + PBI.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 13: Release ═══ -->
+      <section class="scene" data-scene="12" data-duration="6500" data-title="Release · all 8 surfaces sync · HIBT logged">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>13</strong> <span class="of">/ 15</span> · The chequered flag</div>
+              <div class="clock">12:47</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--chevy-red)">
+              <span class="lbl">Baton</span><span class="seat">AI GovOps</span>
+            </div>
+          </div>
+          <div class="scene-body center">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--good);font-weight:700;margin-bottom:14px">Released · 8 surfaces synced · 2.4s SLA met</p>
+              <h1 class="scene-headline" style="max-width:24ch;margin:0 auto">The number lands<br>on <em>every</em> surface.<br><span class="amber">Same value. Same time.</span></h1>
+              <p class="scene-narration" style="margin:18px auto 0;max-width:54ch">Outlook brief sent · Teams approval logged · Excel slice refreshed · SharePoint memo tagged · PBI tile flipped · Glean Q&amp;A updated · Workbench state changed · HIBT entry immutable. <strong>One commit. Every surface. Trust intact.</strong></p>
+            </div>
+          </div>
+          <div class="scene-foot">
+            <div class="scene-telemetry" style="margin:0 auto;justify-content:center">
+              <span class="tel-pill good"><span class="pip"></span>Outlook <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>Teams <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>Excel <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>SharePoint <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>PBI <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>Glean <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>Workbench <span class="v good">synced</span></span>
+              <span class="tel-pill good"><span class="pip"></span>HIBT <span class="v good">immutable</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 14: Podium ═══ -->
+      <section class="scene" data-scene="13" data-duration="6500" data-title="Lap closed · championship contributions">
+        <div class="scene-bg"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>14</strong> <span class="of">/ 15</span> · Podium</div>
+              <div class="clock">12:47</div>
+            </div>
+            <div class="scene-baton" style="--baton-c:var(--good)">
+              <span class="lbl">Status</span><span class="seat">Lap closed · 12:47 of 15:00</span>
+            </div>
+          </div>
+          <div class="scene-body">
+            <div>
+              <p style="font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--good);font-weight:700;margin-bottom:14px">Championship Table · v3.0 preview</p>
+              <h1 class="scene-headline">Krisztina <em>+0.34.</em><br>Jim <span class="amber">+0.28.</span></h1>
+              <p class="scene-narration">The lap closed in <strong>12 minutes 47 seconds</strong>, well under the 15-minute SLA. Override value-add lifted Krisztina's championship score by <strong>+0.34</strong>. Jim's challenge precision score moved <strong>+0.28</strong>. Lap-clap given by Ramzi to Krisztina for the recurring-issue catch.</p>
+            </div>
+            <div class="scene-side">
+              <div class="snap">
+                <div class="snap-head">
+                  <div><div class="snap-title">Lap stats</div><div class="snap-sub">Q3 Trucks · revision</div></div>
+                  <div class="snap-icon" style="background:rgba(35,209,139,.14);border-color:rgba(35,209,139,.32);color:var(--good)">🏁</div>
+                </div>
+                <div class="snap-body">
+                  Total lap time: <span class="mono">12:47</span> · 2:13 under SLA<br>
+                  Override value-add: <span class="mono" style="color:var(--good)">+0.34</span> · Krisztina<br>
+                  Challenge precision: <span class="mono" style="color:var(--good)">+0.28</span> · Jim<br>
+                  Lap-clap given: Ramzi → Krisztina
+                </div>
+                <div class="snap-meta"><span class="good">Replay archived</span><span>HIBT lap_q3_001</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Scene 15: Coda ═══ -->
+      <section class="scene" data-scene="14" data-duration="8000" data-title="The wall runs 22 cycles per month">
+        <div class="scene-bg cinematic" style="--bg-image:url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png')"></div>
+        <div class="scene-inner">
+          <div class="scene-header">
+            <div class="scene-chip">
+              <div class="num">Scene <strong>15</strong> <span class="of">/ 15</span> · Coda</div>
+              <div class="clock">15:00 / 15:00</div>
+            </div>
+          </div>
+          <div class="scene-body center">
+            <div>
+              <h1 class="scene-headline" style="font-size:clamp(46px,6.6vw,96px);max-width:22ch;margin:0 auto">That was <em>one</em> lap.<br>The wall runs <span class="amber">22 cycles</span> per month.</h1>
+              <p class="scene-narration" style="margin:24px auto 0;max-width:54ch;font-size:18px">5 seats. 7 agents. 8 surfaces. 1 trusted substrate. <strong>Take your seat.</strong></p>
+            </div>
+          </div>
+          <div class="scene-foot">
+            <div class="scene-telemetry" style="margin:0 auto;justify-content:center">
+              <span class="tel-pill cyan"><span class="pip"></span>5 seats</span>
+              <span class="tel-pill cyan"><span class="pip"></span>7 agents</span>
+              <span class="tel-pill cyan"><span class="pip"></span>8 surfaces</span>
+              <span class="tel-pill amber"><span class="pip"></span>1 substrate</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- demo controls -->
+    <div class="demo-controls">
+      <div class="demo-progress"><div class="bar" id="demo-bar"></div></div>
+      <button class="demo-ctrl-btn" id="demo-restart" title="Restart">↺</button>
+      <button class="demo-ctrl-btn" id="demo-prev" title="Previous scene">‹</button>
+      <button class="demo-ctrl-btn primary" id="demo-play" title="Play / Pause">▶</button>
+      <button class="demo-ctrl-btn" id="demo-next" title="Next scene">›</button>
+      <div class="demo-scene-info">
+        <div class="demo-scene-title" id="demo-title">Cold open · Tuesday 14:02 ET</div>
+        <div class="demo-scene-meta" id="demo-meta">Scene 01 / 15 · Auto-advance ON</div>
+      </div>
+      <div class="demo-dots" id="demo-dots"></div>
+      <div class="demo-toggle on" id="demo-autotoggle"><span>Auto</span><span class="switch"></span></div>
+      <div class="demo-toggle narration" id="demo-narration" title="Toggle voice narration"><span class="icon">🔊</span><span>Narration</span><span class="switch"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- narration audio element (hidden; controlled by JS) -->
+<audio id="demo-audio" preload="auto" crossorigin="anonymous">
+  <source src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/media/8f31ebe9-d0c5-4c4b-93be-95a01dcdb680.wav" type="audio/wav">
+</audio>
+
+<!-- ════════════════════════════════════════════════════
+     AGENT STUDIO VIEW
+     ════════════════════════════════════════════════════ -->
+<div class="view view-studio" id="view-studio">
+  <div class="studio">
+
+    <div class="studio-head">
+      <div>
+        <h2>Agent Studio · <em>AI GovOps</em></h2>
+        <p>Where humans review agent work before anything ships. Live message-passing, market-intelligence research, and a human-in-the-loop approval queue. <strong>Agents magnify human judgment. They never replace it.</strong></p>
+      </div>
+      <div class="right">
+        <div class="stat"><div class="v cyan">7</div><div class="l">Active agents</div></div>
+        <div class="stat"><div class="v amber" id="msg-rate">12</div><div class="l">Msg / min</div></div>
+        <div class="stat"><div class="v" id="queue-len">5</div><div class="l">Awaiting human</div></div>
+        <div class="stat"><div class="v good">96%</div><div class="l">Eval pass rate</div></div>
+      </div>
+    </div>
+
+    <!-- main 3-panel: roster | message bus | work queue -->
+    <div class="studio-grid">
+
+      <!-- agent roster -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Agent roster</h3>
+            <div class="sub">7 NAMA-certified · live</div>
+          </div>
+        </div>
+        <div class="agent-list">
+          <div class="agent busy" data-agent="workbench-anomaly">
+            <div class="agent-name">workbench-anomaly</div>
+            <div class="agent-ver">v3.5 · serves Analyst</div>
+            <div class="agent-task">Flagging incentive-elasticity drift on Silverado HD · sending to Analyst seat.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 14 events / hr</div>
+          </div>
+          <div class="agent busy" data-agent="pa-agent">
+            <div class="agent-name">personal-assistant-agent</div>
+            <div class="agent-ver">v4.1 · serves Analyst</div>
+            <div class="agent-task">Comparing 3 source files · drafting validation notes · staging-only.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 8 events / hr</div>
+          </div>
+          <div class="agent busy" data-agent="glean-copilot">
+            <div class="agent-name">glean-copilot</div>
+            <div class="agent-ver">v2.7 · serves SME + Leadership</div>
+            <div class="agent-task">Deterministic Q&amp;A · trusted forecast copilot · 4 sources cited.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 23 events / hr</div>
+          </div>
+          <div class="agent" data-agent="intake-agent">
+            <div class="agent-name">intake-agent</div>
+            <div class="agent-ver">v1.9 · serves SME</div>
+            <div class="agent-task">Tagging SharePoint drops · attaching evidence to number objects.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 6 events / hr</div>
+          </div>
+          <div class="agent busy" data-agent="narrative-drafter">
+            <div class="agent-name">narrative-drafter</div>
+            <div class="agent-ver">v2.3 · serves Leadership</div>
+            <div class="agent-task">Drafting exec brief for Q3 Trucks commit · awaiting Ramzi edits.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 4 events / hr</div>
+          </div>
+          <div class="agent" data-agent="guardrail">
+            <div class="agent-name">guardrail-classifier</div>
+            <div class="agent-ver">v1.4 · serves Ops</div>
+            <div class="agent-task">Watching pipeline freshness · 1 amber on avista · auto-paused PBI.</div>
+            <div class="agent-status busy"><span class="pip"></span>busy · 31 events / hr</div>
+          </div>
+          <div class="agent" data-agent="avista">
+            <div class="agent-name">avista-agent</div>
+            <div class="agent-ver">v3.2 · serves SME</div>
+            <div class="agent-task">Refreshing cross-shop index · Texas dealer pulse delta detected.</div>
+            <div class="agent-status idle"><span class="pip"></span>idle · just finished</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- message bus -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Live message bus</h3>
+            <div class="sub">Agent ↔ agent · agent ↔ human · all replayable</div>
+          </div>
+          <span class="badge">live · paused on hover</span>
+        </div>
+        <div class="bus-stage">
+          <svg class="bus-svg" id="bus-svg" viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="bus-legend">
+          <span class="lg"><span class="sw research"></span>Research</span>
+          <span class="lg"><span class="sw flag"></span>Anomaly flag</span>
+          <span class="lg"><span class="sw review"></span>Human review</span>
+          <span class="lg"><span class="sw commit"></span>Commit</span>
+          <span class="lg"><span class="sw guardrail"></span>Guardrail</span>
+        </div>
+      </div>
+
+      <!-- work queue -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Human-in-the-loop</h3>
+            <div class="sub">Approve · Reject · Edit</div>
+          </div>
+          <span class="badge" style="background:rgba(255,107,0,.08);color:var(--f1-amber);border-color:rgba(255,107,0,.32)">5 awaiting</span>
+        </div>
+        <div class="queue-list" id="queue-list">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- persona-agent relationship map -->
+    <div class="relationship">
+      <h3>Agents <em>magnify</em> the humans.</h3>
+      <p class="tagline">Each persona has an AI crew. The crew does the toil — anomaly detection, evidence routing, narrative drafting, freshness checks — so the human can do what only the human can do: <strong>judgment.</strong> Every agent action is logged. Every human action is sovereign.</p>
+
+      <div class="persona-row">
+        <div class="persona-col" data-p="leadership">
+          <div class="persona-head">
+            <div class="persona-emoji">RA</div>
+            <div class="persona-name">Ramzi Abdelmoula</div>
+            <div class="persona-role">Leadership</div>
+          </div>
+          <div class="crew-divider">AI Crew</div>
+          <div class="crew">
+            <div class="crew-item"><div class="dot">N</div><div class="text"><div class="name">narrative-drafter</div><div class="role">drafts exec brief</div></div></div>
+            <div class="crew-item"><div class="dot">G</div><div class="text"><div class="name">glean-copilot</div><div class="role">deterministic Q&amp;A</div></div></div>
+          </div>
+        </div>
+
+        <div class="persona-col" data-p="analyst">
+          <div class="persona-head">
+            <div class="persona-emoji">KG</div>
+            <div class="persona-name">Krisztina Gilezan</div>
+            <div class="persona-role">Analyst</div>
+          </div>
+          <div class="crew-divider">AI Crew</div>
+          <div class="crew">
+            <div class="crew-item"><div class="dot">W</div><div class="text"><div class="name">workbench-anomaly</div><div class="role">flags drift + anomalies</div></div></div>
+            <div class="crew-item"><div class="dot">PA</div><div class="text"><div class="name">personal-assistant</div><div class="role">file compare · prep</div></div></div>
+          </div>
+        </div>
+
+        <div class="persona-col" data-p="sme">
+          <div class="persona-head">
+            <div class="persona-emoji">JK</div>
+            <div class="persona-name">Jim Kyle</div>
+            <div class="persona-role">SME · MIA</div>
+          </div>
+          <div class="crew-divider">AI Crew</div>
+          <div class="crew">
+            <div class="crew-item"><div class="dot">I</div><div class="text"><div class="name">intake-agent</div><div class="role">tags evidence</div></div></div>
+            <div class="crew-item"><div class="dot">G</div><div class="text"><div class="name">glean-copilot</div><div class="role">market research</div></div></div>
+            <div class="crew-item"><div class="dot">A</div><div class="text"><div class="name">avista-agent</div><div class="role">dealer pulse signals</div></div></div>
+          </div>
+        </div>
+
+        <div class="persona-col" data-p="ops">
+          <div class="persona-head">
+            <div class="persona-emoji">GC</div>
+            <div class="persona-name">Govinda Chaluvadi</div>
+            <div class="persona-role">Ops · IT</div>
+          </div>
+          <div class="crew-divider">AI Crew</div>
+          <div class="crew">
+            <div class="crew-item"><div class="dot">GR</div><div class="text"><div class="name">guardrail-classifier</div><div class="role">pipeline auto-pause</div></div></div>
+            <div class="crew-item"><div class="dot">W</div><div class="text"><div class="name">workbench-anomaly</div><div class="role">freshness flags</div></div></div>
+          </div>
+        </div>
+
+        <div class="persona-col" data-p="govops">
+          <div class="persona-head">
+            <div class="persona-emoji">DS</div>
+            <div class="persona-name">Don S.</div>
+            <div class="persona-role">AI GovOps</div>
+          </div>
+          <div class="crew-divider">AI Crew</div>
+          <div class="crew">
+            <div class="crew-item"><div class="dot">H</div><div class="text"><div class="name">hibt-ledger</div><div class="role">replay-prompt-log</div></div></div>
+            <div class="crew-item"><div class="dot">EV</div><div class="text"><div class="name">eval-runner</div><div class="role">gate enforcement</div></div></div>
+            <div class="crew-item"><div class="dot">*</div><div class="text"><div class="name">all certified agents</div><div class="role">promotion authority</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="magnify-line">
+        <strong>Operating principle</strong>
+        Agents do the rework, the research, the toil. Humans do the judgment, the dissent, the commit. The Pit Wall keeps them honest to each other.
+      </div>
+    </div>
+
+    <!-- market intelligence research feed -->
+    <div class="mkt-feed">
+      <h3>Market intelligence · <em>live research</em></h3>
+      <div class="sub">Last 90 seconds · agent research events</div>
+      <div class="feed-stream" id="mkt-feed-stream">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// view toggle
+// ════════════════════════════════════════
+document.querySelectorAll('.view-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const view = btn.dataset.view;
+    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
+    try { localStorage.setItem('nama_demo_view', view); } catch(e){}
+    if (view === 'studio') initBusOnce();
+  });
+});
+try {
+  const savedView = localStorage.getItem('nama_demo_view');
+  if (savedView) document.querySelector(`.view-toggle button[data-view="${savedView}"]`).click();
+} catch(e){}
+
+// ════════════════════════════════════════
+// DEMO REEL · scene controller
+// ════════════════════════════════════════
+const scenes = Array.from(document.querySelectorAll('.scene'));
+const totalScenes = scenes.length;
+let curScene = 0;
+let isPlaying = false;
+let autoAdvance = true;
+let sceneTimer = null;
+let progressTimer = null;
+let sceneStartTime = 0;
+
+// ─── chapter map: phase-level scene ranges ───
+// scenes are 0-indexed; UI shows 1-indexed
+const CHAPTERS = [
+  { id:'signal',   title:'Signal arrives',  emTitle:'Signal <em>arrives</em>',  start:0,  end:3  },  // 1-4
+  { id:'review',   title:'Human review',    emTitle:'Human <em>review</em>',    start:4,  end:10 },  // 5-11
+  { id:'commit',   title:'Commit',          emTitle:'<em>Commit</em>',          start:11, end:11 },  // 12
+  { id:'release',  title:'Release',         emTitle:'<em>Release</em>',         start:12, end:12 },  // 13
+  { id:'podium',   title:'Podium',          emTitle:'<em>Podium</em>',          start:13, end:14 },  // 14-15
+];
+
+function chapterForScene(sceneIdx) {
+  return CHAPTERS.find(c => sceneIdx >= c.start && sceneIdx <= c.end) || CHAPTERS[0];
+}
+
+function chapterDurationMs(ch) {
+  let total = 0;
+  for (let i = ch.start; i <= ch.end; i++) {
+    total += parseInt(scenes[i].dataset.duration || '6000', 10);
+  }
+  return total;
+}
+
+function renderChapters() {
+  const host = document.getElementById('demo-chapters');
+  if (!host) return;
+  // keep the small label
+  Array.from(host.querySelectorAll('.chapter')).forEach(n => n.remove());
+  const current = chapterForScene(curScene);
+  CHAPTERS.forEach((ch, i) => {
+    const div = document.createElement('div');
+    div.className = 'chapter';
+    if (ch.id === current.id) div.classList.add('active');
+    else if (curScene > ch.end) div.classList.add('played');
+    div.dataset.chapter = ch.id;
+
+    const sceneCount = ch.end - ch.start + 1;
+    const sceneRange = ch.start === ch.end
+      ? `Scene ${ch.start + 1}`
+      : `Scenes ${ch.start + 1}–${ch.end + 1}`;
+    const durSec = Math.round(chapterDurationMs(ch) / 1000);
+
+    // progress fill within this chapter
+    let fillPct = 0;
+    if (ch.id === current.id) {
+      const completedScenes = curScene - ch.start;
+      fillPct = (completedScenes / sceneCount) * 100;
+    } else if (curScene > ch.end) {
+      fillPct = 100;
+    }
+
+    const titleHtml = ch.id === current.id ? ch.emTitle : ch.title;
+
+    div.innerHTML = `
+      <div class="chap-num">Chapter ${String(i + 1).padStart(2, '0')}</div>
+      <div class="chap-title">${titleHtml}</div>
+      <div class="chap-meta">
+        <span class="scenes">${sceneRange}</span>
+        <span class="duration">${durSec}s</span>
+      </div>
+      <div class="chap-progress"><div class="fill" data-chapter-fill="${ch.id}" style="width:${fillPct}%"></div></div>
+    `;
+    div.addEventListener('click', () => {
+      const wasPlaying = isPlaying;
+      pause();
+      goto(ch.start);
+      if (wasPlaying) play();
+    });
+    host.appendChild(div);
+  });
+}
+
+const playBtn = document.getElementById('demo-play');
+const prevBtn = document.getElementById('demo-prev');
+const nextBtn = document.getElementById('demo-next');
+const restartBtn = document.getElementById('demo-restart');
+const titleEl = document.getElementById('demo-title');
+const metaEl = document.getElementById('demo-meta');
+const barEl = document.getElementById('demo-bar');
+const dotsEl = document.getElementById('demo-dots');
+const autotoggle = document.getElementById('demo-autotoggle');
+const narrationToggle = document.getElementById('demo-narration');
+const audio = document.getElementById('demo-audio');
+
+// ─── narration sync ───
+// Per-scene audio start timestamps (seconds). Audio is ~3 minutes total.
+// When narration is ON, the audio drives which scene is active via timeupdate.
+const SCENE_AUDIO_STARTS = [
+  0,      // 1. Cold open
+  10,     // 2. Signal arrives
+  22,     // 3. Govinda investigates
+  35,     // 4. Hand-off radio
+  43,     // 5. Workbench opens
+  58,     // 6. Compare mode
+  73,     // 7. Override staged
+  81,     // 8. SME challenge
+  95,     // 9. Glean research
+  109,    // 10. Second-Opinion fires
+  122,    // 11. Consensus forms
+  134,    // 12. Commit
+  148,    // 13. Release
+  157,    // 14. Podium
+  170,    // 15. Coda
+];
+let narrationOn = false;
+let audioDuration = 182;
+let audioScale = 1;
+
+if (audio) {
+  audio.addEventListener('loadedmetadata', () => {
+    if (audio.duration && isFinite(audio.duration)) {
+      audioDuration = audio.duration;
+      // scale timestamps if real audio differs from our estimate (182s)
+      audioScale = audioDuration / 182;
+    }
+  });
+}
+
+function audioStartForScene(idx) {
+  return SCENE_AUDIO_STARTS[idx] * audioScale;
+}
+function audioEndForScene(idx) {
+  return idx < SCENE_AUDIO_STARTS.length - 1
+    ? SCENE_AUDIO_STARTS[idx + 1] * audioScale
+    : audioDuration;
+}
+
+// build dots
+for (let i = 0; i < totalScenes; i++) {
+  const d = document.createElement('div');
+  d.className = 'demo-dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goto(i));
+  dotsEl.appendChild(d);
+}
+const dots = Array.from(dotsEl.children);
+
+function updateUI() {
+  scenes.forEach((s, i) => s.classList.toggle('active', i === curScene));
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i === curScene);
+    d.classList.toggle('played', i < curScene);
+  });
+  const cur = scenes[curScene];
+  const chapter = chapterForScene(curScene);
+  titleEl.textContent = cur.dataset.title || ('Scene ' + (curScene + 1));
+  const chapterIdx = CHAPTERS.indexOf(chapter) + 1;
+  const mode = narrationOn ? '🔊 Narration ON' : (autoAdvance ? 'Auto-advance ON' : 'Manual');
+  metaEl.textContent = `Scene ${String(curScene+1).padStart(2,'0')} / ${String(totalScenes).padStart(2,'0')} · Ch ${chapterIdx} ${chapter.title} · ${mode}`;
+  renderChapters();
+}
+
+function goto(idx) {
+  if (idx < 0 || idx >= totalScenes) return;
+  curScene = idx;
+  updateUI();
+  resetProgress();
+  if (narrationOn && audio) {
+    audio.currentTime = audioStartForScene(idx);
+    if (isPlaying) audio.play().catch(() => {});
+  } else if (isPlaying) {
+    startSceneTimer();
+  }
+}
+
+function next() { goto(Math.min(totalScenes - 1, curScene + 1)); }
+function prev() { goto(Math.max(0, curScene - 1)); }
+
+function startSceneTimer() {
+  if (sceneTimer) clearTimeout(sceneTimer);
+  if (progressTimer) clearInterval(progressTimer);
+  const dur = parseInt(scenes[curScene].dataset.duration || '6000', 10);
+  sceneStartTime = Date.now();
+  barEl.style.width = '0%';
+
+  // capture chapter context for live progress fill
+  const chapter = chapterForScene(curScene);
+  const sceneCountInCh = chapter.end - chapter.start + 1;
+  const completedInCh = curScene - chapter.start;
+
+  progressTimer = setInterval(() => {
+    const elapsed = Date.now() - sceneStartTime;
+    const pct = Math.min(100, (elapsed / dur) * 100);
+    barEl.style.width = pct + '%';
+    // smoothly fill the active chapter's progress bar
+    const chFill = document.querySelector(`.chap-progress .fill[data-chapter-fill="${chapter.id}"]`);
+    if (chFill) {
+      const chPct = ((completedInCh + (elapsed / dur)) / sceneCountInCh) * 100;
+      chFill.style.width = Math.min(100, chPct) + '%';
+    }
+  }, 60);
+  sceneTimer = setTimeout(() => {
+    if (curScene >= totalScenes - 1) {
+      // end of demo
+      pause();
+      barEl.style.width = '100%';
+    } else if (autoAdvance) {
+      next();
+    } else {
+      pause();
+      barEl.style.width = '100%';
+    }
+  }, dur);
+}
+
+function resetProgress() {
+  if (sceneTimer) clearTimeout(sceneTimer);
+  if (progressTimer) clearInterval(progressTimer);
+  sceneTimer = null;
+  progressTimer = null;
+  barEl.style.width = '0%';
+}
+
+function play() {
+  isPlaying = true;
+  playBtn.innerHTML = '❚❚';
+  playBtn.title = 'Pause';
+  if (narrationOn && audio) {
+    // audio drives scenes in narration mode
+    if (Math.abs(audio.currentTime - audioStartForScene(curScene)) > 1) {
+      audio.currentTime = audioStartForScene(curScene);
+    }
+    audio.play().catch(() => { /* autoplay blocked; user must click again */ });
+  } else {
+    startSceneTimer();
+  }
+}
+
+function pause() {
+  isPlaying = false;
+  playBtn.innerHTML = '▶';
+  playBtn.title = 'Play';
+  if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+  if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+  if (audio && !audio.paused) audio.pause();
+}
+
+function toggle() { isPlaying ? pause() : play(); }
+
+playBtn.addEventListener('click', toggle);
+prevBtn.addEventListener('click', () => { const wasPlaying = isPlaying; pause(); prev(); if (wasPlaying) play(); });
+nextBtn.addEventListener('click', () => { const wasPlaying = isPlaying; pause(); next(); if (wasPlaying) play(); });
+restartBtn.addEventListener('click', () => { pause(); goto(0); });
+autotoggle.addEventListener('click', () => {
+  autoAdvance = !autoAdvance;
+  autotoggle.classList.toggle('on', autoAdvance);
+  updateUI();
+});
+
+// ─── narration toggle ───
+narrationToggle.addEventListener('click', () => {
+  narrationOn = !narrationOn;
+  narrationToggle.classList.toggle('on', narrationOn);
+  try { localStorage.setItem('nama_demo_narration', narrationOn ? 'on' : 'off'); } catch (e) {}
+  if (!audio) return;
+  if (narrationOn) {
+    // switch to audio-driven timing
+    if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+    if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+    audio.currentTime = audioStartForScene(curScene);
+    // ensure demo enters playing state and audio plays from user gesture
+    if (!isPlaying) {
+      isPlaying = true;
+      playBtn.innerHTML = '❚❚';
+    }
+    audio.play().catch(() => { isPlaying = false; playBtn.innerHTML = '▶'; });
+  } else {
+    audio.pause();
+    if (isPlaying) startSceneTimer();
+  }
+  updateUI();
+});
+
+// Narration starts OFF every session (browser autoplay policies require a user gesture)
+
+// ─── audio timeupdate drives scenes when narration is on ───
+if (audio) {
+  audio.addEventListener('timeupdate', () => {
+    if (!narrationOn) return;
+    const t = audio.currentTime;
+    // find which scene this time falls in
+    let target = 0;
+    for (let i = SCENE_AUDIO_STARTS.length - 1; i >= 0; i--) {
+      if (t >= audioStartForScene(i) - 0.1) { target = i; break; }
+    }
+    if (target !== curScene) {
+      curScene = target;
+      scenes.forEach((s, i) => s.classList.toggle('active', i === curScene));
+      dots.forEach((d, i) => { d.classList.toggle('active', i === curScene); d.classList.toggle('played', i < curScene); });
+      const cur = scenes[curScene];
+      const ch = chapterForScene(curScene);
+      titleEl.textContent = cur.dataset.title || ('Scene ' + (curScene + 1));
+      const chapterIdx = CHAPTERS.indexOf(ch) + 1;
+      metaEl.textContent = `Scene ${String(curScene+1).padStart(2,'0')} / ${String(totalScenes).padStart(2,'0')} · Ch ${chapterIdx} ${ch.title} · 🔊 Narration`;
+      renderChapters();
+    }
+    // update progress bar based on audio position within current scene
+    const startT = audioStartForScene(curScene);
+    const endT = audioEndForScene(curScene);
+    const span = Math.max(0.5, endT - startT);
+    const pct = Math.min(100, Math.max(0, ((t - startT) / span) * 100));
+    barEl.style.width = pct + '%';
+    // also fill the active chapter's progress bar
+    const ch = chapterForScene(curScene);
+    const chFill = document.querySelector(`.chap-progress .fill[data-chapter-fill="${ch.id}"]`);
+    if (chFill) {
+      const completedInCh = curScene - ch.start;
+      const sceneCountInCh = ch.end - ch.start + 1;
+      const chPct = ((completedInCh + ((t - startT) / span)) / sceneCountInCh) * 100;
+      chFill.style.width = Math.min(100, chPct) + '%';
+    }
+  });
+
+  audio.addEventListener('ended', () => {
+    if (!narrationOn) return;
+    isPlaying = false;
+    playBtn.innerHTML = '▶';
+    barEl.style.width = '100%';
+  });
+
+  audio.addEventListener('pause', () => {
+    if (!narrationOn) return;
+    // if pause was triggered by something other than our pause() (e.g. browser), reflect it
+    if (!audio.ended && isPlaying) {
+      // user-paused via system controls
+      isPlaying = false;
+      playBtn.innerHTML = '▶';
+    }
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('view-demo').classList.contains('active') === false) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === ' ') { e.preventDefault(); toggle(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  else if (e.key === 'Home') { e.preventDefault(); goto(0); }
+  else if (e.key === 'End') { e.preventDefault(); goto(totalScenes - 1); }
+});
+
+updateUI();
+// auto-start after a moment so the first scene gets visual focus
+setTimeout(() => { if (!isPlaying) play(); }, 1500);
+
+// ════════════════════════════════════════
+// AGENT STUDIO · message bus
+// ════════════════════════════════════════
+const AGENT_POSITIONS = {
+  'workbench-anomaly':  { x:140, y:100, c:'#00e5ff', label:'workbench-anomaly' },
+  'pa-agent':           { x:140, y:260, c:'#00e5ff', label:'pa-agent' },
+  'glean-copilot':      { x:140, y:420, c:'#00e5ff', label:'glean-copilot' },
+  'intake-agent':       { x:660, y:100, c:'#7fb0bf', label:'intake-agent' },
+  'narrative-drafter':  { x:660, y:260, c:'#c8b273', label:'narrative-drafter' },
+  'guardrail':          { x:660, y:420, c:'#ffc72c', label:'guardrail' },
+  'avista':             { x:400, y:50,  c:'#7fb0bf', label:'avista' },
+  'hibt':               { x:400, y:470, c:'#da1a2e', label:'HIBT ledger' },
+  'human-analyst':      { x:400, y:180, c:'#f5f6f8', label:'Krisztina · Analyst', isHuman:true },
+  'human-sme':          { x:400, y:340, c:'#f5f6f8', label:'Jim · SME', isHuman:true },
+};
+
+const MESSAGE_PATTERNS = [
+  // research traffic
+  { from:'glean-copilot', to:'human-sme', type:'research', color:'#00e5ff' },
+  { from:'avista', to:'glean-copilot', type:'research', color:'#00e5ff' },
+  { from:'avista', to:'workbench-anomaly', type:'research', color:'#00e5ff' },
+  { from:'intake-agent', to:'human-sme', type:'research', color:'#00e5ff' },
+  // anomaly flags
+  { from:'workbench-anomaly', to:'human-analyst', type:'flag', color:'#ff6b00' },
+  { from:'guardrail', to:'human-analyst', type:'flag', color:'#ff6b00' },
+  { from:'workbench-anomaly', to:'guardrail', type:'flag', color:'#ff6b00' },
+  // human review going back
+  { from:'human-analyst', to:'human-sme', type:'review', color:'#c8b273' },
+  { from:'human-sme', to:'human-analyst', type:'review', color:'#c8b273' },
+  { from:'pa-agent', to:'human-analyst', type:'review', color:'#c8b273' },
+  // commits
+  { from:'human-analyst', to:'hibt', type:'commit', color:'#23d18b' },
+  { from:'narrative-drafter', to:'hibt', type:'commit', color:'#23d18b' },
+  // guardrail
+  { from:'guardrail', to:'hibt', type:'guardrail', color:'#da1a2e' },
+];
+
+let busInitialized = false;
+function initBusOnce() {
+  if (busInitialized) return;
+  busInitialized = true;
+  drawBusBase();
+  startBusAnimation();
+}
+
+function drawBusBase() {
+  const svg = document.getElementById('bus-svg');
+  if (!svg) return;
+  svg.innerHTML = '';
+
+  // draw soft connection arcs between human nodes and their agent crews
+  const arcs = [
+    ['human-analyst', 'workbench-anomaly'],
+    ['human-analyst', 'pa-agent'],
+    ['human-sme', 'intake-agent'],
+    ['human-sme', 'avista'],
+    ['human-sme', 'glean-copilot'],
+    ['human-analyst', 'guardrail'],
+    ['narrative-drafter', 'hibt'],
+    ['human-analyst', 'narrative-drafter'],
+  ];
+  arcs.forEach(([a,b]) => {
+    const pa = AGENT_POSITIONS[a], pb = AGENT_POSITIONS[b];
+    if (!pa || !pb) return;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y);
+    line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y);
+    line.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('stroke-dasharray', '3,5');
+    svg.appendChild(line);
+  });
+
+  // draw nodes
+  Object.entries(AGENT_POSITIONS).forEach(([key, p]) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', `translate(${p.x}, ${p.y})`);
+
+    // outer halo for humans
+    if (p.isHuman) {
+      const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      halo.setAttribute('r', 28);
+      halo.setAttribute('fill', 'none');
+      halo.setAttribute('stroke', p.c);
+      halo.setAttribute('stroke-width', '1');
+      halo.setAttribute('opacity', '0.32');
+      g.appendChild(halo);
+    }
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', p.isHuman ? 22 : 14);
+    circle.setAttribute('fill', p.isHuman ? 'rgba(245,246,248,0.06)' : 'rgba(0,0,0,0.55)');
+    circle.setAttribute('stroke', p.c);
+    circle.setAttribute('stroke-width', p.isHuman ? '2' : '1.5');
+    g.appendChild(circle);
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('y', p.isHuman ? 50 : 32);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-family', 'JetBrains Mono, monospace');
+    text.setAttribute('font-size', '10');
+    text.setAttribute('font-weight', '700');
+    text.setAttribute('fill', p.c);
+    text.setAttribute('letter-spacing', '0.04em');
+    text.textContent = p.label;
+    g.appendChild(text);
+
+    svg.appendChild(g);
+  });
+}
+
+function fireMessage(pattern) {
+  const svg = document.getElementById('bus-svg');
+  if (!svg) return;
+  const pa = AGENT_POSITIONS[pattern.from];
+  const pb = AGENT_POSITIONS[pattern.to];
+  if (!pa || !pb) return;
+
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', pa.x);
+  dot.setAttribute('cy', pa.y);
+  dot.setAttribute('r', 4.5);
+  dot.setAttribute('fill', pattern.color);
+  dot.setAttribute('opacity', '0.9');
+  dot.style.filter = `drop-shadow(0 0 6px ${pattern.color})`;
+  svg.appendChild(dot);
+
+  const duration = 1100 + Math.random() * 400;
+  const start = Date.now();
+  function step() {
+    const t = Math.min(1, (Date.now() - start) / duration);
+    const ease = t * (2 - t); // ease-out quad
+    const x = pa.x + (pb.x - pa.x) * ease;
+    const y = pa.y + (pb.y - pa.y) * ease;
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    dot.setAttribute('opacity', String(0.9 - 0.5 * t));
+    if (t < 1) requestAnimationFrame(step);
+    else dot.remove();
+  }
+  requestAnimationFrame(step);
+}
+
+let busAnimInterval = null;
+function startBusAnimation() {
+  if (busAnimInterval) clearInterval(busAnimInterval);
+  busAnimInterval = setInterval(() => {
+    // only animate when studio view is active
+    if (!document.getElementById('view-studio').classList.contains('active')) return;
+    // fire 1-3 random messages per tick
+    const fires = 1 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < fires; i++) {
+      const p = MESSAGE_PATTERNS[Math.floor(Math.random() * MESSAGE_PATTERNS.length)];
+      setTimeout(() => fireMessage(p), Math.random() * 700);
+    }
+  }, 1400);
+
+  // pause on hover
+  const stage = document.querySelector('.bus-stage');
+  stage.addEventListener('mouseenter', () => { if (busAnimInterval) { clearInterval(busAnimInterval); busAnimInterval = null; } });
+  stage.addEventListener('mouseleave', () => { if (!busAnimInterval) startBusAnimation(); });
+}
+
+// ════════════════════════════════════════
+// AGENT STUDIO · human-in-loop work queue
+// ════════════════════════════════════════
+const QUEUE_ITEMS = [
+  { agent:'workbench-anomaly · v3.5', persona:'Krisztina · Analyst', color:'cyan',
+    action:'Stage override on Silverado HD: -2.1k (R-18)',
+    evidence:'Drift score <strong>0.41 · watch</strong>. Texas dealer pulse pattern matches May Avista signal. Confidence: medium.' },
+  { agent:'glean-copilot · v2.7', persona:'Jim · SME', color:'teal',
+    action:'Confirm historical pull-rate citation for challenge',
+    evidence:'<strong>4 sources</strong> cited from forecast-set v2026.05A · NAMA Q2 retro + MIA pulse + Avista white paper. Freshness 4m.' },
+  { agent:'intake-agent · v1.9', persona:'Jim · SME', color:'teal',
+    action:'Approve auto-tag of dealer-pulse-week19.pptx',
+    evidence:'Classified as <span class="mono">competitive-launch</span> evidence · routed to NO-TRK-Q3-001 · tag accuracy 94%.' },
+  { agent:'narrative-drafter · v2.3', persona:'Ramzi · Leadership', color:'champagne',
+    action:'Approve exec brief draft for Scenario B commit',
+    evidence:'1-paragraph summary · current vs prior · delta · confidence · 4 deep-links. Draft eval score <strong>89%</strong>.' },
+  { agent:'guardrail-classifier · v1.4', persona:'Govinda · Ops', color:'amber',
+    action:'Confirm avista pipeline retry, lift PBI publish pause',
+    evidence:'Avista refreshed <strong>2.4s ago</strong> · cross-shop index green · 1 amber → clear.' },
+  { agent:'second-opinion-svc · v1.0', persona:'Jim · SME', color:'amber',
+    action:'Review divergent recommendation (MDS 0.42)',
+    evidence:'Primary 312.4k · Second 308.6k · Δ -3.8k · top factor <span class="mono">texas_dealer_pulse</span> (weight 0.34).' },
+  { agent:'hibt-ledger · v2.0', persona:'Don · GovOps', color:'red',
+    action:'Promote workbench-anomaly v3.5 → v3.6',
+    evidence:'Eval pass-rate <strong>96.4%</strong> · 12-point regression test green · canary 24h clean. NAMA-certified.' },
+];
+
+let queueIdx = 0;
+function renderQueue() {
+  const host = document.getElementById('queue-list');
+  if (!host) return;
+  host.innerHTML = '';
+  const items = QUEUE_ITEMS.slice(queueIdx, queueIdx + 4);
+  if (!items.length) {
+    host.innerHTML = '<div class="queue-empty">Queue clear · all caught up</div>';
+    return;
+  }
+  items.forEach((it, i) => {
+    const card = document.createElement('div');
+    card.className = 'queue-card';
+    card.dataset.c = it.color;
+    card.innerHTML = `
+      <div class="qc-head">
+        <span class="qc-agent">${it.agent}</span>
+        <span class="qc-persona">→ ${it.persona}</span>
+      </div>
+      <div class="qc-action">${it.action}</div>
+      <div class="qc-evidence">${it.evidence}</div>
+      <div class="qc-actions">
+        <button class="qc-btn approve">✓ Approve</button>
+        <button class="qc-btn edit">✎ Edit</button>
+        <button class="qc-btn reject">✕ Reject</button>
+      </div>
+    `;
+    const onAction = (cls) => {
+      card.classList.add(cls);
+      setTimeout(() => {
+        queueIdx = (queueIdx + 1) % QUEUE_ITEMS.length; // cycle for demo
+        renderQueue();
+        updateQueueCount();
+      }, 450);
+    };
+    card.querySelector('.approve').addEventListener('click', () => onAction('approving'));
+    card.querySelector('.reject').addEventListener('click', () => onAction('rejecting'));
+    card.querySelector('.edit').addEventListener('click', () => onAction('approving'));
+    host.appendChild(card);
+  });
+}
+
+function updateQueueCount() {
+  const remaining = QUEUE_ITEMS.length - queueIdx;
+  const len = Math.max(0, Math.min(QUEUE_ITEMS.length, remaining));
+  const el = document.getElementById('queue-len');
+  if (el) el.textContent = String(len);
+  const el2 = document.getElementById('live-queue-count');
+  if (el2) el2.textContent = `${len} awaiting`;
+}
+
+renderQueue();
+updateQueueCount();
+
+// ════════════════════════════════════════
+// AGENT STUDIO · market intelligence feed
+// ════════════════════════════════════════
+const FEED_EVENTS = [
+  { agent:'avista-agent', color:'teal', text:'Refreshed <strong>cross-shop index</strong> for TX, CA, FL regions · 84 dealers sampled.' },
+  { agent:'glean-copilot', color:'cyan', text:'Answered <em>"What\\'s the Silverado/Sierra HD cross-shop pull rate?"</em> with <strong>4 source citations</strong>.' },
+  { agent:'intake-agent', color:'teal', text:'Tagged <span class="mono">dealer-pulse-week19.pptx</span> · routed to NO-TRK-Q3-001 · attached as evidence to Jim\\'s challenge.' },
+  { agent:'workbench-anomaly', color:'cyan', text:'Flagged <strong>incentive-elasticity drift</strong> on Silverado HD · drift score 0.41 · routed to Analyst seat.' },
+  { agent:'guardrail-classifier', color:'amber', text:'Auto-paused <span class="mono">PBI exec_trucks_tile</span> · upstream avista stale 38m · retry queued.' },
+  { agent:'narrative-drafter', color:'champagne', text:'Drafted exec brief for Scenario B commit · 1 paragraph · 4 deep-links · awaiting Ramzi edits.' },
+  { agent:'glean-copilot', color:'cyan', text:'Indexed <strong>3 new SharePoint documents</strong> · Q3 dealer pulse memos · available for SME Q&amp;A.' },
+  { agent:'pa-agent', color:'cyan', text:'Prepped Krisztina\\'s workbench: 3 file comparisons, 1 cleaning suggestion, 2 validation flags · staging-only.' },
+  { agent:'hibt-ledger', color:'champagne', text:'Logged override action <span class="mono">hibt_q3_001</span> · replay-from-source available · immutable.' },
+  { agent:'avista-agent', color:'teal', text:'Detected <strong>Sierra HD cross-shop spike</strong> in Texas dealer pulse · 8% week-over-week.' },
+  { agent:'workbench-anomaly', color:'cyan', text:'Suggested opening challenge to Pricing team on incentive-elasticity coefficient.' },
+  { agent:'intake-agent', color:'teal', text:'Tagged <strong>2 competitor memos</strong> from market press · routed to MIA team.' },
+  { agent:'second-opinion-svc', color:'amber', text:'Returned <strong>MDS 0.42</strong> on Q3 Trucks pre-Gate-3 check · routed to Jim for confirmation.' },
+  { agent:'eval-runner', color:'champagne', text:'Nightly eval passed for <strong>workbench-anomaly v3.5</strong> · 96.4% pass rate · 12 regression tests green.' },
+  { agent:'glean-copilot', color:'cyan', text:'Cited <strong>Avista cross-shop white paper</strong> in deterministic Q&amp;A response · freshness chip green.' },
+];
+
+function tsAgo(secAgo) {
+  if (secAgo < 60) return `${secAgo}s ago`;
+  return `${Math.floor(secAgo / 60)}m ago`;
+}
+
+function renderFeed() {
+  const stream = document.getElementById('mkt-feed-stream');
+  if (!stream) return;
+  stream.innerHTML = '';
+  // shuffle a bit for freshness
+  const shuffled = [...FEED_EVENTS].sort(() => Math.random() - 0.5).slice(0, 9);
+  let secOffset = 4;
+  shuffled.forEach((ev) => {
+    const row = document.createElement('div');
+    row.className = 'feed-item';
+    row.innerHTML = `
+      <span class="agent-pill ${ev.color}">${ev.agent}</span>
+      <span class="text">${ev.text}</span>
+      <span class="ts">${tsAgo(secOffset)}</span>
+    `;
+    stream.appendChild(row);
+    secOffset += 4 + Math.floor(Math.random() * 9);
+  });
+}
+
+renderFeed();
+setInterval(() => {
+  // periodically add a fresh event at the top
+  if (!document.getElementById('view-studio').classList.contains('active')) return;
+  const stream = document.getElementById('mkt-feed-stream');
+  if (!stream) return;
+  const ev = FEED_EVENTS[Math.floor(Math.random() * FEED_EVENTS.length)];
+  const row = document.createElement('div');
+  row.className = 'feed-item';
+  row.innerHTML = `
+    <span class="agent-pill ${ev.color}">${ev.agent}</span>
+    <span class="text">${ev.text}</span>
+    <span class="ts">just now</span>
+  `;
+  stream.insertBefore(row, stream.firstChild);
+  // trim
+  while (stream.children.length > 10) stream.removeChild(stream.lastChild);
+  // update msg rate (small jitter)
+  const rate = 9 + Math.floor(Math.random() * 8);
+  const r1 = document.getElementById('msg-rate');
+  const r2 = document.getElementById('live-msg-rate');
+  if (r1) r1.textContent = String(rate);
+  if (r2) r2.textContent = `${rate} msg/min`;
+}, 5000);
+
+// if studio is the initial view, init bus immediately
+if (document.getElementById('view-studio').classList.contains('active')) initBusOnce();
+</script>
+
+</body>
+</html>

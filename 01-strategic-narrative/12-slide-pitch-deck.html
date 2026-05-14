@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — Sponsor Review v2.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06080d;
+  --carbon:#0e1119;
+  --pit:#171b27;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf;
+  --buick-platinum:#d8dce0;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --risk:#ff453a;
+  --good:#23d18b;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  height:100vh;width:100vw;overflow:hidden;
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  font-size:16px;
+  user-select:none;
+}
+::selection{background:var(--f1-amber);color:#1a0f00}
+
+/* ════════ slide framework ════════ */
+.deck{position:fixed;inset:0;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;
+  transition:opacity .55s ease, visibility .55s ease;
+  padding:48px 64px;
+}
+.slide.active{opacity:1;visibility:visible}
+.slide.full{padding:0}
+
+/* topbar (deck) */
+.deck-bar{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  padding:16px 32px;
+  display:flex;justify-content:space-between;align-items:center;
+  pointer-events:none;
+}
+.deck-bar > *{pointer-events:auto}
+.deck-brand{display:flex;align-items:center;gap:12px}
+.deck-mark{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,#222837 0%, #0c0e14 100%);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.16em;color:var(--f1-cyan);
+}
+.deck-name{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+.deck-counter{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:5px 12px;border-radius:999px;
+  background:rgba(0,0,0,.45);border:1px solid var(--line-strong);
+  color:var(--ink-2);backdrop-filter:blur(10px);
+}
+.deck-counter .pos{color:var(--f1-amber);font-weight:700}
+
+/* nav buttons */
+.nav-btn{
+  position:fixed;top:50%;transform:translateY(-50%);z-index:40;
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(0,0,0,.4);
+  border:1px solid var(--line-strong);
+  color:var(--ink);font-family:var(--mono);font-size:18px;
+  cursor:pointer;
+  display:grid;place-items:center;
+  transition:all .2s ease;
+  backdrop-filter:blur(10px);
+}
+.nav-btn:hover{background:rgba(0,0,0,.7);border-color:var(--f1-cyan);color:var(--f1-cyan)}
+.nav-btn:disabled{opacity:.25;cursor:not-allowed}
+.nav-prev{left:24px}
+.nav-next{right:24px}
+
+/* dots */
+.dots{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  z-index:40;display:flex;gap:6px;
+  padding:8px 14px;border-radius:999px;
+  background:rgba(0,0,0,.5);border:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.18);
+  cursor:pointer;transition:all .2s ease;
+}
+.dot.active{background:var(--f1-amber);box-shadow:0 0 8px var(--f1-amber);width:24px;border-radius:4px}
+.dot:hover:not(.active){background:rgba(255,255,255,.4)}
+
+/* common ─── */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.22em;font-weight:700;
+}
+.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}
+.headline{
+  font-family:var(--serif);font-weight:700;
+  line-height:1;letter-spacing:-.025em;
+}
+.headline em{font-style:italic;font-weight:500}
+.lead{
+  font-size:19px;line-height:1.5;color:var(--ink-2);
+  max-width:65ch;font-weight:400;
+}
+.mono{font-family:var(--mono);letter-spacing:.04em}
+.kicker{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;
+}
+
+/* slide-specific colors */
+.slide[data-color="cyan"]    { --slide-accent:var(--f1-cyan)   ; --slide-accent-bg:rgba(0,229,255,.08); }
+.slide[data-color="amber"]   { --slide-accent:var(--f1-amber)  ; --slide-accent-bg:rgba(255,107,0,.08); }
+.slide[data-color="champagne"] { --slide-accent:var(--cad-champagne); --slide-accent-bg:rgba(200,178,115,.08); }
+.slide[data-color="teal"]    { --slide-accent:var(--buick-teal); --slide-accent-bg:rgba(127,176,191,.08); }
+.slide[data-color="yellow"]  { --slide-accent:var(--chevy-yellow); --slide-accent-bg:rgba(255,199,44,.08); }
+.slide[data-color="red"]     { --slide-accent:var(--chevy-red); --slide-accent-bg:rgba(218,26,46,.08); }
+.slide{ --slide-accent:var(--f1-cyan); --slide-accent-bg:rgba(0,229,255,.08); }
+
+/* ═══════════════════ SLIDE 1 · cover ═══════════════════ */
+.cover{padding:0;position:relative;overflow:hidden}
+.cover-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg, rgba(6,8,13,.45) 0%, rgba(6,8,13,.78) 60%, var(--void) 100%),
+    url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png') center/cover no-repeat;
+}
+.cover-bg:after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(900px 500px at 75% 20%, rgba(255,107,0,.12), transparent 60%),
+    radial-gradient(900px 500px at 15% 70%, rgba(0,229,255,.1), transparent 70%);
+  mix-blend-mode:screen;
+}
+.cover-content{
+  position:relative;z-index:2;height:100%;
+  padding:90px 80px 70px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+}
+.cover-flag{
+  display:inline-flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:24px;
+}
+.cover-flag .pill{
+  padding:4px 11px;border-radius:999px;
+  background:rgba(218,26,46,.18);color:#ffb0ba;
+  border:1px solid rgba(218,26,46,.45);
+  font-weight:700;font-size:10.5px;
+}
+.cover-flag .pill.amber{background:rgba(255,107,0,.18);color:#ffc193;border-color:rgba(255,107,0,.45)}
+.cover-flag .pill.champagne{background:rgba(200,178,115,.14);color:#e9d8a8;border-color:rgba(200,178,115,.45)}
+.cover-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(56px,8vw,124px);
+  line-height:.92;letter-spacing:-.04em;
+  margin:0 0 28px;max-width:18ch;
+}
+.cover-headline em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.cover-headline .amber{color:var(--f1-amber)}
+.cover-meta{
+  display:flex;gap:30px;flex-wrap:wrap;align-items:flex-end;
+}
+.cover-meta .col{display:flex;flex-direction:column;gap:4px}
+.cover-meta .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.cover-meta .v{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink)}
+
+/* ═══════════════════ SLIDE 2 · problem ═══════════════════ */
+.split{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;height:100%;align-items:center}
+.split.tight{gap:40px}
+.left h2.headline{font-size:clamp(42px,5.4vw,84px);line-height:.98}
+.stat-list{display:grid;gap:18px;margin-top:12px}
+.stat{
+  padding:22px 26px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  border:1px solid var(--line);
+  border-left:3px solid var(--slide-accent);
+}
+.stat .num{
+  font-family:var(--serif);font-weight:700;font-size:46px;line-height:1;letter-spacing:-.02em;
+  color:var(--slide-accent);
+}
+.stat .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.stat .desc{font-size:13.5px;color:var(--ink-2);margin-top:8px;line-height:1.5}
+
+/* ═══════════════════ SLIDE 3 · vision ═══════════════════ */
+.vision-hero{
+  height:100%;display:grid;grid-template-rows:auto 1fr auto;
+}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.pillar{
+  padding:24px;border-radius:16px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-top:3px solid var(--slide-accent);
+}
+.pillar .n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--slide-accent);font-weight:700}
+.pillar h4{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.015em;margin:8px 0 10px;color:var(--ink)}
+.pillar p{font-size:14px;color:var(--ink-2);line-height:1.55}
+
+/* ═══════════════════ SLIDE 4 · architecture ═══════════════════ */
+.arch-stack{display:grid;gap:14px;margin-top:30px}
+.arch-band{
+  padding:22px 28px;border-radius:14px;
+  background:linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.0));
+  border:1px solid var(--line);
+  display:grid;grid-template-columns:160px 1fr auto;gap:24px;align-items:center;
+}
+.arch-band .id{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--slide-accent);font-weight:700;
+}
+.arch-band .id .name{display:block;font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-top:6px;text-transform:none}
+.arch-band .body{font-size:14px;color:var(--ink-2);line-height:1.55}
+.arch-band .body strong{color:var(--ink);font-weight:600}
+.arch-band .tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:5px 10px;border-radius:999px;
+  background:var(--slide-accent-bg);color:var(--slide-accent);
+  border:1px solid var(--slide-accent);font-weight:700;
+}
+
+/* ═══════════════════ SLIDE 5 · seats ═══════════════════ */
+.seats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:36px}
+.seat-card{
+  padding:24px 22px;border-radius:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.005));
+  border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  min-height:280px;
+}
+.seat-card:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--sc, var(--slide-accent));
+}
+.seat-card .num{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.seat-card .role{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:-.015em;margin:10px 0 6px}
+.seat-card .brand{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--sc, var(--slide-accent));font-weight:700;margin-bottom:14px;
+}
+.seat-card .action{
+  font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-.01em;
+  color:var(--ink);margin-bottom:8px;
+}
+.seat-card p{font-size:13px;color:var(--ink-2);line-height:1.5}
+.seat-card[data-s="leadership"]{--sc:var(--cad-champagne)}
+.seat-card[data-s="analyst"]   {--sc:var(--f1-cyan)}
+.seat-card[data-s="sme"]       {--sc:var(--buick-teal)}
+.seat-card[data-s="ops"]       {--sc:var(--chevy-yellow)}
+.seat-card[data-s="govops"]    {--sc:var(--chevy-red)}
+
+/* ═══════════════════ SLIDE 6 · pit wall ═══════════════════ */
+.pw-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;height:100%;align-items:center}
+.pw-image{
+  border-radius:18px;overflow:hidden;
+  border:1px solid var(--line-strong);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  position:relative;
+}
+.pw-image img{width:100%;display:block}
+.pw-image:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, transparent 50%, rgba(6,8,13,.6) 100%);
+}
+.number-card{
+  padding:28px;border-radius:16px;
+  background:radial-gradient(400px 200px at 0% 0%, var(--slide-accent-bg), transparent 60%), rgba(255,255,255,.03);
+  border:1px solid var(--line-strong);
+  margin-top:24px;
+}
+.number-card .label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.number-card .big{font-family:var(--serif);font-weight:700;font-size:64px;line-height:1;letter-spacing:-.025em;margin-top:8px}
+.number-card .big .unit{color:var(--muted);font-size:18px;font-family:var(--mono);font-weight:400;margin-left:8px}
+.number-card .meta{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px;
+}
+.number-card .meta .m{
+  padding:10px 12px;border-radius:10px;
+  background:rgba(0,0,0,.3);border:1px solid var(--line);
+}
+.number-card .meta .m .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.number-card .meta .m .v{font-family:var(--mono);font-weight:700;font-size:13px;margin-top:3px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.kpi-cell{
+  padding:12px 14px;border-radius:10px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+}
+.kpi-cell .v{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--ink)}
+.kpi-cell .v.good{color:var(--good)}
+.kpi-cell .v.amber{color:var(--f1-amber)}
+.kpi-cell .v.cyan{color:var(--f1-cyan)}
+.kpi-cell .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ═══════════════════ SLIDE 7 · 15-min race ═══════════════════ */
+.race-image{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg, rgba(6,8,13,.5) 0%, rgba(6,8,13,.86) 60%, var(--void) 100%),
+    url('https://external-preview.redd.it/choreography-of-a-double-pitstop-in-f1-v0-Mno1aWdha2Y4MHdjMcXjA7IX_aiRLlpHYyxO3AlafUQU5bL5e_fmGn5IX3oe.png?format=pjpg&auto=webp&s=9cf22dd58c3ae4b3429776f1dacafe68004b47df') center/cover no-repeat;
+}
+.race-content{position:relative;z-index:2;height:100%;padding:90px 80px 90px;display:flex;flex-direction:column;justify-content:space-between}
+.race-content h2{font-size:clamp(48px,6vw,96px)}
+.race-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:30px;
+}
+.race-step{
+  padding:18px 16px;border-radius:14px;
+  background:rgba(10,12,16,.78);
+  border:1px solid var(--line);
+  backdrop-filter:blur(8px);
+  border-top:3px solid var(--st, var(--f1-amber));
+}
+.race-step[data-s="ops"]{--st:var(--chevy-yellow)}
+.race-step[data-s="analyst"]{--st:var(--f1-cyan)}
+.race-step[data-s="sme"]{--st:var(--buick-teal)}
+.race-step[data-s="leadership"]{--st:var(--cad-champagne)}
+.race-step[data-s="govops"]{--st:var(--chevy-red)}
+.race-step .stage{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.race-step .min{font-family:var(--mono);font-size:11px;color:var(--st, var(--f1-amber));font-weight:700;margin-top:4px}
+.race-step .h{font-family:var(--serif);font-weight:600;font-size:18px;margin:10px 0 6px;letter-spacing:-.01em}
+.race-step .seat{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);letter-spacing:.08em}
+.race-step .baton{
+  display:inline-block;margin-top:10px;
+  font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:999px;
+  letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  background:var(--st, var(--f1-amber));color:#1a0f00;
+}
+
+/* ═══════════════════ SLIDE 8 · monthly lap ═══════════════════ */
+.gates{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.gate{
+  padding:28px 26px;border-radius:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  border:1px solid var(--line);
+  border-left:4px solid var(--gc, var(--slide-accent));
+  min-height:240px;
+}
+.gate[data-g="1"]{--gc:var(--f1-cyan)}
+.gate[data-g="2"]{--gc:var(--f1-amber)}
+.gate[data-g="3"]{--gc:var(--cad-champagne)}
+.gate .gname{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gc);font-weight:700;
+}
+.gate h4{font-family:var(--serif);font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-.02em;margin:8px 0 14px}
+.gate p{font-size:14px;color:var(--ink-2);line-height:1.6;margin-bottom:14px}
+.gate ul{list-style:none;padding:0;margin:0}
+.gate ul li{
+  padding:6px 0 6px 18px;position:relative;
+  font-size:13px;color:var(--ink-2);font-family:var(--mono);letter-spacing:.02em;
+}
+.gate ul li:before{
+  content:"›";position:absolute;left:0;color:var(--gc);font-weight:700;font-family:var(--serif);font-size:16px;
+}
+
+/* ═══════════════════ SLIDE 9 · agent studio + HIBT ═══════════════════ */
+.studio-split{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;height:100%;align-items:center}
+.studio-image{
+  border-radius:18px;overflow:hidden;
+  border:1px solid var(--line-strong);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+  position:relative;
+}
+.studio-image img{width:100%;display:block}
+.studio-image:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, transparent 60%, rgba(6,8,13,.7) 100%);
+}
+.adl-list{margin-top:30px;display:grid;gap:14px}
+.adl-step{
+  padding:18px 22px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;
+}
+.adl-step .num{
+  font-family:var(--serif);font-weight:700;font-size:32px;line-height:1;
+  color:var(--slide-accent);width:48px;
+}
+.adl-step h5{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-.01em;color:var(--ink)}
+.adl-step p{font-size:13px;color:var(--ink-2);margin-top:4px;font-family:var(--mono);letter-spacing:.02em}
+
+/* ═══════════════════ SLIDE 10 · pole position ═══════════════════ */
+.poles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.pole-card{
+  padding:22px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.005));
+  border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  min-height:200px;
+}
+.pole-card:before{
+  content:attr(data-num);
+  position:absolute;top:14px;right:18px;
+  font-family:var(--serif);font-style:italic;font-weight:900;font-size:46px;line-height:1;
+  color:rgba(255,255,255,.05);
+}
+.pole-card .from{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--slide-accent);font-weight:700;margin-bottom:8px}
+.pole-card h5{font-family:var(--serif);font-weight:600;font-size:17px;letter-spacing:-.005em;line-height:1.2;margin:0 0 10px;color:var(--ink)}
+.pole-card .borrow{font-family:var(--mono);font-size:11px;color:var(--ink-2);line-height:1.5;letter-spacing:.02em}
+
+/* ═══════════════════ SLIDE 11 · roadmap & ask ═══════════════════ */
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.horizon{
+  padding:26px 24px;border-radius:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.0));
+  border:1px solid var(--line);
+}
+.horizon[data-h="now"]{border-color:rgba(35,209,139,.32);background:linear-gradient(180deg, rgba(35,209,139,.06), rgba(255,255,255,0))}
+.horizon[data-h="next"]{border-color:rgba(255,107,0,.32);background:linear-gradient(180deg, rgba(255,107,0,.06), rgba(255,255,255,0))}
+.horizon[data-h="future"]{border-color:rgba(200,178,115,.32);background:linear-gradient(180deg, rgba(200,178,115,.06), rgba(255,255,255,0))}
+.horizon .when{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin-bottom:6px}
+.horizon h4{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:-.015em;margin:0 0 14px;color:var(--ink)}
+.horizon ul{list-style:none;padding:0;margin:0}
+.horizon ul li{
+  padding:6px 0 6px 16px;position:relative;
+  font-size:13px;color:var(--ink-2);line-height:1.5;font-family:var(--mono);letter-spacing:.02em;
+}
+.horizon ul li:before{content:"›";position:absolute;left:0;color:var(--slide-accent);font-weight:700}
+.ask{
+  margin-top:24px;padding:24px 28px;border-radius:14px;
+  background:linear-gradient(90deg, rgba(255,107,0,.1), rgba(255,107,0,.02));
+  border:1px solid rgba(255,107,0,.42);
+  display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;
+}
+.ask .ask-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--f1-amber);font-weight:700;
+  border-right:1px solid rgba(255,107,0,.3);padding-right:24px;
+}
+.ask-bullets{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.ask-bullets .b{font-size:13px;color:var(--ink);line-height:1.45;font-family:var(--mono);letter-spacing:.02em}
+.ask-bullets .b strong{display:block;color:var(--f1-amber);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+
+/* ═══════════════════ SLIDE 12 · close ═══════════════════ */
+.close-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg, rgba(6,8,13,.55) 0%, rgba(6,8,13,.88) 60%, var(--void) 100%),
+    url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png') center/cover no-repeat;
+}
+.close-bg:after{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(900px 500px at 50% 70%, rgba(255,107,0,.15), transparent 60%);
+  mix-blend-mode:screen;
+}
+.close-content{
+  position:relative;z-index:2;height:100%;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:90px 80px;text-align:center;
+}
+.close-tag{font-family:var(--mono);font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;margin-bottom:30px}
+.close-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(64px,10vw,144px);
+  line-height:.9;letter-spacing:-.04em;
+  margin:0 0 30px;max-width:18ch;
+}
+.close-headline em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.close-sub{font-family:var(--serif);font-size:22px;line-height:1.5;color:var(--ink-2);max-width:46ch;margin-bottom:48px;font-weight:400}
+.start-lights{display:flex;gap:10px;justify-content:center;margin-bottom:40px}
+.start-lights .light{
+  width:18px;height:18px;border-radius:50%;background:#26282f;border:1px solid var(--line);
+}
+.start-lights .light.on{background:var(--start-green);box-shadow:0 0 24px var(--start-green)}
+.start-lights .light.red{background:var(--chevy-red);box-shadow:0 0 24px var(--chevy-red)}
+.close-foot{
+  display:flex;gap:30px;flex-wrap:wrap;justify-content:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+}
+
+/* ═══════════════════ responsive ═══════════════════ */
+@media (max-width: 1180px){
+  .split,.pw-grid,.studio-split{grid-template-columns:1fr;gap:30px}
+  .seats-row,.poles-grid{grid-template-columns:repeat(2,1fr)}
+  .race-strip,.roadmap,.gates,.pillars{grid-template-columns:repeat(2,1fr)}
+  .ask-bullets{grid-template-columns:repeat(2,1fr)}
+  .ask{grid-template-columns:1fr;gap:14px}
+  .ask .ask-label{border-right:0;border-bottom:1px solid rgba(255,107,0,.3);padding-right:0;padding-bottom:12px}
+}
+@media (max-width: 760px){
+  .slide{padding:36px 24px}
+  .cover-content,.close-content,.race-content{padding:80px 24px 70px}
+  .seats-row,.poles-grid,.race-strip,.gates,.roadmap,.pillars,.kpi-row,.ask-bullets{grid-template-columns:1fr}
+  .nav-btn{display:none}
+  .deck-bar{padding:12px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<div class="deck-bar">
+  <div class="deck-brand">
+    <div class="deck-mark">NAMA</div>
+    <div class="deck-name">NAMA Pit Wall · Sponsor Review v2.4</div>
+  </div>
+  <div class="deck-counter"><span class="pos" id="slide-pos">01</span> / <span id="slide-total">12</span></div>
+</div>
+
+<!-- nav -->
+<button class="nav-btn nav-prev" id="prevBtn" aria-label="previous slide">‹</button>
+<button class="nav-btn nav-next" id="nextBtn" aria-label="next slide">›</button>
+
+<!-- dots -->
+<div class="dots" id="dots"></div>
+
+<!-- ════════════ deck ════════════ -->
+<div class="deck" id="deck">
+
+<!-- ════════════ SLIDE 1 · cover ════════════ -->
+<section class="slide cover full active" data-color="amber">
+  <div class="cover-bg"></div>
+  <div class="cover-content">
+    <div class="cover-flag">
+      <span class="pill">Lights out</span>
+      <span class="pill amber">Agentic ensemble</span>
+      <span class="pill champagne">Sponsor review</span>
+    </div>
+    <h1 class="cover-headline">
+      One planning brain.<br>
+      <em>Many</em> surfaces.<br>
+      <span class="amber">Human</span> judgment preserved.
+    </h1>
+    <div class="cover-meta">
+      <div class="col"><span class="lbl">Project</span><span class="v">NAMA Pit Wall · Agentic Ensemble Engine</span></div>
+      <div class="col"><span class="lbl">Version</span><span class="v">v2.4 · May 2026</span></div>
+      <div class="col"><span class="lbl">Sponsor</span><span class="v">Ramzi Abdelmoula</span></div>
+      <div class="col"><span class="lbl">Architect</span><span class="v">Bob Rapp</span></div>
+      <div class="col"><span class="lbl">Forecasting</span><span class="v">Krisztina Gilezan</span></div>
+      <div class="col"><span class="lbl">MIA</span><span class="v">Jim Kyle &amp; team</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 2 · problem ════════════ -->
+<section class="slide" data-color="red">
+  <div class="split">
+    <div class="left">
+      <div class="eyebrow" style="color:var(--chevy-red)">The state of play · 01</div>
+      <h2 class="headline" style="margin-top:18px">Today every seat<br><em>brings their own</em><br>spreadsheet.</h2>
+      <p class="lead" style="margin-top:28px">Seven surfaces, five personas, one shadow spreadsheet per person. Plan-of-record drifts. Lineage evaporates. Hours go to reconciliation, not decisions. Q3 2026 told us the math.</p>
+    </div>
+    <div class="right">
+      <div class="stat-list">
+        <div class="stat">
+          <div class="num">38%</div>
+          <div class="lbl">of analyst time</div>
+          <div class="desc">spent reconciling shadow spreadsheets and chasing the latest version — not analyzing the forecast.</div>
+        </div>
+        <div class="stat">
+          <div class="num">14%</div>
+          <div class="lbl">of plan-of-record drift</div>
+          <div class="desc">attributable to version mismatches between Excel slices, Power BI tiles, and exec briefs.</div>
+        </div>
+        <div class="stat">
+          <div class="num">4–7 d</div>
+          <div class="lbl">to close one challenge</div>
+          <div class="desc">p50 challenge resolution time across Q1–Q2 2026 cycles. Best-in-class is under an hour.</div>
+        </div>
+        <div class="stat">
+          <div class="num">0</div>
+          <div class="lbl">replayable agent actions</div>
+          <div class="desc">no Replay-Prompt-Ledger, no NAMA-certified gate, no audit trail for AI-assisted decisions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 3 · vision ════════════ -->
+<section class="slide" data-color="cyan">
+  <div class="vision-hero">
+    <div>
+      <div class="eyebrow" style="color:var(--f1-cyan)">The vision · 02</div>
+      <h2 class="headline" style="margin-top:18px;font-size:clamp(46px,6.4vw,98px);max-width:18ch">One trusted substrate.<br><em>Every tool</em> you love.<br>Zero shadow spreadsheets.</h2>
+    </div>
+    <div></div>
+    <div>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="n">PILLAR 01</div>
+          <h4>Planning fabric</h4>
+          <p>One forecast set. One number object. One lineage. Databricks + Unity Catalog hold the plan-of-record substrate. Every surface reads from it. Every surface writes back through it.</p>
+        </div>
+        <div class="pillar">
+          <div class="n">PILLAR 02</div>
+          <h4>Choose your seat</h4>
+          <p>Leadership, Analyst, SME, Ops, GovOps — each seat keeps the surfaces they already love. The workspace reframes; the substrate does not. Decision rights enforced at the API.</p>
+        </div>
+        <div class="pillar">
+          <div class="n">PILLAR 03</div>
+          <h4>Agentic prep</h4>
+          <p>Agents do the rework. People do the judgment. Anomaly detection, narrative drafting, evidence routing, freshness validation — all logged, all replayable, all gated.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 4 · architecture ════════════ -->
+<section class="slide" data-color="cyan">
+  <div>
+    <div class="eyebrow">The architecture · 03</div>
+    <h2 class="headline" style="margin-top:18px;font-size:clamp(40px,5vw,72px)">Four layers. <em>One</em> brain.</h2>
+    <p class="lead" style="margin-top:14px">An anti-fragmentation operating stack. Every surface is a client of the same planning fabric. Every action transacts through the same access layer. Every change emits the same events.</p>
+  </div>
+  <div class="arch-stack">
+    <div class="arch-band">
+      <div class="id">Layer A<span class="name">Planning Fabric</span></div>
+      <div class="body">Databricks + Unity Catalog hold the plan-of-record substrate. <strong>Forecast sets · Number objects · Scenarios · Constraint links · Trust metadata.</strong> One version of every number, with full lineage to source.</div>
+      <span class="tag">Substrate</span>
+    </div>
+    <div class="arch-band">
+      <div class="id">Layer B<span class="name">Process Engine</span></div>
+      <div class="body">State machines, trust scoring, approval routing, challenge workflows. <strong>Number states: draft → updated → challenged → committed → final → reviewed.</strong> Every action emits replayable lineage.</div>
+      <span class="tag">Engine</span>
+    </div>
+    <div class="arch-band">
+      <div class="id">Layer C<span class="name">Access API + Events</span></div>
+      <div class="body">The anti-fragmentation layer. <strong>One API for forecasts, overrides, comments, approvals, evidence, audit.</strong> Event bus for anomalies, stale data, challenge raised, plan promoted, drift detected. Role-aware decision rights.</div>
+      <span class="tag">Contract</span>
+    </div>
+    <div class="arch-band">
+      <div class="id">Layer D<span class="name">Persona Surfaces</span></div>
+      <div class="body">Outlook · Teams · Slack · Excel · SharePoint · Power BI · Glean · Forecast Workbench · Agent Studio + HIBT. <strong>Each surface speaks its native idiom — but writes back through the same access layer.</strong></div>
+      <span class="tag">Surfaces</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 5 · five seats ════════════ -->
+<section class="slide" data-color="champagne">
+  <div>
+    <div class="eyebrow" style="color:var(--cad-champagne)">Choose your own adventure · 04</div>
+    <h2 class="headline" style="margin-top:18px;font-size:clamp(42px,5.6vw,80px)">Five seats. <em>One</em> number.</h2>
+    <p class="lead" style="margin-top:14px">Each seat keeps the surfaces and decision rights that fit how they work. The workspace reframes — the substrate stays one.</p>
+  </div>
+  <div class="seats-row">
+    <div class="seat-card" data-s="leadership">
+      <div class="num">SEAT · 01</div>
+      <div class="role">Leadership</div>
+      <div class="brand">Cadillac line · Champagne</div>
+      <div class="action">Approve &amp; commit</div>
+      <p>Outlook brief in. Teams approval out. Promote scenario to plan-of-record. Sign the exec brief. You don't author numbers — you bless them and ship them.</p>
+    </div>
+    <div class="seat-card" data-s="analyst">
+      <div class="num">SEAT · 02</div>
+      <div class="role">Analyst</div>
+      <div class="brand">Race engineer · Cyan</div>
+      <div class="action">Validate &amp; override</div>
+      <p>Live in the Workbench. Stage structured overrides with reason codes. Compare mode for everything. Personal-assistant agent handles your prep.</p>
+    </div>
+    <div class="seat-card" data-s="sme">
+      <div class="num">SEAT · 03</div>
+      <div class="role">SME · Markets</div>
+      <div class="brand">Buick line · Teal</div>
+      <div class="action">Challenge &amp; enrich</div>
+      <p>Challenge any number with evidence in under 90 seconds. Teams, Glean, SharePoint. Discussion stays on the number, not in email.</p>
+    </div>
+    <div class="seat-card" data-s="ops">
+      <div class="num">SEAT · 04</div>
+      <div class="role">Ops · IT</div>
+      <div class="brand">Chevy line · Halo yellow</div>
+      <div class="action">Pause &amp; retry</div>
+      <p>Pit-crew chief. Watch pipelines, pause stale state, retry failed jobs, sign off release readiness. You don't author — you protect the surfaces.</p>
+    </div>
+    <div class="seat-card" data-s="govops">
+      <div class="num">SEAT · 05</div>
+      <div class="role">AI GovOps</div>
+      <div class="brand">Race director · Ignition red</div>
+      <div class="action">Certify &amp; promote</div>
+      <p>Race steward. Promote agent versions, rollback regressions, curate memory, audit the replay-prompt-ledger. NAMA-certified means it went through you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 6 · the pit wall ════════════ -->
+<section class="slide" data-color="cyan">
+  <div class="pw-grid">
+    <div>
+      <div class="pw-image">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png" alt="NAMA workbench cockpit overhead">
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow">The workbench · 05</div>
+      <h2 class="headline" style="margin-top:14px;font-size:clamp(36px,4.2vw,60px)">Same Number Object.<br><em>Every</em> surface.</h2>
+      <div class="number-card">
+        <div class="label">Forecast set FS-2026Q3-NA-TRK-001 · U.S. Full-Size Trucks</div>
+        <div class="big">312,400<span class="unit">units</span></div>
+        <div class="meta">
+          <div class="m"><div class="k">P10 / P90</div><div class="v">287.6k / 338.9k</div></div>
+          <div class="m"><div class="k">Owner</div><div class="v">K. Gilezan</div></div>
+          <div class="m"><div class="k">Freshness</div><div class="v">42 min</div></div>
+          <div class="m"><div class="k">Confidence</div><div class="v">0.71 · Medium</div></div>
+        </div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-cell"><div class="v cyan">14 live</div><div class="l">on the wall</div></div>
+        <div class="kpi-cell"><div class="v amber">7 active</div><div class="l">challenges</div></div>
+        <div class="kpi-cell"><div class="v good">+1.9 pts</div><div class="l">override lift</div></div>
+        <div class="kpi-cell"><div class="v good">2.4 s</div><div class="l">surface SLA</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 7 · 15-min race ════════════ -->
+<section class="slide full" data-color="amber">
+  <div class="race-image"></div>
+  <div class="race-content">
+    <div>
+      <div class="eyebrow" style="color:var(--f1-amber)">The urgent flow · 06</div>
+      <h2 class="headline" style="margin-top:18px">Urgent? The wall runs<br>a <em>15-minute</em> lap.</h2>
+      <p class="lead" style="margin-top:18px;color:var(--ink-2);max-width:62ch">Signal arrives. Agents do the first pass. Humans inject judgment. Owner commits. The new number ships to every surface. The baton passes through five seats — pit-to-driver radio at every hand-off.</p>
+    </div>
+    <div class="race-strip">
+      <div class="race-step" data-s="ops">
+        <div class="stage">Pit stop 1 · Trigger</div>
+        <div class="min">Min 0 – 2</div>
+        <div class="h">Signal arrives</div>
+        <div class="seat">Anomaly · stale source · exec request</div>
+        <span class="baton">Baton · Ops</span>
+      </div>
+      <div class="race-step" data-s="analyst">
+        <div class="stage">Pit stop 2 · Agent prep</div>
+        <div class="min">Min 2 – 5</div>
+        <div class="h">First pass</div>
+        <div class="seat">Refresh check · anomaly pack · draft</div>
+        <span class="baton">Baton · Analyst</span>
+      </div>
+      <div class="race-step" data-s="sme">
+        <div class="stage">Pit stop 3 · Review</div>
+        <div class="min">Min 5 – 9</div>
+        <div class="h">Human judgment</div>
+        <div class="seat">Compare mode · challenge · confirm</div>
+        <span class="baton">Baton · SME</span>
+      </div>
+      <div class="race-step" data-s="leadership">
+        <div class="stage">Pit stop 4 · Decision</div>
+        <div class="min">Min 9 – 12</div>
+        <div class="h">Owner commits</div>
+        <div class="seat">Approval · state change · brief</div>
+        <span class="baton">Baton · Leadership</span>
+      </div>
+      <div class="race-step" data-s="govops">
+        <div class="stage">Pit stop 5 · Released</div>
+        <div class="min">Min 12 – 15</div>
+        <div class="h">Replay + ship</div>
+        <div class="seat">PBI · brief · HIBT · all surfaces</div>
+        <span class="baton">Baton · GovOps</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 8 · monthly lap ════════════ -->
+<section class="slide" data-color="champagne">
+  <div>
+    <div class="eyebrow" style="color:var(--cad-champagne)">The recurring cycle · 07</div>
+    <h2 class="headline" style="margin-top:18px;font-size:clamp(42px,5.4vw,80px)">Long lap: <em>the monthly</em> S&amp;OP.</h2>
+    <p class="lead" style="margin-top:14px">Six lanes, three state gates. Agents handle the mechanical prep — refresh, anomaly packs, narrative drafts. People handle the things that matter — conflict, dissent, scenario choice, commitment.</p>
+  </div>
+  <div class="gates">
+    <div class="gate" data-g="1">
+      <div class="gname">Gate 01 · Cyan</div>
+      <h4>Analyst-ready</h4>
+      <p>Freshness validated. Baseline run complete. Anomaly pack generated. Compare views built.</p>
+      <ul>
+        <li>Databricks pipelines green</li>
+        <li>Quantile fan refreshed</li>
+        <li>Risk-classified anomalies</li>
+        <li>Workbench task queue routed</li>
+      </ul>
+    </div>
+    <div class="gate" data-g="2">
+      <div class="gname">Gate 02 · Amber</div>
+      <h4>Challenge-ready</h4>
+      <p>Consensus draft built. Challenge window open. Evidence routed. SMEs engaged. Conflict surfaced.</p>
+      <ul>
+        <li>Open challenges with reason codes</li>
+        <li>Evidence attached to Number Objects</li>
+        <li>Conflict summary published</li>
+        <li>Scenario lab populated</li>
+      </ul>
+    </div>
+    <div class="gate" data-g="3">
+      <div class="gname">Gate 03 · Champagne</div>
+      <h4>Plan-of-record</h4>
+      <p>Leadership commits selected scenario. All surfaces inherit committed values. HIBT entry final. Replay archived.</p>
+      <ul>
+        <li>Scenario promoted to POR</li>
+        <li>Exec brief signed and broadcast</li>
+        <li>HIBT entry logged immutable</li>
+        <li>Post-cycle accuracy review</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 9 · agent studio + HIBT ════════════ -->
+<section class="slide" data-color="red">
+  <div class="studio-split">
+    <div>
+      <div class="studio-image">
+        <img src="https://cdn-1.motorsport.com/images/amp/2d189vBY/s1000/un-ingegnere-della-mclaren-da-.webp" alt="Race strategy engineer at monitors">
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" style="color:var(--chevy-red)">The race director · 08</div>
+      <h2 class="headline" style="margin-top:14px;font-size:clamp(38px,4.6vw,68px)">Nothing ships<br>without going<br>through <em>this</em> seat.</h2>
+      <p class="lead" style="margin-top:18px">Every prompt logged. Every override traceable. Every approval replayable. The Agent Development Lifecycle is enforced, not encouraged.</p>
+      <div class="adl-list">
+        <div class="adl-step"><div class="num">01</div><div><h5>Build &amp; eval</h5><p>Regression tests · golden prompts · adversarial probes</p></div></div>
+        <div class="adl-step"><div class="num">02</div><div><h5>Canary &amp; observe</h5><p>5% traffic · 24h window · drift watch · prompt diff</p></div></div>
+        <div class="adl-step"><div class="num">03</div><div><h5>Promote or rollback</h5><p>NAMA-certified gate · eval ≥ 90% · GovOps signoff</p></div></div>
+        <div class="adl-step"><div class="num">04</div><div><h5>Audit &amp; improve</h5><p>Replay-Prompt-Ledger · post-cycle review · memory curation</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 10 · pole position ════════════ -->
+<section class="slide" data-color="cyan">
+  <div>
+    <div class="eyebrow">What we borrowed · 09</div>
+    <h2 class="headline" style="margin-top:18px;font-size:clamp(42px,5.6vw,80px)">Pole position.</h2>
+    <p class="lead" style="margin-top:14px">Eight ideas borrowed from the best planners and racers in the world — automotive, aerospace, agriculture, logistics, lithography, and the F1 pit wall. Each one ships with v2.4.</p>
+  </div>
+  <div class="poles-grid">
+    <div class="pole-card" data-num="01">
+      <div class="from">Toyota · TPS</div>
+      <h5>Andon stop-the-line for forecasts</h5>
+      <div class="borrow">Stale-state pause is a first-class state, not a fallback.</div>
+    </div>
+    <div class="pole-card" data-num="02">
+      <div class="from">Mercedes-AMG F1</div>
+      <h5>Pit wall as a co-working seat</h5>
+      <div class="borrow">Curved-monitor co-working metaphor for the Forecast Workbench.</div>
+    </div>
+    <div class="pole-card" data-num="03">
+      <div class="from">Tesla · Production</div>
+      <h5>Closed demand-to-build loop</h5>
+      <div class="borrow">Constraint Link object connects forecast deltas to plant impact in real time.</div>
+    </div>
+    <div class="pole-card" data-num="04">
+      <div class="from">Boeing · PDM</div>
+      <h5>Gate reviews with lineage</h5>
+      <div class="borrow">Three monthly state gates · Gate 3 cannot bypass HIBT.</div>
+    </div>
+    <div class="pole-card" data-num="05">
+      <div class="from">ASML · Lithography</div>
+      <h5>Digital twin for capacity</h5>
+      <div class="borrow">Scenarios show units AND constraint risk side-by-side, not just volume.</div>
+    </div>
+    <div class="pole-card" data-num="06">
+      <div class="from">John Deere · Ops</div>
+      <h5>Decisions in your cab</h5>
+      <div class="borrow">Persona-fit surfaces meet people where they already work.</div>
+    </div>
+    <div class="pole-card" data-num="07">
+      <div class="from">Maersk · Ports</div>
+      <h5>Live constraint replan</h5>
+      <div class="borrow">15-minute race flow runs alongside the monthly cycle.</div>
+    </div>
+    <div class="pole-card" data-num="08">
+      <div class="from">Ferrari · Race eng.</div>
+      <h5>The voice in the headset</h5>
+      <div class="borrow">Single PA agent per seat · all surfaces speak through it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 11 · roadmap + ask ════════════ -->
+<section class="slide" data-color="amber">
+  <div>
+    <div class="eyebrow" style="color:var(--f1-amber)">Roadmap · the ask · 10</div>
+    <h2 class="headline" style="margin-top:18px;font-size:clamp(42px,5.4vw,80px)">Three horizons.<br><em>One</em> ask.</h2>
+  </div>
+
+  <div class="roadmap">
+    <div class="horizon" data-h="now">
+      <div class="when">Now · v2.4 · shipped</div>
+      <h4>The Pit Wall</h4>
+      <ul>
+        <li>5 persona seats live</li>
+        <li>Forecast workbench + 8 surface tiles</li>
+        <li>15-minute race with baton-pass radio</li>
+        <li>Monthly S&amp;OP swimlane · 3 state gates</li>
+        <li>Agent Studio + HIBT replay-ledger</li>
+        <li>NAMA-certified agent gate enforced</li>
+      </ul>
+    </div>
+    <div class="horizon" data-h="next">
+      <div class="when">Next 90 days · v3.0</div>
+      <h4>The delighters</h4>
+      <ul>
+        <li>Second-Opinion Agent · adversarial review</li>
+        <li>Ghost Lap · cycle-over-cycle overlay</li>
+        <li>Championship Table · override value-add leaderboard</li>
+        <li>Constraint twin · plant + supplier links</li>
+        <li>Live-mode race for non-Q3 segments</li>
+      </ul>
+    </div>
+    <div class="horizon" data-h="future">
+      <div class="when">6 months · v3.5</div>
+      <h4>The strategic horizon</h4>
+      <ul>
+        <li>Strategic scenario planning (3-5 year)</li>
+        <li>Auto-S&amp;OP pre-read · agent-drafted</li>
+        <li>External signal marketplace</li>
+        <li>Cross-region wall (NAMA / Europe / China)</li>
+        <li>Plan-of-record API for plant systems</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ask">
+    <div class="ask-label">The ask</div>
+    <div class="ask-bullets">
+      <div class="b"><strong>Funding</strong>$2.4M committed to v3.0 build · Q3 start</div>
+      <div class="b"><strong>People</strong>4 SMEs · 6 analysts onboarded for Q3 pilot</div>
+      <div class="b"><strong>Sponsorship</strong>Brief NAMA exec team · co-sign roadmap</div>
+      <div class="b"><strong>Cert gate</strong>3 production agents promoted · gates owned by GovOps</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ SLIDE 12 · close ════════════ -->
+<section class="slide full" data-color="amber">
+  <div class="close-bg"></div>
+  <div class="close-content">
+    <div class="close-tag">Lights out · go go go</div>
+    <h1 class="close-headline">
+      Take your <em>seat.</em>
+    </h1>
+    <p class="close-sub">One planning brain. Many surfaces. Human judgment preserved. The Pit Wall is open.</p>
+    <div class="start-lights">
+      <div class="light on"></div><div class="light on"></div><div class="light on"></div><div class="light on"></div><div class="light on"></div>
+    </div>
+    <div class="close-foot">
+      <span>NAMA Pit Wall · v2.4</span>
+      <span>Sponsor: Ramzi Abdelmoula</span>
+      <span>Architect: Bob Rapp</span>
+      <span>2026-05-12</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+// ────────── slide manager ──────────
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+let current = 0;
+let touchStart = null;
+
+const slidePos = document.getElementById('slide-pos');
+const slideTotal = document.getElementById('slide-total');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const dotsHost = document.getElementById('dots');
+
+slideTotal.textContent = String(total).padStart(2,'0');
+
+// build dots
+for(let i=0;i<total;i++){
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.addEventListener('click', ()=>goto(i));
+  dotsHost.appendChild(d);
+}
+const dots = Array.from(dotsHost.children);
+
+function goto(idx){
+  if(idx<0 || idx>=total) return;
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = idx;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  slidePos.textContent = String(current+1).padStart(2,'0');
+  prevBtn.disabled = current===0;
+  nextBtn.disabled = current===total-1;
+  try{ localStorage.setItem('nama_deck_slide', String(current)); }catch(e){}
+}
+
+function next(){ goto(Math.min(total-1, current+1)); }
+function prev(){ goto(Math.max(0, current-1)); }
+
+prevBtn.addEventListener('click', prev);
+nextBtn.addEventListener('click', next);
+
+// keyboard
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+  else if(e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  else if(e.key === 'Home') goto(0);
+  else if(e.key === 'End') goto(total-1);
+  else if(e.key === 'Escape') {
+    try{ window.parent.postMessage({ type:'close-fullscreen' }, '*'); }catch(e){}
+  }
+});
+
+// touch swipe (50px threshold)
+document.addEventListener('touchstart', (e)=>{ touchStart = e.touches[0].clientX; }, {passive:true});
+document.addEventListener('touchend', (e)=>{
+  if(touchStart === null) return;
+  const dx = e.changedTouches[0].clientX - touchStart;
+  if(Math.abs(dx) > 50){
+    if(dx < 0) next(); else prev();
+  }
+  touchStart = null;
+}, {passive:true});
+
+// parent message listener (for fullscreen portal nav)
+window.addEventListener('message', (e)=>{
+  if(!e.data) return;
+  if(e.data.type === 'navigate'){
+    if(e.data.direction === 'next') next();
+    else if(e.data.direction === 'prev') prev();
+  }
+});
+
+// restore last position
+try{
+  const saved = parseInt(localStorage.getItem('nama_deck_slide')||'0', 10);
+  if(saved > 0 && saved < total) goto(saved);
+}catch(e){}
+
+// init
+prevBtn.disabled = true;
+</script>
+
+</body>
+</html>

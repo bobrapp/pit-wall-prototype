@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — Executive One-Pager v2.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06080d;
+  --carbon:#0e1119;
+  --pit:#171b27;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --good:#23d18b;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.4;
+}
+body{
+  padding:24px 16px;
+  min-height:100vh;
+  background-image:
+    radial-gradient(1000px 500px at 80% -5%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(800px 400px at 5% 35%, rgba(255,107,0,.04), transparent 70%),
+    linear-gradient(180deg,#04060a 0%, #06080d 100%);
+}
+
+/* ════ page (letter portrait) ════ */
+.page{
+  width:100%;
+  max-width:8.5in;
+  min-height:11in;
+  margin:0 auto;
+  padding:0.42in 0.45in;
+  background:
+    radial-gradient(900px 500px at 80% -5%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(700px 380px at 5% 30%, rgba(255,107,0,.045), transparent 70%),
+    linear-gradient(180deg, #0a0d13 0%, #06080d 100%);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  display:grid;
+  grid-template-rows:auto auto auto auto auto auto auto;
+  gap:14px;
+  position:relative;
+  overflow:hidden;
+}
+.page:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg, var(--chevy-red), var(--chevy-yellow), var(--cad-champagne), var(--buick-teal), var(--f1-cyan), var(--f1-amber));
+}
+
+/* ════ header strip ════ */
+.head{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;
+  padding-bottom:12px;border-bottom:1px solid var(--line);
+}
+.mark{
+  width:36px;height:36px;border-radius:8px;
+  background:linear-gradient(135deg,#222837 0%, #0c0e14 100%);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.18em;color:var(--f1-cyan);
+}
+.head .center{display:flex;flex-direction:column;gap:2px}
+.title{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em;line-height:1}
+.subtitle{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.head .right{display:flex;gap:8px;align-items:center}
+.ver{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;
+  background:rgba(0,229,255,.08);color:var(--f1-cyan);
+  border:1px solid rgba(0,229,255,.28);font-weight:700;
+}
+.ver.amber{background:rgba(255,107,0,.08);color:var(--f1-amber);border-color:rgba(255,107,0,.32)}
+
+/* ════ hero strip ════ */
+.hero-strip{
+  display:grid;grid-template-columns:1.4fr .9fr;gap:18px;align-items:center;
+  padding:6px 0;
+}
+.hero-strip .h{
+  font-family:var(--serif);font-weight:800;
+  font-size:32px;line-height:1;letter-spacing:-.022em;
+}
+.hero-strip .h em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.hero-strip .h .amber{color:var(--f1-amber)}
+.hero-strip .sub{font-size:11.5px;color:var(--ink-2);line-height:1.5;margin-top:8px;max-width:50ch}
+.hero-strip .leads{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;line-height:1.4;
+}
+.hero-strip .leads .l{
+  padding:7px 10px;border-radius:8px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+}
+.hero-strip .leads .l .k{color:var(--muted);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:2px}
+.hero-strip .leads .l .v{color:var(--ink);font-weight:600;letter-spacing:.02em}
+
+/* ════ section headers ════ */
+.sec-head{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  margin-bottom:8px;
+}
+.sec-head .step{
+  font-family:var(--mono);font-size:10px;padding:3px 7px;border-radius:6px;
+  background:var(--accent-bg, rgba(0,229,255,.08));color:var(--accent, var(--f1-cyan));
+  border:1px solid var(--accent, var(--f1-cyan));font-weight:700;
+}
+
+/* ════ row A: problem + vision ════ */
+.row-a{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.box{
+  padding:12px 14px;border-radius:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.005));
+  border:1px solid var(--line);
+}
+.box.red{--accent:var(--chevy-red); --accent-bg:rgba(218,26,46,.1); border-left:3px solid var(--chevy-red)}
+.box.cyan{--accent:var(--f1-cyan); --accent-bg:rgba(0,229,255,.1); border-left:3px solid var(--f1-cyan)}
+.box.amber{--accent:var(--f1-amber); --accent-bg:rgba(255,107,0,.1); border-left:3px solid var(--f1-amber)}
+.box.champagne{--accent:var(--cad-champagne); --accent-bg:rgba(200,178,115,.1); border-left:3px solid var(--cad-champagne)}
+.box.teal{--accent:var(--buick-teal); --accent-bg:rgba(127,176,191,.1); border-left:3px solid var(--buick-teal)}
+.box.yellow{--accent:var(--chevy-yellow); --accent-bg:rgba(255,199,44,.1); border-left:3px solid var(--chevy-yellow)}
+
+.box h3{
+  font-family:var(--serif);font-weight:700;font-size:16px;line-height:1.05;
+  letter-spacing:-.015em;color:var(--ink);margin-bottom:6px;
+}
+.box h3 em{font-style:italic;font-weight:500;color:var(--accent)}
+.box .desc{font-size:10.5px;color:var(--ink-2);line-height:1.5}
+
+/* problem stats */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.stat-mini{
+  padding:6px 8px;border-radius:6px;
+  background:rgba(0,0,0,.3);border:1px solid var(--line);
+  display:flex;flex-direction:column;
+}
+.stat-mini .num{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1;color:var(--chevy-red);letter-spacing:-.015em}
+.stat-mini .lbl{font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:4px;line-height:1.2}
+
+/* vision pillars */
+.pillars-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.pillar-mini{
+  padding:7px 9px;border-radius:6px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+}
+.pillar-mini .n{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--f1-cyan);font-weight:700}
+.pillar-mini h5{font-family:var(--serif);font-weight:600;font-size:11.5px;letter-spacing:-.01em;margin:2px 0 3px;color:var(--ink);line-height:1.15}
+.pillar-mini p{font-size:9px;color:var(--ink-2);line-height:1.4}
+
+/* ════ architecture (4 horizontal bands) ════ */
+.arch{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.arch-band{
+  padding:8px 10px;border-radius:8px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+  border-top:2px solid var(--f1-cyan);
+  display:flex;flex-direction:column;
+}
+.arch-band .layer{font-family:var(--mono);font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--f1-cyan);font-weight:700}
+.arch-band h5{font-family:var(--serif);font-weight:600;font-size:13px;letter-spacing:-.01em;margin:3px 0 4px;color:var(--ink);line-height:1.05}
+.arch-band p{font-size:8.5px;color:var(--ink-2);line-height:1.4}
+
+/* ════ row C: race + monthly ════ */
+.row-c{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+.race-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px}
+.race-step{
+  padding:7px 8px;border-radius:6px;
+  background:rgba(0,0,0,.3);border:1px solid var(--line);
+  border-top:2px solid var(--st);
+}
+.race-step[data-s="ops"]{--st:var(--chevy-yellow)}
+.race-step[data-s="analyst"]{--st:var(--f1-cyan)}
+.race-step[data-s="sme"]{--st:var(--buick-teal)}
+.race-step[data-s="leadership"]{--st:var(--cad-champagne)}
+.race-step[data-s="govops"]{--st:var(--chevy-red)}
+.race-step .min{font-family:var(--mono);font-size:7.5px;color:var(--st);font-weight:700;letter-spacing:.06em}
+.race-step .stage{font-family:var(--mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:2px}
+.race-step .h{font-family:var(--serif);font-weight:600;font-size:10.5px;letter-spacing:-.01em;margin-top:3px;line-height:1.1}
+.race-step .baton{
+  display:inline-block;margin-top:3px;
+  font-family:var(--mono);font-size:6.5px;padding:1.5px 5px;border-radius:999px;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  background:var(--st);color:#1a0f00;
+}
+
+/* monthly gates */
+.gates-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
+.gate-mini{
+  padding:7px 9px;border-radius:6px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+  border-left:2px solid var(--gc);
+}
+.gate-mini[data-g="1"]{--gc:var(--f1-cyan)}
+.gate-mini[data-g="2"]{--gc:var(--f1-amber)}
+.gate-mini[data-g="3"]{--gc:var(--cad-champagne)}
+.gate-mini .gname{font-family:var(--mono);font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:var(--gc);font-weight:700}
+.gate-mini h5{font-family:var(--serif);font-weight:700;font-size:12px;letter-spacing:-.012em;margin:2px 0 3px;line-height:1.05}
+.gate-mini p{font-size:8.5px;color:var(--ink-2);line-height:1.4}
+
+/* ════ row D: roadmap + ask ════ */
+.row-d{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.roadmap-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}
+.horizon-mini{
+  padding:7px 9px;border-radius:6px;
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+}
+.horizon-mini[data-h="now"]{border-color:rgba(35,209,139,.32);background:linear-gradient(180deg, rgba(35,209,139,.06), rgba(255,255,255,0))}
+.horizon-mini[data-h="next"]{border-color:rgba(255,107,0,.32);background:linear-gradient(180deg, rgba(255,107,0,.06), rgba(255,255,255,0))}
+.horizon-mini[data-h="future"]{border-color:rgba(200,178,115,.32);background:linear-gradient(180deg, rgba(200,178,115,.06), rgba(255,255,255,0))}
+.horizon-mini .when{font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin-bottom:3px}
+.horizon-mini h5{font-family:var(--serif);font-weight:700;font-size:12.5px;letter-spacing:-.012em;margin:0 0 5px;line-height:1.05}
+.horizon-mini ul{list-style:none;padding:0;margin:0}
+.horizon-mini ul li{
+  font-size:8.5px;color:var(--ink-2);font-family:var(--mono);
+  padding:1.5px 0 1.5px 9px;position:relative;letter-spacing:.02em;line-height:1.4;
+}
+.horizon-mini ul li:before{
+  content:"›";position:absolute;left:0;color:var(--good);font-weight:700;font-family:var(--serif);
+}
+.horizon-mini[data-h="next"] ul li:before{color:var(--f1-amber)}
+.horizon-mini[data-h="future"] ul li:before{color:var(--cad-champagne)}
+
+/* the ask */
+.ask{
+  padding:9px 11px;border-radius:8px;
+  background:linear-gradient(135deg, rgba(255,107,0,.12), rgba(255,107,0,.02));
+  border:1px solid rgba(255,107,0,.42);
+  border-left:3px solid var(--f1-amber);
+  display:grid;grid-template-rows:auto 1fr;gap:6px;
+  height:100%;
+}
+.ask .ah{
+  font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;
+  padding-bottom:5px;border-bottom:1px solid rgba(255,107,0,.22);
+}
+.ask-bullets{display:grid;grid-template-columns:1fr 1fr;gap:5px;align-self:start}
+.ask-bullets .b{
+  padding:5px 7px;border-radius:5px;
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,107,0,.18);
+}
+.ask-bullets .b strong{display:block;color:var(--f1-amber);font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:2px}
+.ask-bullets .b .v{font-size:9.5px;color:var(--ink);font-family:var(--mono);line-height:1.35;letter-spacing:.01em}
+
+/* ════ footer ════ */
+.foot{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
+  padding-top:10px;margin-top:auto;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;
+}
+.foot .pulse{
+  display:inline-flex;align-items:center;gap:6px;color:var(--f1-amber);
+}
+.foot .pulse .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--f1-amber);
+  box-shadow:0 0 8px var(--f1-amber);
+}
+.foot .center{text-align:center;color:var(--ink-2)}
+
+/* race bar at top */
+.race-bar{
+  display:flex;align-items:center;gap:8px;
+  margin:-4px 0 6px;
+}
+.lights-mini{display:flex;gap:3px}
+.lights-mini .l{width:7px;height:7px;border-radius:50%;background:var(--start-green);box-shadow:0 0 6px rgba(0,210,106,.6)}
+
+/* utility text */
+.tag-trio{
+  display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;
+}
+.tag-trio .t{
+  font-family:var(--mono);font-size:7.5px;padding:2px 7px;border-radius:999px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  color:var(--ink-2);letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+}
+
+/* ════ print rules ════ */
+@page{ size: letter portrait; margin: 0.35in; }
+@media print{
+  html,body{background:#06080d !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+  body{padding:0}
+  .page{
+    box-shadow:none;border:0;
+    max-width:none;width:100%;
+    min-height:auto;
+    page-break-inside:avoid;
+  }
+  *{print-color-adjust:exact !important;-webkit-print-color-adjust:exact !important}
+}
+
+/* ════ responsive ════ */
+@media (max-width: 760px){
+  .row-a,.row-c,.row-d{grid-template-columns:1fr}
+  .arch,.stat-grid,.pillars-mini,.race-strip,.gates-mini,.roadmap-mini{grid-template-columns:1fr 1fr}
+  .ask-bullets{grid-template-columns:1fr}
+  .head{grid-template-columns:1fr;gap:8px}
+  .hero-strip{grid-template-columns:1fr}
+  .hero-strip .h{font-size:24px}
+}
+
+::selection{background:var(--f1-amber);color:#1a0f00}
+</style>
+</head>
+<body>
+
+<article class="page">
+
+  <!-- ═══ header ═══ -->
+  <header class="head">
+    <div class="mark">NAMA</div>
+    <div class="center">
+      <div class="title">NAMA Pit Wall · Executive One-Pager</div>
+      <div class="subtitle">Agentic Ensemble Forecasting · Sponsor Brief</div>
+    </div>
+    <div class="right">
+      <span class="ver">v2.4</span>
+      <span class="ver amber">2026-05-12</span>
+    </div>
+  </header>
+
+  <!-- ═══ hero strip ═══ -->
+  <section class="hero-strip">
+    <div>
+      <div class="race-bar">
+        <div class="lights-mini"><div class="l"></div><div class="l"></div><div class="l"></div><div class="l"></div><div class="l"></div></div>
+        <span class="subtitle" style="color:var(--f1-amber);font-size:9px">Lights out · go go go</span>
+      </div>
+      <div class="h">One planning brain.<br><em>Many</em> surfaces. <span class="amber">Human</span> judgment preserved.</div>
+      <p class="sub">A co-working pit wall where Leadership, Analysts, SMEs, Ops, and GovOps stay in the tools they prefer — Outlook, Teams, Excel, SharePoint, Power BI, Glean, Workbench — while every comment, challenge, override, and approval lands on the same governed forecast set. Agents take care of the rework. People bring the judgment.</p>
+      <div class="tag-trio">
+        <span class="t">One trusted substrate</span>
+        <span class="t">Choose-your-own-adventure</span>
+        <span class="t">Replay by default</span>
+        <span class="t">Human-in-the-loop</span>
+      </div>
+    </div>
+    <div class="leads">
+      <div class="l"><span class="k">Sponsor</span><span class="v">Ramzi Abdelmoula</span></div>
+      <div class="l"><span class="k">Architect</span><span class="v">Bob Rapp</span></div>
+      <div class="l"><span class="k">Forecasting</span><span class="v">Krisztina Gilezan</span></div>
+      <div class="l"><span class="k">MIA · Markets</span><span class="v">Jim Kyle &amp; team</span></div>
+      <div class="l"><span class="k">Data &amp; Ops</span><span class="v">Mansoor A. · Govinda C.</span></div>
+      <div class="l"><span class="k">AI GovOps</span><span class="v">Bob Rapp · Don S.</span></div>
+    </div>
+  </section>
+
+  <!-- ═══ row A: problem | vision ═══ -->
+  <section class="row-a">
+    <div class="box red">
+      <div class="sec-head" style="--accent:var(--chevy-red);--accent-bg:rgba(218,26,46,.1)"><span class="step">01</span>The state of play · today</div>
+      <h3>Today every seat brings their <em>own</em> spreadsheet.</h3>
+      <p class="desc">Seven surfaces. Five personas. One shadow spreadsheet per person. Plan-of-record drifts. Lineage evaporates. Hours go to reconciliation, not decisions. Q3 2026 told us the math.</p>
+      <div class="stat-grid">
+        <div class="stat-mini"><div class="num">38%</div><div class="lbl">analyst time = rework</div></div>
+        <div class="stat-mini"><div class="num">14%</div><div class="lbl">POR drift from version mismatch</div></div>
+        <div class="stat-mini"><div class="num">4–7 d</div><div class="lbl">p50 challenge resolution</div></div>
+        <div class="stat-mini"><div class="num">0</div><div class="lbl">replayable agent actions</div></div>
+      </div>
+    </div>
+    <div class="box cyan">
+      <div class="sec-head" style="--accent:var(--f1-cyan)"><span class="step">02</span>The vision · the pit wall</div>
+      <h3>One trusted substrate. <em>Every</em> tool you love. Zero shadow spreadsheets.</h3>
+      <p class="desc">Five seats. One number. The substrate stays one — the workspace reframes to fit how each seat works. Agents handle the prep; people handle the judgment.</p>
+      <div class="pillars-mini">
+        <div class="pillar-mini"><div class="n">P · 01</div><h5>Planning fabric</h5><p>One forecast set, one lineage, one source of truth.</p></div>
+        <div class="pillar-mini"><div class="n">P · 02</div><h5>Choose your seat</h5><p>Surfaces fit the role; substrate stays the same.</p></div>
+        <div class="pillar-mini"><div class="n">P · 03</div><h5>Agentic prep</h5><p>Rework to agents · judgment to people.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ architecture ═══ -->
+  <section>
+    <div class="sec-head"><span class="step">03</span>The architecture · four layers, one brain</div>
+    <div class="arch">
+      <div class="arch-band" style="border-top-color:var(--f1-cyan)">
+        <div class="layer" style="color:var(--f1-cyan)">Layer A · Substrate</div>
+        <h5>Planning Fabric</h5>
+        <p>Databricks + Unity Catalog · forecast sets · number objects · scenarios · constraint links · trust metadata.</p>
+      </div>
+      <div class="arch-band" style="border-top-color:var(--f1-cyan)">
+        <div class="layer" style="color:var(--f1-cyan)">Layer B · Engine</div>
+        <h5>Process Engine</h5>
+        <p>State machines · trust scoring · approval routing · challenge workflows · replayable lineage per action.</p>
+      </div>
+      <div class="arch-band" style="border-top-color:var(--f1-cyan)">
+        <div class="layer" style="color:var(--f1-cyan)">Layer C · Contract</div>
+        <h5>Access API + Events</h5>
+        <p>One API for forecasts, overrides, comments, approvals, audit · event bus · role-aware decision rights.</p>
+      </div>
+      <div class="arch-band" style="border-top-color:var(--f1-cyan)">
+        <div class="layer" style="color:var(--f1-cyan)">Layer D · Surfaces</div>
+        <h5>Persona Surfaces</h5>
+        <p>Outlook · Teams · Slack · Excel · SharePoint · Power BI · Glean · Workbench · Agent Studio · HIBT.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ row C: race + monthly ═══ -->
+  <section class="row-c">
+    <div>
+      <div class="sec-head" style="--accent:var(--f1-amber);--accent-bg:rgba(255,107,0,.08)"><span class="step">04</span>The 15-minute race · baton hand-off</div>
+      <div class="race-strip">
+        <div class="race-step" data-s="ops">
+          <div class="min">Min 0–2</div>
+          <div class="stage">Trigger</div>
+          <div class="h">Signal arrives</div>
+          <span class="baton">Ops</span>
+        </div>
+        <div class="race-step" data-s="analyst">
+          <div class="min">Min 2–5</div>
+          <div class="stage">Agent prep</div>
+          <div class="h">First pass</div>
+          <span class="baton">Analyst</span>
+        </div>
+        <div class="race-step" data-s="sme">
+          <div class="min">Min 5–9</div>
+          <div class="stage">Review</div>
+          <div class="h">Human judgment</div>
+          <span class="baton">SME</span>
+        </div>
+        <div class="race-step" data-s="leadership">
+          <div class="min">Min 9–12</div>
+          <div class="stage">Decision</div>
+          <div class="h">Owner commits</div>
+          <span class="baton">Leadership</span>
+        </div>
+        <div class="race-step" data-s="govops">
+          <div class="min">Min 12–15</div>
+          <div class="stage">Release</div>
+          <div class="h">Replay + ship</div>
+          <span class="baton">GovOps</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-head" style="--accent:var(--cad-champagne);--accent-bg:rgba(200,178,115,.08)"><span class="step">05</span>The monthly lap · S&amp;OP gates</div>
+      <div class="gates-mini">
+        <div class="gate-mini" data-g="1"><div class="gname">Gate 01 · Cyan</div><h5>Analyst-ready</h5><p>Freshness validated · baseline run · anomaly pack staged.</p></div>
+        <div class="gate-mini" data-g="2"><div class="gname">Gate 02 · Amber</div><h5>Challenge-ready</h5><p>Consensus draft · evidence routed · conflict surfaced.</p></div>
+        <div class="gate-mini" data-g="3"><div class="gname">Gate 03 · Champagne</div><h5>Plan-of-record</h5><p>Leadership commits · all surfaces inherit · HIBT immutable.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ row D: roadmap + ask ═══ -->
+  <section class="row-d">
+    <div>
+      <div class="sec-head"><span class="step">06</span>Roadmap · three horizons</div>
+      <div class="roadmap-mini">
+        <div class="horizon-mini" data-h="now">
+          <div class="when" style="color:var(--good)">Now · v2.4 · shipped</div>
+          <h5>The Pit Wall</h5>
+          <ul>
+            <li>5 persona seats live</li>
+            <li>Forecast workbench + 8 surfaces</li>
+            <li>15-min race with baton-radio</li>
+            <li>Monthly S&amp;OP swimlane</li>
+            <li>Agent Studio + HIBT</li>
+          </ul>
+        </div>
+        <div class="horizon-mini" data-h="next">
+          <div class="when" style="color:var(--f1-amber)">Next 90 days · v3.0</div>
+          <h5>The delighters</h5>
+          <ul>
+            <li>Second-Opinion Agent</li>
+            <li>Ghost Lap overlay</li>
+            <li>Championship Table</li>
+            <li>Constraint twin</li>
+            <li>Live-mode race expansion</li>
+          </ul>
+        </div>
+        <div class="horizon-mini" data-h="future">
+          <div class="when" style="color:var(--cad-champagne)">6 months · v3.5</div>
+          <h5>Strategic horizon</h5>
+          <ul>
+            <li>Strategic scenario planning</li>
+            <li>Auto-S&amp;OP pre-read</li>
+            <li>External signal marketplace</li>
+            <li>Cross-region pit wall</li>
+            <li>POR API for plant systems</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="ask">
+      <div class="ah">The ask · what we need from you</div>
+      <div class="ask-bullets">
+        <div class="b"><strong>Funding</strong><div class="v">$2.4M · v3.0 build · Q3 start</div></div>
+        <div class="b"><strong>People</strong><div class="v">4 SMEs · 6 analysts onboarded for pilot</div></div>
+        <div class="b"><strong>Sponsorship</strong><div class="v">Brief NAMA exec · co-sign roadmap</div></div>
+        <div class="b"><strong>Cert gate</strong><div class="v">3 prod agents promoted · GovOps owns</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ footer ═══ -->
+  <footer class="foot">
+    <div class="pulse"><span class="dot"></span>NAMA · One Trusted Substrate</div>
+    <div class="center">Take your seat · the pit wall is open · ramzi.abdelmoula@gm.com</div>
+    <div>v2.4 · 2026-05-12 · 1 of 1</div>
+  </footer>
+
+</article>
+
+</body>
+</html>

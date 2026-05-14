@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — Deliverables Index · For Ramzi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#06080d; --carbon:#0e1119; --pit:#171b27;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8; --ink-2:#cdd1d9; --muted:#8a8f9e;
+  --chevy-red:#da1a2e; --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273; --buick-teal:#7fb0bf;
+  --f1-amber:#ff6b00; --f1-cyan:#00e5ff; --good:#23d18b; --warn:#ff9500;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--void);
+  background-image:
+    radial-gradient(1200px 600px at 80% -5%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(255,107,0,.05), transparent 70%),
+    linear-gradient(180deg,#04060a 0%, var(--void) 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  font-size:15px;line-height:1.55;
+}
+::selection{background:var(--f1-amber);color:#1a0f00}
+a{color:var(--f1-cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+img,video{display:block;max-width:100%}
+
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(6,8,13,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1480px;margin:0 auto;padding:14px 32px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#222837,#0c0e14);border:1px solid var(--line-strong);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:10px;letter-spacing:.18em;color:var(--f1-cyan)}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:2px;font-weight:700}
+.ver{font-family:var(--mono);font-size:10px;letter-spacing:.18em;padding:5px 12px;border-radius:999px;background:rgba(0,229,255,.08);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.22);text-transform:uppercase;font-weight:700}
+
+.shell{max-width:1480px;margin:0 auto;padding:0 32px}
+
+/* hero */
+.hero{padding:70px 0 50px}
+.hero-flag{display:inline-flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2);margin-bottom:24px}
+.hero-flag .pill{padding:4px 11px;border-radius:999px;background:rgba(218,26,46,.18);color:#ffb0ba;border:1px solid rgba(218,26,46,.45);font-weight:700;font-size:10.5px}
+.hero-flag .pill.amber{background:rgba(255,107,0,.16);color:#ffc193;border-color:rgba(255,107,0,.4)}
+.hero-flag .pill.champagne{background:rgba(200,178,115,.14);color:#e9d8a8;border-color:rgba(200,178,115,.4)}
+.hero-flag .pill.cyan{background:rgba(0,229,255,.12);color:#9beeff;border-color:rgba(0,229,255,.4)}
+h1.hero{font-family:var(--serif);font-weight:900;font-size:clamp(44px,6vw,84px);line-height:.95;letter-spacing:-.035em;margin:0 0 22px;max-width:18ch}
+h1.hero em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+h1.hero .amber{color:var(--f1-amber)}
+.hero-lead{font-size:18px;line-height:1.55;color:var(--ink-2);max-width:64ch;margin-bottom:32px}
+.hero-lead strong{color:var(--ink);font-weight:600}
+
+.hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.meta-card{padding:18px 22px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid var(--line);border-left:3px solid var(--mc, var(--f1-cyan))}
+.meta-card[data-c="cyan"]{--mc:var(--f1-cyan)}
+.meta-card[data-c="amber"]{--mc:var(--f1-amber)}
+.meta-card[data-c="champagne"]{--mc:var(--cad-champagne)}
+.meta-card[data-c="green"]{--mc:var(--good)}
+.meta-card .v{font-family:var(--serif);font-weight:700;font-size:32px;line-height:1;letter-spacing:-.02em;color:var(--mc)}
+.meta-card .l{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:8px}
+
+/* section */
+.section{padding:50px 0;border-top:1px solid var(--line)}
+.section-head{margin-bottom:30px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--accent,var(--f1-cyan));font-weight:700;margin-bottom:12px}
+.eyebrow:before{content:"";width:24px;height:1px;background:currentColor}
+.section-head h2{font-family:var(--serif);font-weight:700;font-size:clamp(28px,3.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin-bottom:10px}
+.section-head h2 em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.section-head p{font-size:15.5px;color:var(--ink-2);max-width:68ch;line-height:1.6}
+
+/* card grids */
+.grid{display:grid;gap:18px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  padding:0;border-radius:16px;
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .2s ease,border-color .2s ease;
+}
+.card:hover{transform:translateY(-2px);border-color:var(--line-strong)}
+.card:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--c,var(--f1-cyan));z-index:2}
+.card[data-c="cyan"]{--c:var(--f1-cyan)}
+.card[data-c="amber"]{--c:var(--f1-amber)}
+.card[data-c="champagne"]{--c:var(--cad-champagne)}
+.card[data-c="teal"]{--c:var(--buick-teal)}
+.card[data-c="red"]{--c:var(--chevy-red)}
+.card[data-c="yellow"]{--c:var(--chevy-yellow)}
+.card[data-c="green"]{--c:var(--good)}
+
+.card-media{aspect-ratio:16/9;background:#0a0c10;overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)}
+.card-media img,.card-media video{width:100%;height:100%;object-fit:cover}
+.card-media.tall{aspect-ratio:3/4}
+
+.card-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--c,var(--f1-cyan));font-weight:700}
+.card-title{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:-.01em;line-height:1.18;color:var(--ink)}
+.card-title.smaller{font-size:17px}
+.card-desc{font-size:13px;color:var(--ink-2);line-height:1.55;flex:1}
+.card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.card-meta span{font-family:var(--mono);font-size:9.5px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-2);letter-spacing:.06em}
+.card-cta{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--f1-cyan));text-decoration:none;width:fit-content}
+.card-cta:hover{text-decoration:underline}
+.card-cta:after{content:"→"}
+
+/* URL strip — visible, selectable URL with a copy button under each CTA */
+.url-strip{
+  margin-top:8px;padding:7px 10px;
+  background:rgba(0,0,0,.35);border:1px solid var(--line);
+  border-radius:7px;
+  font-family:var(--mono);font-size:10px;color:var(--ink-2);
+  display:flex;align-items:center;gap:8px;
+  word-break:break-all;line-height:1.4;
+}
+.url-text{flex:1;user-select:all;cursor:text;letter-spacing:.01em}
+.url-copy{
+  flex-shrink:0;padding:4px 9px;border-radius:5px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line-strong);
+  font-family:var(--mono);font-size:9px;color:var(--ink);
+  cursor:pointer;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+  transition:background .15s ease;
+}
+.url-copy:hover{background:rgba(255,255,255,.14)}
+.url-copy.copied{background:var(--good);color:#001a0f;border-color:var(--good)}
+
+@media print{
+  .url-copy{display:none}
+  .url-strip{background:#fff !important;color:#000 !important;border-color:#888 !important}
+  .url-text{color:#000 !important}
+}
+
+/* download banner */
+.dl-banner{margin-top:30px;padding:32px 36px;border-radius:18px;background:linear-gradient(135deg,rgba(255,107,0,.1),rgba(0,229,255,.06));border:1px solid var(--line-strong);display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap;position:relative;overflow:hidden}
+.dl-banner:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--chevy-red),var(--chevy-yellow),var(--cad-champagne),var(--buick-teal),var(--f1-cyan),var(--f1-amber))}
+.dl-banner h3{font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:-.015em;margin-bottom:8px}
+.dl-banner p{font-size:14.5px;color:var(--ink-2);line-height:1.5;max-width:62ch}
+.dl-banner .meta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:8px}
+.dl-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;background:linear-gradient(135deg,var(--f1-amber),#ff8a3d);color:#1a0f00;font-weight:700;font-size:14px;border:1px solid rgba(255,255,255,.22);box-shadow:0 12px 36px rgba(255,107,0,.32);text-decoration:none}
+.dl-btn:hover{text-decoration:none;transform:translateY(-1px);box-shadow:0 16px 48px rgba(255,107,0,.45)}
+
+/* compact strip for individual clips */
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:18px}
+.strip-card{padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025);text-align:center}
+.strip-card video{width:100%;border-radius:6px;margin-bottom:8px}
+.strip-card .n{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.strip-card .t{font-family:var(--serif);font-weight:600;font-size:13px;letter-spacing:-.005em;margin-top:3px}
+
+/* review checklist */
+.check-list{display:flex;flex-direction:column;gap:14px}
+.check-item{
+  display:grid;grid-template-columns:36px 1fr 340px;gap:18px;align-items:start;
+  padding:18px 22px;border-radius:14px;
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  border:1px solid var(--line);
+  page-break-inside:avoid;break-inside:avoid;
+}
+.check-box{
+  width:24px;height:24px;border:2px solid var(--ink-2);border-radius:5px;
+  margin-top:4px;flex-shrink:0;background:rgba(255,255,255,.02);
+}
+.check-content{display:flex;flex-direction:column;gap:6px}
+.check-title{font-family:var(--serif);font-weight:600;font-size:17px;letter-spacing:-.01em;line-height:1.2;color:var(--ink)}
+.check-context{font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.check-context em{font-style:italic;color:var(--cad-champagne)}
+.check-context strong{color:var(--ink);font-weight:600}
+.check-link{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--f1-amber);text-decoration:none;font-weight:700;margin-top:2px;width:fit-content}
+.check-link:hover{text-decoration:underline}
+.check-notes{display:flex;flex-direction:column;gap:9px;padding:4px 0}
+.check-notes.wide{grid-column:2 / 4;margin-top:8px}
+.note-line{height:1px;background:rgba(255,255,255,.16);position:relative}
+.note-line:before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:repeating-linear-gradient(to right, var(--line-strong) 0, var(--line-strong) 4px, transparent 4px, transparent 8px)}
+
+/* signoff block */
+.signoff-block{
+  margin-top:30px;padding:24px 28px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(255,107,0,.06),rgba(0,229,255,.04));
+  border:1px solid var(--line-strong);
+  border-left:3px solid var(--f1-amber);
+  page-break-inside:avoid;
+}
+.signoff-head{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);font-weight:700;margin-bottom:18px}
+.signoff-grid{display:flex;flex-direction:column;gap:14px}
+.signoff-row{display:grid;grid-template-columns:120px 200px 1fr 160px;gap:18px;align-items:end}
+.signoff-role{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.signoff-name{font-family:var(--serif);font-weight:600;font-size:15px;letter-spacing:-.01em;color:var(--ink)}
+.signoff-line,.signoff-date{position:relative;padding-bottom:6px;border-bottom:1.5px solid var(--ink-2)}
+.signoff-line span,.signoff-date span{position:absolute;bottom:-18px;left:0;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* footer */
+.footer{border-top:1px solid var(--line);padding:40px 0 50px;margin-top:40px}
+.footer-content{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
+.footer-l h4{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em;margin-bottom:6px}
+.footer-l p{font-size:13.5px;color:var(--ink-2);line-height:1.55;max-width:62ch}
+.footer-r{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:right}
+.footer-r .accent{color:var(--f1-amber)}
+
+/* print styles */
+@page{size:letter portrait;margin:0.35in}
+@media print{
+  *{print-color-adjust:exact !important;-webkit-print-color-adjust:exact !important}
+  body{background:#06080d !important}
+  .topbar{position:static !important}
+  .shell{padding:0 12px}
+  .section{padding:24px 0;page-break-inside:auto}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .card,.dl-banner{page-break-inside:avoid;break-inside:avoid}
+  video,audio{display:none !important}
+  .card-media{aspect-ratio:auto;height:120px}
+  h1.hero{font-size:38px}
+  .dl-btn{box-shadow:none}
+  .footer{margin-top:18px;padding:20px 0}
+  /* checklist optimized for print */
+  #checklist{page-break-before:always}
+  .check-item{
+    page-break-inside:avoid;
+    background:#0a0c10 !important;
+    grid-template-columns:32px 1fr 280px;
+  }
+  .check-box{border:2px solid #000 !important;background:#fff !important}
+  .check-notes{padding:0}
+  .note-line{height:18px;border-bottom:1px solid #444}
+  .note-line:before{display:none}
+  .signoff-row{grid-template-columns:100px 180px 1fr 140px}
+  .signoff-line,.signoff-date{border-bottom-color:#444 !important}
+}
+
+@media (max-width:1100px){
+  .hero-meta{grid-template-columns:repeat(2,1fr)}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .strip{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:680px){
+  .topbar-inner{padding:12px 16px}
+  .shell{padding:0 16px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(2,1fr)}
+  .hero-meta{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">NAMA</div>
+      <div>
+        <div class="brand-name">NAMA Pit Wall</div>
+        <div class="brand-sub">Deliverables Index · For Ramzi</div>
+      </div>
+    </div>
+    <span class="ver">v2.4 · 2026-05-12</span>
+  </div>
+</div>
+
+<main class="shell">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-flag">
+    <span class="pill">Final handoff</span>
+    <span class="pill amber">~30 artifacts</span>
+    <span class="pill champagne">Ready to share</span>
+    <span class="pill cyan">Print-friendly</span>
+  </div>
+  <h1 class="hero">
+    Every artifact.<br>
+    <em>One</em> page.<br>
+    <span class="amber">Ready to ship.</span>
+  </h1>
+  <p class="hero-lead">
+    Ramzi — this is the complete deliverable index for the NAMA Pit Wall v2.4 build. <strong>One link, one page, every artifact organized by audience and use case.</strong> The four headline deliverables are at the top: the 52-file mega-package, the 12-slide sponsor deck, the printable executive one-pager, and the live v2.4 interactive app. Below that you'll find the supporting story arc (interactive demo + narration audio), the strategic spec docs (PRD addendum, eng spec, design doc), a gallery of brand visuals, and a <strong>printable review checklist</strong> for you to mark up before our sync.
+  </p>
+
+  <div class="hero-meta">
+    <div class="meta-card" data-c="amber"><div class="v">4</div><div class="l">Headline deliverables</div></div>
+    <div class="meta-card" data-c="cyan"><div class="v">52</div><div class="l">Files in mega-package</div></div>
+    <div class="meta-card" data-c="champagne"><div class="v">~30k</div><div class="l">Words of docs</div></div>
+    <div class="meta-card" data-c="green"><div class="v">10</div><div class="l">Review-checklist items</div></div>
+  </div>
+</section>
+
+<!-- HEADLINE DELIVERABLES -->
+<section class="section">
+  <div class="section-head" style="--accent:var(--f1-amber)">
+    <div class="eyebrow">01 · The headline deliverables</div>
+    <h2>The <em>four</em> things to open first.</h2>
+    <p>If you read nothing else, read these. The mega-package is the full developer-ready spec. The deck is for sponsor review. The one-pager is for forwarding. The live app is the working product.</p>
+  </div>
+
+  <div class="grid grid-2">
+
+    <!-- mega-package -->
+    <div class="card" data-c="amber">
+      <div class="card-media">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a2fb158-1033-42bb-9449-ea2d9d198d74.jpg" alt="Mega-package index hero">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Headline · open this first</span>
+        <h3 class="card-title">Mega-Package · 52 files (tarball)</h3>
+        <p class="card-desc">The complete developer-ready monorepo: PRD, PRD-FAQ, MRD, Personas, Architecture, Design Spec, 5 ADRs, OpenAPI spec, Postgres DDL, runnable React/Vite/TypeScript starter code, 4 runbooks, deployment guide, and export guides for Replit, Lovable, Claude Code, and OpenAI Codex.</p>
+        <div class="card-meta"><span>tar.gz · 151 KB</span><span>52 files · 644 KB</span><span>~30k words</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz" target="_blank" rel="noopener noreferrer">Download tar.gz</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz">Copy</button>
+        </div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/b1a2c866-d086-4125-acea-37de33007898.html" target="_blank" rel="noopener noreferrer">Browse the index</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/b1a2c866-d086-4125-acea-37de33007898.html</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/b1a2c866-d086-4125-acea-37de33007898.html">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- pitch deck -->
+    <div class="card" data-c="champagne">
+      <div class="card-media">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/b43d2e97-122d-4778-8961-ac9b9a46ae22.png" alt="Cadillac cockpit forecasting">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Headline · for sponsor review</span>
+        <h3 class="card-title">12-Slide Pitch Deck</h3>
+        <p class="card-desc">Cinematic sponsor-review deck. Cover · Problem · Vision · Architecture · Five seats · The Pit Wall · 15-min race · Monthly S&amp;OP · Agent Studio · Pole position · Roadmap · Close. Arrow keys / swipe / dots navigate.</p>
+        <div class="card-meta"><span>12 slides</span><span>HTML standalone</span><span>50 KB</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/7ce1d677-c575-449d-85cd-7ef587f06cfb.html" target="_blank" rel="noopener noreferrer">Open the deck</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/7ce1d677-c575-449d-85cd-7ef587f06cfb.html</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/7ce1d677-c575-449d-85cd-7ef587f06cfb.html">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- one-pager -->
+    <div class="card" data-c="cyan">
+      <div class="card-media">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png" alt="Workbench cockpit overhead">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Headline · for forwarding</span>
+        <h3 class="card-title">Executive One-Pager</h3>
+        <p class="card-desc">Printable letter-portrait single-sheet. Problem · Vision · Architecture · 15-minute race · Monthly cycle · Roadmap · The ask. Print-color-adjust preserves the brand on paper.</p>
+        <div class="card-meta"><span>1 page · letter portrait</span><span>HTML standalone</span><span>Print-ready</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/e7e8d001-ef40-4448-99d2-f24c859dc904.html" target="_blank" rel="noopener noreferrer">Open + print</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/e7e8d001-ef40-4448-99d2-f24c859dc904.html</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/e7e8d001-ef40-4448-99d2-f24c859dc904.html">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- v2.4 app -->
+    <div class="card" data-c="red">
+      <div class="card-media">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png" alt="Pit Wall command center">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Headline · the working product</span>
+        <h3 class="card-title">v2.4 Interactive App · The Pit Wall</h3>
+        <p class="card-desc">The full working application. Five-seat picker that swaps the entire workspace. D3 quantile fan chart. Scenario compare. 15-minute race with baton-pass and pit-to-driver radio. Agent Studio. Telemetry strip that reframes per seat. Activity feed that filters per seat.</p>
+        <div class="card-meta"><span>Interactive HTML</span><span>5 seats live</span><span>v6 build</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/a9a26d1d-44e7-4c64-9fe2-1f5422eefaeb.html" target="_blank" rel="noopener noreferrer">Open the app</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/a9a26d1d-44e7-4c64-9fe2-1f5422eefaeb.html</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/a9a26d1d-44e7-4c64-9fe2-1f5422eefaeb.html">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STORY ARC -->
+<section class="section">
+  <div class="section-head" style="--accent:var(--f1-cyan)">
+    <div class="eyebrow">02 · The story arc</div>
+    <h2>How to <em>tell</em> the Pit Wall story.</h2>
+    <p>Two complementary experiences that walk a viewer through the v2.4 system. Open the interactive demo, click <em>Run race</em>, and the audio narration syncs scene-by-scene.</p>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card" data-c="amber">
+      <div class="card-media">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png" alt="End-to-end demo">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Interactive · self-running</span>
+        <h3 class="card-title smaller">End-to-End Demo + Agent Studio</h3>
+        <p class="card-desc">15-scene cinematic walkthrough with chapter picker (Signal · Review · Commit · Release · Podium), audio-synced narration, and an Agent Studio view with message bus + work queue.</p>
+        <div class="card-meta"><span>Interactive HTML</span><span>15 scenes</span><span>~3 min</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/66890eb7-0de7-4c41-a46c-76cc8c3b2d8f.html" target="_blank" rel="noopener noreferrer">Open the demo</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/66890eb7-0de7-4c41-a46c-76cc8c3b2d8f.html</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/66890eb7-0de7-4c41-a46c-76cc8c3b2d8f.html">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-c="champagne">
+      <div class="card-media" style="aspect-ratio:16/9;background:linear-gradient(135deg,#1f1c12,#3d3725);display:flex;align-items:center;justify-content:center">
+        <audio controls preload="metadata" style="width:100%;padding:0 20px">
+          <source src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/media/c871da42-aba0-4af2-b780-0769b2c5c65b.wav" type="audio/wav">
+        </audio>
+      </div>
+      <div class="card-body">
+        <span class="card-tag">3 min · narrated</span>
+        <h3 class="card-title smaller">Maya Narration · End-to-End Tour</h3>
+        <p class="card-desc">~3-minute spoken tour of the Pit Wall — problem, vision, five seats, 15-minute race, Agent Studio, what's coming v3.0. Kore voice (clean General American).</p>
+        <div class="card-meta"><span>WAV</span><span>~3 min</span><span>Female voice</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STRATEGIC SPECS -->
+<section class="section">
+  <div class="section-head" style="--accent:var(--cad-champagne)">
+    <div class="eyebrow">03 · Strategic specs</div>
+    <h2>The <em>strategic</em> documents.</h2>
+    <p>These three are inside the mega-package tarball, but each is also a live document in this workspace that you can read directly. They define what v3.0 looks like and what we'd build first.</p>
+  </div>
+
+  <div class="grid grid-3">
+
+    <div class="card" data-c="champagne">
+      <div class="card-media" style="background:linear-gradient(135deg,#1f1c12,#3d3725)">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/b43d2e97-122d-4778-8961-ac9b9a46ae22.png" alt="Cadillac cockpit" style="opacity:.45">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">v3.0 product spec</span>
+        <h3 class="card-title smaller">Delighters PRD Addendum</h3>
+        <p class="card-desc">Full PRD for the three v3.0 delighter features (Second-Opinion Agent · Ghost Lap · Championship Table). 18 FRs, 10 NFRs, success metrics, risks with mitigations, signoff chain.</p>
+        <div class="card-meta"><span>~6,500 words</span><span>v3.0 scope</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/documents/cmp2r8ado05kq06adeczn4lf8/view" target="_blank" rel="noopener noreferrer">Open the doc</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/documents/cmp2r8ado05kq06adeczn4lf8/view</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/documents/cmp2r8ado05kq06adeczn4lf8/view">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-c="cyan">
+      <div class="card-media" style="background:linear-gradient(135deg,#003540,#0a4a55)">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png" alt="Workbench overhead" style="opacity:.45">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Engineering scope</span>
+        <h3 class="card-title smaller">Engineering Spec Stub</h3>
+        <p class="card-desc">Stub-depth eng spec. Architecture overview, API contract changes, data-model deltas, infrastructure investments, observability plan, and an honest staffing-gap callout (42 ew needed vs 35 ew capacity).</p>
+        <div class="card-meta"><span>11 sections</span><span>Stub depth</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/documents/cmp2rg94l059q07ado1r8q03n/view" target="_blank" rel="noopener noreferrer">Open the doc</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/documents/cmp2rg94l059q07ado1r8q03n/view</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/documents/cmp2rg94l059q07ado1r8q03n/view">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-c="red">
+      <div class="card-media" style="background:linear-gradient(135deg,#28080c,#4a0d15)">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png" alt="Pit Wall command center" style="opacity:.45">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Implementation contract</span>
+        <h3 class="card-title smaller">Second-Opinion Agent Design Doc</h3>
+        <p class="card-desc">Implementation-grade design for the Second-Opinion service. Sequence diagrams, full prompt pack contents (divergent_v1), MDS algorithm with worked example, 5-suite eval harness, deployment plan, 4 runbook stubs.</p>
+        <div class="card-meta"><span>13 sections</span><span>Build-ready</span></div>
+        <a class="card-cta" href="https://hyperagent.com/api/documents/cmp2t5py111b807adak6l23cf/view" target="_blank" rel="noopener noreferrer">Open the doc</a>
+        <div class="url-strip">
+          <span class="url-text">https://hyperagent.com/api/documents/cmp2t5py111b807adak6l23cf/view</span>
+          <button class="url-copy" data-url="https://hyperagent.com/api/documents/cmp2t5py111b807adak6l23cf/view">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DOWNLOAD BANNER -->
+<section class="section">
+  <div class="dl-banner">
+    <div>
+      <h3>Want it all in one tarball?</h3>
+      <p>nama-pit-wall-mega-package.tar.gz · 52 files · ~30,000 words of documentation · runnable React/Vite/TypeScript scaffold · OpenAPI + Postgres DDL · 4 platform export guides.</p>
+      <div class="meta">151 KB compressed · 644 KB uncompressed · v2.4 · 2026-05-12</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+      <a class="dl-btn" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz" target="_blank" rel="noopener noreferrer">Download tar.gz</a>
+      <div class="url-strip" style="margin-top:0;min-width:280px">
+        <span class="url-text">https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz</span>
+        <button class="url-copy" data-url="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/files/e8cd6f14-8b78-4a22-8c9c-f26298c6636b.gz">Copy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRAND VISUALS -->
+<section class="section">
+  <div class="section-head" style="--accent:var(--buick-teal)">
+    <div class="eyebrow">04 · Brand visuals + media</div>
+    <h2>The <em>visual</em> language.</h2>
+    <p>Cinematic hero frames generated in-thread, plus the Maya portrait for any spokesperson/intro use. Two Maya variants — corporate (for everyday use) and cinematic (for editorial moments).</p>
+  </div>
+
+  <div class="grid grid-4">
+
+    <div class="card" data-c="teal">
+      <div class="card-media tall">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/545ba3b1-9888-49a0-b100-48aab3718eb6.png" alt="Maya corporate portrait">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Spokesperson · everyday</span>
+        <h3 class="card-title smaller">Maya · Corporate (mid-40s)</h3>
+        <p class="card-desc">Standard professional headshot. Use for slide-deck speaker slot, LinkedIn-style bio, intranet, sponsor brief.</p>
+      </div>
+    </div>
+
+    <div class="card" data-c="champagne">
+      <div class="card-media tall">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/69da87a6-ed25-40ab-a15a-c38e88b7b2c0.png" alt="Maya cinematic portrait">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Spokesperson · editorial</span>
+        <h3 class="card-title smaller">Maya · Cinematic (alt)</h3>
+        <p class="card-desc">Cinematic editorial portrait. Use for the v2.4 hero shot, magazine-style placements, or video reference.</p>
+      </div>
+    </div>
+
+    <div class="card" data-c="amber">
+      <div class="card-media tall">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png" alt="Pit Wall command center">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Hero · pit wall</span>
+        <h3 class="card-title smaller">Pit Wall Command Center</h3>
+        <p class="card-desc">Cinematic 21:9 hero frame. Used as the cover of the v2.4 app and the deck.</p>
+      </div>
+    </div>
+
+    <div class="card" data-c="cyan">
+      <div class="card-media tall">
+        <img src="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/7bbaf46a-6357-4252-862b-b1f2c1c4ef55.png" alt="Workbench overhead">
+      </div>
+      <div class="card-body">
+        <span class="card-tag">Hero · workbench</span>
+        <h3 class="card-title smaller">Workbench Cockpit Overhead</h3>
+        <p class="card-desc">Top-down editorial. Used in deck slide 6 and various card backgrounds.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- REVIEW CHECKLIST -->
+<section class="section" id="checklist">
+  <div class="section-head" style="--accent:var(--f1-amber)">
+    <div class="eyebrow">05 · Review checklist · print this</div>
+    <h2>Before our <em>sync.</em></h2>
+    <p>Ramzi — work through this list before we meet. Each item links to what you need. Note space at right is for handwritten comments / concerns / questions. Bring the printed page to the meeting.</p>
+  </div>
+
+  <div class="check-list">
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Read the executive one-pager</div>
+        <div class="check-context">~3 min · letter portrait · printable · the full v2.4 brief in one page</div>
+        <a class="check-link" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/e7e8d001-ef40-4448-99d2-f24c859dc904.html" target="_blank" rel="noopener noreferrer">Open one-pager →</a>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Open the v2.4 app · test all 5 seats</div>
+        <div class="check-context">~5 min · click each seat (Leadership · Analyst · SME · Ops · GovOps) and confirm the whole workspace reframes — action panel, telemetry strip, surface ring, activity feed all swap</div>
+        <a class="check-link" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/a9a26d1d-44e7-4c64-9fe2-1f5422eefaeb.html" target="_blank" rel="noopener noreferrer">Open v2.4 app →</a>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Run the 15-minute race in the app</div>
+        <div class="check-context">~1 min · scroll to "The 15-minute race" section, click <em>Run race</em>. Watch the baton pass through 5 seats with pit-to-driver radio hand-offs. Confirms the operating model works as one experience.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Browse the 12-slide pitch deck</div>
+        <div class="check-context">~5 min · arrow keys to navigate · pay particular attention to <strong>slide 11 (Roadmap + Ask)</strong> and <strong>slide 12 (Close)</strong> — those are the decision slides for the sync</div>
+        <a class="check-link" href="https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/artifacts/7ce1d677-c575-449d-85cd-7ef587f06cfb.html" target="_blank" rel="noopener noreferrer">Open deck →</a>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Read the v3.0 Delighters PRD addendum</div>
+        <div class="check-context">~10 min · at minimum: Cover (signoff chain) + Cross-cutting requirements + one of the three feature deep-dives. The full doc is in the mega-package tarball.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Skim the engineering spec stub — especially the staffing gap</div>
+        <div class="check-context">~5 min · scroll to "Build effort estimates &amp; staffing gap" — honest 7-engineer-week shortfall, ML engineer hire is the recommended fix. This is the most important page of the eng spec.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Confirm the $2.4M v3.0 funding ask</div>
+        <div class="check-context">Breakdown: $0.9M Second-Opinion Agent (biggest) · $0.6M Ghost Lap · $0.4M Championship Table · $0.5M cross-cutting infra. Decision window: 14 days from this packet.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Authorize the ML engineer hire</div>
+        <div class="check-context">~$180K annualized · within v3.0 budget · closes the staffing gap · target close by end of week 1 of build. Fallback Option B is a 2-week Second-Opinion GA slip.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Block 30 min for the Championship Table cultural review</div>
+        <div class="check-context">Pre-launch sponsor review required (week 4). The anti-goal is performance review framing — needs your sign-off on the celebration framing before public launch.</div>
+      </div>
+      <div class="check-notes"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-content">
+        <div class="check-title">Mark up any open concerns / questions / changes</div>
+        <div class="check-context">Anything that needs to be on the sync agenda. Use the note spaces above for specifics. Use the space below for broader strategic notes.</div>
+      </div>
+      <div class="check-notes wide"><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div><div class="note-line"></div></div>
+    </div>
+
+  </div>
+
+  <!-- signoff block -->
+  <div class="signoff-block">
+    <div class="signoff-head">Signoff · v3.0 build authorization</div>
+    <div class="signoff-grid">
+      <div class="signoff-row">
+        <div class="signoff-role">Sponsor</div>
+        <div class="signoff-name">Ramzi Abdelmoula</div>
+        <div class="signoff-line"><span>Signature</span></div>
+        <div class="signoff-date"><span>Date</span></div>
+      </div>
+      <div class="signoff-row">
+        <div class="signoff-role">Architect</div>
+        <div class="signoff-name">Bob Rapp</div>
+        <div class="signoff-line"><span>Signature</span></div>
+        <div class="signoff-date"><span>Date</span></div>
+      </div>
+      <div class="signoff-row">
+        <div class="signoff-role">AI GovOps</div>
+        <div class="signoff-name">Don S.</div>
+        <div class="signoff-line"><span>Signature</span></div>
+        <div class="signoff-date"><span>Date</span></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="shell" style="padding:0">
+    <div class="footer-content">
+      <div class="footer-l">
+        <h4>That's the package.</h4>
+        <p>Built across one focused thread. Cinematic GM consumer-brand + Formula 1 race-control aesthetic throughout. Same canonical sample data (Q3 Trucks · FS-2026Q3-NA-TRK-001 · Texas dealer pulse) used consistently across every artifact for narrative coherence. <strong>Open the four headline deliverables first; everything else is in support.</strong></p>
+      </div>
+      <div class="footer-r">
+        NAMA Pit Wall · <span class="accent">v2.4</span><br>
+        2026-05-12<br>
+        Build owner: Bob Rapp<br>
+        Sponsor: Ramzi Abdelmoula<br>
+        Architect signoff: <span class="accent">☐</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<!-- toast for clipboard fallback -->
+<div id="link-toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(40px);z-index:1000;padding:14px 22px;border-radius:12px;background:rgba(8,10,14,.97);border:1px solid var(--f1-amber);box-shadow:0 0 0 1px var(--f1-amber),0 20px 50px rgba(0,0,0,.6);backdrop-filter:blur(20px);opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--ink);max-width:560px"></div>
+
+<script>
+/**
+ * Combined click + copy handler.
+ *
+ * Two cases:
+ * 1. Click on `.url-copy` button — copy the data-url to clipboard, flash "Copied" state.
+ * 2. Click on any external link (.card-cta, .dl-btn, etc.) — try window.open, then window.top, then clipboard.
+ *
+ * Sandboxed iframes can block popup-style navigation. The visible URL strips below each CTA
+ * are the reliable path: click "Copy", paste into a fresh browser tab.
+ */
+(function(){
+  const toast = document.getElementById('link-toast');
+  let toastTimer = null;
+  function showToast(msg, ms){
+    if(!toast) return;
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    toast.style.pointerEvents = 'auto';
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(40px)';
+      toast.style.pointerEvents = 'none';
+    }, ms || 4200);
+  }
+
+  function copyToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise((resolve, reject)=>{
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? resolve() : reject(new Error('execCommand failed'));
+      }catch(e){ reject(e); }
+    });
+  }
+
+  // ─── copy-button handler ───
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.url-copy');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const url = btn.getAttribute('data-url') || '';
+    if(!url) return;
+    copyToClipboard(url).then(function(){
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(function(){
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 1600);
+    }).catch(function(){
+      showToast('Copy failed. URL: ' + url, 6000);
+    });
+  });
+
+  // ─── link click handler ───
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a[href]');
+    if(!a) return;
+    const href = a.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    // we want to intercept external links - both http(s) absolute and hyperagent-absolute paths
+    if(!/^https?:\/\//i.test(href) && !href.startsWith('/api/')) return;
+    e.preventDefault();
+
+    const fullUrl = href.startsWith('/') ? (window.location.origin + href) : href;
+
+    // strategy 1: new tab via window.open
+    let win = null;
+    try{ win = window.open(fullUrl, '_blank', 'noopener,noreferrer'); }catch(err){ win = null; }
+    if(win){ return; }
+
+    // strategy 2: top window navigation
+    try{
+      if(window.top && window.top !== window.self){
+        window.top.location.href = fullUrl;
+        return;
+      }
+    }catch(err){ /* cross-origin top — fall through */ }
+
+    // strategy 3: clipboard
+    copyToClipboard(fullUrl).then(function(){
+      showToast('Link copied to clipboard — paste in a new tab: ' + fullUrl.slice(0, 60) + (fullUrl.length>60?'…':''), 5500);
+    }).catch(function(){
+      showToast('Click was blocked. URL: ' + fullUrl, 7000);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

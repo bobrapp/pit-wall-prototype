@@ -1,0 +1,2783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAMA Pit Wall — Agentic Ensemble Forecasting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0a0c10;
+  --carbon:#13161e;
+  --pit:#1c2030;
+  --pit-2:#252a3b;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273;
+  --cad-midnight:#0e1014;
+  --buick-teal:#7fb0bf;
+  --buick-platinum:#d8dce0;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --risk:#ff453a;
+  --good:#23d18b;
+  --accent:var(--f1-cyan);
+  --accent-2:var(--cad-champagne);
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 1px 1px rgba(0,0,0,.4), 0 30px 80px rgba(0,0,0,.55);
+  --shadow-soft:0 1px 1px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--void);
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0,229,255,.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(255,107,0,.05), transparent 70%),
+    linear-gradient(180deg,#070811 0%, #0a0c10 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+  letter-spacing:.005em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+img{display:block;max-width:100%}
+
+/* ────────── topbar ────────── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:saturate(140%) blur(18px);
+  -webkit-backdrop-filter:saturate(140%) blur(18px);
+  background:rgba(10,12,16,.72);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1480px;margin:0 auto;
+  padding:14px 32px;
+  display:flex;justify-content:space-between;align-items:center;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{
+  width:38px;height:38px;border-radius:10px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.22), transparent 50%),
+    linear-gradient(135deg,#222837 0%, #0c0e14 100%);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:10px;
+  letter-spacing:.18em;color:var(--accent);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 8px 24px rgba(0,229,255,.18);
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand-sub{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.22em;color:var(--muted);margin-top:2px}
+.topnav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.topnav a{
+  color:var(--ink-2);font-size:13px;font-weight:500;
+  padding:8px 12px;border-radius:8px;letter-spacing:.01em;
+}
+.topnav a:hover{background:rgba(255,255,255,.04);color:var(--ink);text-decoration:none}
+.cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:999px;
+  background:linear-gradient(135deg,var(--f1-amber),#ff8a3d);
+  color:#1a0f00;font-weight:700;font-size:13px;letter-spacing:.01em;
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 6px 24px rgba(255,107,0,.35);
+  transition:transform .15s ease, box-shadow .2s ease;
+}
+.cta:hover{transform:translateY(-1px);box-shadow:0 10px 32px rgba(255,107,0,.5);text-decoration:none}
+.cta .dot{width:6px;height:6px;border-radius:50%;background:#1a0f00;box-shadow:0 0 0 4px rgba(26,15,0,.22)}
+.ver-chip{
+  font-family:var(--mono);font-size:10px;
+  padding:5px 10px;border-radius:999px;
+  background:rgba(0,229,255,.08);color:var(--f1-cyan);
+  border:1px solid rgba(0,229,255,.22);
+  letter-spacing:.14em;text-transform:uppercase;
+}
+
+/* ────────── shell ────────── */
+.shell{max-width:1480px;margin:0 auto;padding:0 32px}
+section{position:relative}
+.section-frame{padding:90px 0}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;
+  text-transform:uppercase;letter-spacing:.22em;
+  color:var(--accent);font-weight:700;
+}
+.eyebrow:before{content:"";width:24px;height:1px;background:currentColor;display:inline-block}
+.h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(38px,5vw,76px);
+  line-height:1.02;letter-spacing:-.02em;
+  margin:14px 0 22px;
+}
+.h2{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(28px,3.4vw,46px);
+  line-height:1.06;letter-spacing:-.015em;
+  margin:14px 0 18px;
+}
+.h3{
+  font-family:var(--serif);font-weight:600;
+  font-size:24px;line-height:1.15;letter-spacing:-.01em;
+  margin:0 0 10px;
+}
+.h4{font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin:0 0 8px}
+.lead{font-size:18px;color:var(--ink-2);max-width:62ch;line-height:1.55}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);letter-spacing:.04em}
+
+/* ────────── hero ────────── */
+.hero{
+  position:relative;min-height:760px;
+  overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:120px 0 80px;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    linear-gradient(180deg, rgba(10,12,16,.35) 0%, rgba(10,12,16,.78) 60%, var(--void) 100%),
+    url('https://hyperagent.com/api/files/usergenerated/threads/cmp2o81df029a07ad7sskfnfh/images/6a09df78-6b95-407e-8227-1e1ad27112b9.png') center/cover no-repeat;
+}
+.hero-bg:after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(800px 400px at 75% 30%, rgba(255,107,0,.15), transparent 60%),
+    radial-gradient(800px 400px at 20% 60%, rgba(0,229,255,.12), transparent 70%);
+  mix-blend-mode:screen;
+}
+.hero-inner{position:relative;z-index:2;padding:0 32px;max-width:1480px;margin:0 auto;width:100%}
+.hero-title-wrap{max-width:920px}
+.hero-flag{
+  display:inline-flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:18px;
+}
+.hero-flag .pill{
+  padding:4px 10px;border-radius:999px;
+  background:rgba(218,26,46,.16);color:#ffb0ba;
+  border:1px solid rgba(218,26,46,.4);
+  font-weight:700;
+}
+.hero-flag .pill.amber{background:rgba(255,107,0,.16);color:#ffc193;border-color:rgba(255,107,0,.4)}
+.hero-flag .pill.champagne{background:rgba(200,178,115,.14);color:#e9d8a8;border-color:rgba(200,178,115,.4)}
+.hero-flag .pill.cyan{background:rgba(0,229,255,.12);color:#9beeff;border-color:rgba(0,229,255,.4)}
+.hero-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(48px,7vw,108px);
+  line-height:.95;letter-spacing:-.035em;
+  margin:0 0 24px;
+}
+.hero-headline em{font-style:italic;font-weight:500;color:var(--cad-champagne);letter-spacing:-.025em}
+.hero-headline .red{color:var(--chevy-red)}
+.hero-headline .amber{color:var(--f1-amber)}
+.hero-lead{font-size:21px;line-height:1.5;color:var(--ink-2);max-width:62ch;margin:0 0 36px;font-weight:400}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;
+  font-weight:600;font-size:14px;letter-spacing:.01em;
+  border:1px solid var(--line-strong);
+  background:rgba(255,255,255,.04);
+  color:var(--ink);cursor:pointer;
+  transition:all .2s ease;
+  text-decoration:none;
+}
+.btn:hover{background:rgba(255,255,255,.08);transform:translateY(-1px);text-decoration:none}
+.btn.primary{
+  background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);
+  color:#001a1f;border-color:rgba(0,229,255,.5);
+  box-shadow:0 12px 36px rgba(0,229,255,.3);
+}
+.btn.primary:hover{box-shadow:0 16px 48px rgba(0,229,255,.45)}
+.btn.ghost{background:transparent;color:var(--ink-2);border-color:var(--line)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--line-strong)}
+
+/* ────────── starting-lights telemetry strip ────────── */
+.telemetry-strip{
+  position:sticky;top:66px;z-index:80;
+  background:linear-gradient(180deg, rgba(10,12,16,.95), rgba(10,12,16,.88));
+  border-top:1px solid rgba(255,255,255,.04);
+  border-bottom:1px solid var(--line);
+  padding:14px 0;
+  backdrop-filter:blur(18px);
+}
+.telemetry{
+  max-width:1480px;margin:0 auto;padding:0 32px;
+  display:flex;gap:8px;align-items:center;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;
+}
+.telemetry::-webkit-scrollbar{display:none}
+.tel-cell{
+  flex:0 0 auto;
+  padding:8px 16px;border-radius:10px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  display:flex;align-items:center;gap:10px;
+  min-width:max-content;
+}
+.tel-cell .lbl{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted)}
+.tel-cell .val{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--ink);letter-spacing:.02em}
+.tel-cell .val.good{color:var(--good)}
+.tel-cell .val.warn{color:var(--warn)}
+.tel-cell .val.risk{color:var(--risk)}
+.tel-cell .val.cyan{color:var(--f1-cyan)}
+.tel-cell .val.amber{color:var(--f1-amber)}
+.tel-led{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 12px var(--good)}
+.tel-led.warn{background:var(--warn);box-shadow:0 0 12px var(--warn)}
+.tel-led.risk{background:var(--risk);box-shadow:0 0 12px var(--risk)}
+.tel-led.amber{background:var(--f1-amber);box-shadow:0 0 12px var(--f1-amber)}
+
+/* ────────── seat selector ────────── */
+.seats{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;
+  margin-top:32px;
+}
+.seat{
+  position:relative;
+  padding:24px 22px 22px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  cursor:pointer;
+  transition:all .25s ease;
+  overflow:hidden;
+  min-height:200px;
+}
+.seat:hover{transform:translateY(-3px);border-color:var(--line-strong);background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02))}
+.seat.active{border-color:var(--seat-color, var(--accent));box-shadow:0 0 0 1px var(--seat-color, var(--accent)), 0 20px 60px rgba(0,0,0,.5)}
+.seat:before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--seat-color, var(--accent));
+  opacity:.7;
+}
+.seat-num{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.seat-role{font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:-.015em;margin:10px 0 6px;color:var(--ink)}
+.seat-brand{
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--seat-color, var(--accent));font-weight:700;
+  margin-bottom:14px;
+}
+.seat-summary{font-size:13px;color:var(--ink-2);line-height:1.5;margin:0 0 14px}
+.seat-tools{display:flex;gap:6px;flex-wrap:wrap}
+.seat-tools .t{
+  font-family:var(--mono);font-size:9.5px;
+  padding:3px 8px;border-radius:6px;
+  background:rgba(255,255,255,.04);
+  color:var(--ink-2);
+  border:1px solid var(--line);
+  letter-spacing:.06em;
+}
+.seat[data-seat="leadership"]{--seat-color:var(--cad-champagne)}
+.seat[data-seat="analyst"]{--seat-color:var(--f1-cyan)}
+.seat[data-seat="sme"]{--seat-color:var(--buick-teal)}
+.seat[data-seat="ops"]{--seat-color:var(--chevy-yellow)}
+.seat[data-seat="govops"]{--seat-color:var(--chevy-red)}
+
+/* ────────── pit wall (workbench) ────────── */
+.pit-wall{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:22px;
+  margin-top:24px;
+}
+.panel{
+  background:linear-gradient(180deg, var(--carbon), var(--pit));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+  box-shadow:var(--shadow-soft);
+}
+.panel.tight{padding:18px}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:16px;margin-bottom:18px;flex-wrap:wrap;
+}
+.panel-head h3{margin:0;font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.015em}
+.panel-head .sub{color:var(--muted);font-size:13px;margin-top:2px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em}
+.state-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;
+  font-family:var(--mono);font-size:10px;
+  text-transform:uppercase;letter-spacing:.14em;font-weight:700;
+}
+.state-pill .pip{width:6px;height:6px;border-radius:50%}
+.state-pill.committed{background:rgba(35,209,139,.14);color:var(--good);border:1px solid rgba(35,209,139,.32)}
+.state-pill.committed .pip{background:var(--good)}
+.state-pill.challenged{background:rgba(255,149,0,.14);color:var(--warn);border:1px solid rgba(255,149,0,.32)}
+.state-pill.challenged .pip{background:var(--warn);animation:pulse 1.6s ease-in-out infinite}
+.state-pill.draft{background:rgba(0,229,255,.1);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.32)}
+.state-pill.draft .pip{background:var(--f1-cyan)}
+.state-pill.final{background:rgba(200,178,115,.12);color:var(--cad-champagne);border:1px solid rgba(200,178,115,.32)}
+.state-pill.final .pip{background:var(--cad-champagne)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.number-hero{
+  display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+  padding:20px 22px;
+  background:radial-gradient(400px 200px at 0% 0%, rgba(255,107,0,.08), transparent 60%), rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  margin-bottom:18px;
+}
+.number-hero .label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);width:100%;margin-bottom:6px}
+.number-hero .big{font-family:var(--serif);font-weight:700;font-size:48px;line-height:1;letter-spacing:-.02em}
+.number-hero .unit{color:var(--muted);font-size:14px;font-family:var(--mono)}
+.number-hero .delta{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  padding:5px 10px;border-radius:8px;
+  background:rgba(255,149,0,.12);color:var(--warn);
+  border:1px solid rgba(255,149,0,.28);
+}
+.number-hero .delta.up{background:rgba(35,209,139,.12);color:var(--good);border-color:rgba(35,209,139,.28)}
+.number-hero .delta.down{background:rgba(255,69,58,.1);color:var(--risk);border-color:rgba(255,69,58,.28)}
+.number-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;width:100%}
+.number-meta .nm{padding:8px 10px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:8px}
+.number-meta .nm .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}
+.number-meta .nm .v{font-family:var(--mono);font-size:13px;font-weight:700;margin-top:3px}
+
+#fan-chart{width:100%;height:340px;display:block}
+.fan-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.fan-legend span{display:inline-flex;align-items:center;gap:6px}
+.fan-legend .sw{width:14px;height:8px;border-radius:2px}
+.fan-legend .sw.p10{background:rgba(0,229,255,.18)}
+.fan-legend .sw.p50{background:var(--f1-cyan)}
+.fan-legend .sw.p90{background:rgba(0,229,255,.42)}
+.fan-legend .sw.consensus{background:var(--cad-champagne)}
+.fan-legend .sw.actual{background:var(--chevy-yellow)}
+
+.scenario-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;
+}
+.scenario{
+  padding:14px;border-radius:var(--radius-sm);
+  border:1px solid var(--line);background:rgba(255,255,255,.02);
+  cursor:pointer;transition:all .2s ease;
+}
+.scenario:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.scenario.active{border-color:var(--f1-cyan);background:rgba(0,229,255,.06);box-shadow:inset 0 0 0 1px rgba(0,229,255,.2)}
+.scenario .name{font-family:var(--serif);font-weight:600;font-size:16px;margin-bottom:4px}
+.scenario .val{font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+.scenario .delta{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* presence + collab */
+.presence-rail{display:flex;align-items:center;gap:-6px;margin-top:8px}
+.av{
+  width:30px;height:30px;border-radius:50%;
+  border:2px solid var(--carbon);
+  background:linear-gradient(135deg,#3a4156,#1e2230);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  display:grid;place-items:center;
+  color:var(--ink);
+  margin-left:-8px;
+  position:relative;
+}
+.av:first-child{margin-left:0}
+.av .ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--good);opacity:.7}
+.av.away .ring{border-color:var(--muted)}
+.av.busy .ring{border-color:var(--warn)}
+.av[data-color="cyan"]{background:linear-gradient(135deg,#0a4a55,#003540)}
+.av[data-color="amber"]{background:linear-gradient(135deg,#4a2d0d,#2b1a05)}
+.av[data-color="champagne"]{background:linear-gradient(135deg,#3d3725,#1f1c12)}
+.av[data-color="teal"]{background:linear-gradient(135deg,#1d3b44,#0c1e23)}
+.av[data-color="red"]{background:linear-gradient(135deg,#4a0d15,#28080c)}
+.presence-line{font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:14px;text-transform:uppercase;letter-spacing:.1em}
+.presence-line .now{color:var(--good)}
+
+/* override form */
+.override{margin-top:16px;padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.override h4{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:5px}
+.field select,.field input,.field textarea{
+  width:100%;padding:9px 12px;border-radius:8px;
+  background:rgba(0,0,0,.3);border:1px solid var(--line);
+  color:var(--ink);font-family:var(--mono);font-size:13px;
+  outline:none;transition:border-color .2s ease;
+}
+.field textarea{font-family:var(--sans);font-size:13px;min-height:64px;resize:vertical}
+.field select:focus,.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field-row{margin-top:10px}
+.override-actions{display:flex;gap:10px;margin-top:14px;align-items:center}
+.btn-sm{
+  padding:9px 14px;border-radius:8px;font-size:12px;font-weight:600;
+  border:1px solid var(--line-strong);background:rgba(255,255,255,.04);
+  color:var(--ink);cursor:pointer;font-family:var(--sans);letter-spacing:.02em;
+}
+.btn-sm:hover{background:rgba(255,255,255,.08)}
+.btn-sm.primary{background:var(--f1-cyan);color:#001a1f;border-color:rgba(0,229,255,.6)}
+.btn-sm.warn{background:var(--f1-amber);color:#1a0f00;border-color:rgba(255,107,0,.6)}
+
+/* activity feed */
+.activity{display:grid;gap:10px;max-height:520px;overflow:auto;padding-right:6px}
+.activity::-webkit-scrollbar{width:6px}
+.activity::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:3px}
+.act{
+  padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);
+  display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;
+}
+.act .who{
+  width:34px;height:34px;border-radius:50%;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  display:grid;place-items:center;color:var(--ink);
+  background:linear-gradient(135deg,#3a4156,#1e2230);
+}
+.act .who[data-color="cyan"]{background:linear-gradient(135deg,#0a4a55,#003540)}
+.act .who[data-color="amber"]{background:linear-gradient(135deg,#4a2d0d,#2b1a05)}
+.act .who[data-color="champagne"]{background:linear-gradient(135deg,#3d3725,#1f1c12)}
+.act .who[data-color="teal"]{background:linear-gradient(135deg,#1d3b44,#0c1e23)}
+.act .who[data-color="red"]{background:linear-gradient(135deg,#4a0d15,#28080c)}
+.act .body{font-size:13px;line-height:1.5}
+.act .body .name{font-weight:600;color:var(--ink)}
+.act .body .verb{color:var(--muted)}
+.act .body .target{color:var(--accent);font-family:var(--mono);font-size:12px}
+.act .body .note{color:var(--ink-2);font-size:12.5px;margin-top:6px;padding-left:10px;border-left:2px solid var(--line-strong)}
+.act .time{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.act.challenge{border-color:rgba(255,149,0,.28);background:rgba(255,149,0,.04)}
+.act.commit{border-color:rgba(35,209,139,.28);background:rgba(35,209,139,.04)}
+.act.agent{border-color:rgba(0,229,255,.24);background:rgba(0,229,255,.04)}
+
+/* ────────── surface ring ────────── */
+.ring{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-top:32px;
+}
+.tile{
+  padding:18px;border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  position:relative;overflow:hidden;
+  min-height:240px;display:flex;flex-direction:column;
+  transition:transform .2s ease, border-color .2s ease;
+}
+.tile:hover{border-color:var(--line-strong);transform:translateY(-2px)}
+.tile-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tile-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-2);
+}
+.tile-name{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.tile-sync{font-family:var(--mono);font-size:9.5px;color:var(--good);display:inline-flex;align-items:center;gap:5px}
+.tile-sync .pip{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+.tile-body{flex:1;font-size:13px;color:var(--ink-2);line-height:1.5}
+.tile-body strong{color:var(--ink)}
+.tile-foot{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.mini-btn{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 9px;border-radius:6px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  color:var(--ink-2);
+}
+.mini-btn.primary{background:rgba(0,229,255,.1);color:var(--f1-cyan);border-color:rgba(0,229,255,.3)}
+
+.tile.outlook{}
+.tile.outlook .tile-icon{background:rgba(0,120,212,.18);color:#5fb3ff;border-color:rgba(0,120,212,.4)}
+.tile.teams .tile-icon{background:rgba(98,100,167,.18);color:#a5a7e0;border-color:rgba(98,100,167,.4)}
+.tile.excel .tile-icon{background:rgba(33,115,70,.18);color:#5fd29a;border-color:rgba(33,115,70,.4)}
+.tile.sharepoint .tile-icon{background:rgba(3,120,124,.18);color:#5fc8cb;border-color:rgba(3,120,124,.4)}
+.tile.pbi .tile-icon{background:rgba(241,180,52,.18);color:#f1b434;border-color:rgba(241,180,52,.4)}
+.tile.glean .tile-icon{background:rgba(124,86,255,.18);color:#b09bff;border-color:rgba(124,86,255,.4)}
+.tile.workbench .tile-icon{background:rgba(0,229,255,.18);color:#9beeff;border-color:rgba(0,229,255,.4)}
+.tile.agent .tile-icon{background:rgba(255,107,0,.18);color:#ffc193;border-color:rgba(255,107,0,.4)}
+
+/* ────────── 15-minute race ────────── */
+.race-card{
+  margin-top:30px;border-radius:var(--radius);
+  background:linear-gradient(180deg,#10131a,#0b0d12);
+  border:1px solid var(--line);overflow:hidden;
+}
+.race-head{
+  padding:22px 26px;display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--line);flex-wrap:wrap;gap:18px;
+  background:radial-gradient(600px 200px at 0% 0%, rgba(255,107,0,.1), transparent 60%);
+}
+.race-head h3{margin:0;font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.01em}
+.race-head .sub{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-top:4px}
+.race-clock{display:flex;align-items:center;gap:14px}
+.lights{display:flex;gap:4px}
+.light{width:14px;height:14px;border-radius:50%;background:#26282f;border:1px solid var(--line)}
+.light.on{background:var(--start-green);box-shadow:0 0 16px var(--start-green)}
+.light.red{background:var(--chevy-red);box-shadow:0 0 16px var(--chevy-red)}
+.clock{
+  font-family:var(--mono);font-weight:700;font-size:32px;letter-spacing:.06em;
+  padding:8px 16px;border-radius:10px;
+  background:#000;border:1px solid var(--line-strong);
+  color:var(--f1-amber);text-shadow:0 0 12px rgba(255,107,0,.6);
+}
+.race-controls{display:flex;gap:10px;align-items:center}
+.race-stops{display:grid;grid-template-columns:repeat(5,1fr);gap:0;padding:0}
+.stop{
+  position:relative;padding:24px 22px;
+  border-right:1px solid var(--line);
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  transition:background .35s ease;
+}
+.stop:last-child{border-right:0}
+.stop.active{background:linear-gradient(180deg,rgba(255,107,0,.14),rgba(255,107,0,.06));border-top:2px solid var(--f1-amber)}
+.stop.done{background:linear-gradient(180deg,rgba(35,209,139,.1),rgba(35,209,139,.03))}
+.stop .stage{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.stop .min{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+.stop .h{font-family:var(--serif);font-weight:600;font-size:20px;margin:10px 0 8px;letter-spacing:-.01em}
+.stop p{margin:0 0 10px;font-size:13px;color:var(--ink-2);line-height:1.5}
+.stop ul{margin:8px 0 0;padding:0;list-style:none}
+.stop ul li{font-size:12px;color:var(--muted);padding:4px 0 4px 14px;position:relative;font-family:var(--mono);letter-spacing:.02em}
+.stop ul li:before{content:"";position:absolute;left:0;top:11px;width:6px;height:1px;background:var(--accent)}
+.stop .ribbon{
+  position:absolute;top:14px;right:14px;
+  font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:999px;
+  letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+}
+.stop.done .ribbon{background:rgba(35,209,139,.16);color:var(--good);border:1px solid rgba(35,209,139,.36)}
+.stop.active .ribbon{background:rgba(255,107,0,.16);color:var(--f1-amber);border:1px solid rgba(255,107,0,.36)}
+
+/* ────────── hand-off radio toast ────────── */
+.handoff-toast{
+  position:fixed;top:128px;left:50%;
+  transform:translateX(-50%) translateY(-18px);
+  z-index:200;
+  width:min(660px, 92vw);
+  padding:20px 24px 18px;
+  border-radius:14px;
+  background:rgba(8,10,14,.97);
+  border:1px solid var(--f1-amber);
+  box-shadow:0 0 0 1px var(--f1-amber), 0 30px 80px rgba(0,0,0,.55), 0 0 60px rgba(255,107,0,.18);
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
+  backdrop-filter:blur(20px);
+}
+.handoff-toast.show{
+  opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;
+}
+.handoff-head{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--f1-amber);
+  font-weight:700;
+  margin-bottom:12px;
+}
+.handoff-head .pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--f1-amber);
+  box-shadow:0 0 12px var(--f1-amber);
+  animation:pulse 1.2s ease-in-out infinite;
+}
+.handoff-route{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;
+}
+.handoff-route .from,.handoff-route .to{
+  padding:6px 12px;border-radius:8px;
+  font-family:var(--mono);font-size:11.5px;font-weight:700;
+  letter-spacing:.08em;
+}
+.handoff-route .from{
+  background:rgba(255,255,255,.05);border:1px solid var(--line-strong);color:var(--ink-2);
+}
+.handoff-route .to{
+  background:var(--f1-amber);color:#1a0f00;border:1px solid var(--f1-amber);
+}
+.handoff-route .arrow{color:var(--f1-amber);font-family:var(--mono);font-weight:700;font-size:14px}
+.handoff-msg{font-size:14px;line-height:1.55;color:var(--ink)}
+.handoff-msg .label{
+  display:block;font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px;
+}
+.handoff-msg .label.completed{color:var(--good)}
+.handoff-msg .label.next{color:var(--f1-amber);margin-top:10px}
+.handoff-close{
+  position:absolute;top:14px;right:14px;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);
+  color:var(--muted);font-size:16px;line-height:1;
+  display:grid;place-items:center;cursor:pointer;
+  font-family:var(--mono);font-weight:700;
+}
+.handoff-close:hover{background:rgba(255,255,255,.12);color:var(--ink)}
+
+/* baton + per-stop seat ownership */
+.baton{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px;border-radius:10px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--accent);
+  box-shadow:0 0 0 1px var(--accent), 0 0 24px rgba(0,229,255,.18);
+  transition:box-shadow .35s ease, border-color .35s ease;
+  min-width:200px;
+}
+.baton-label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;
+}
+.baton-seat{
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em;
+  transition:color .35s ease;
+}
+.stop .owner{
+  display:inline-block;margin-top:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line-strong);
+  color:var(--ink-2);font-weight:700;
+}
+.stop.active .owner{
+  background:var(--f1-amber);color:#1a0f00;border-color:var(--f1-amber);
+}
+
+/* ────────── monthly swimlane ────────── */
+.swim{
+  margin-top:24px;border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  border:1px solid var(--line);padding:20px;overflow:auto;
+}
+.swim table{width:100%;border-collapse:separate;border-spacing:6px}
+.swim th{
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);text-align:left;padding:8px 12px;font-weight:700;
+  white-space:nowrap;
+}
+.swim th.lane{color:var(--accent);width:140px}
+.swim td{
+  padding:14px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(255,255,255,.02);vertical-align:top;
+  font-size:12.5px;color:var(--ink-2);line-height:1.45;
+  min-width:170px;
+}
+.swim td.lane{
+  font-family:var(--serif);font-weight:600;font-size:16px;
+  color:var(--ink);background:rgba(255,255,255,.04);
+  border-color:var(--line-strong);
+}
+.swim td.gate{position:relative}
+.swim td .gtag{
+  display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;padding:2px 7px;border-radius:999px;
+  margin-bottom:6px;
+}
+.swim td .gtag.g1{background:rgba(0,229,255,.12);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.3)}
+.swim td .gtag.g2{background:rgba(255,107,0,.12);color:var(--f1-amber);border:1px solid rgba(255,107,0,.3)}
+.swim td .gtag.g3{background:rgba(200,178,115,.12);color:var(--cad-champagne);border:1px solid rgba(200,178,115,.3)}
+.swim td .gtag.g4{background:rgba(35,209,139,.12);color:var(--good);border:1px solid rgba(35,209,139,.3)}
+
+/* ────────── Agent Studio + HIBT ────────── */
+.studio{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;margin-top:24px}
+.ledger{margin-top:14px}
+.ledger table{width:100%;border-collapse:collapse}
+.ledger th,.ledger td{padding:12px 14px;text-align:left;font-size:12.5px;vertical-align:top;border-bottom:1px solid var(--line)}
+.ledger th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.ledger td.mono{font-family:var(--mono);font-size:12px}
+.ledger tr:hover td{background:rgba(255,255,255,.02)}
+.eval-row{
+  display:flex;justify-content:space-between;gap:14px;align-items:center;
+  padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);margin-bottom:10px;
+}
+.eval-row .n{font-family:var(--serif);font-size:16px;font-weight:600}
+.eval-row .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
+.score-bar{width:120px;height:8px;background:rgba(255,255,255,.05);border-radius:999px;overflow:hidden;position:relative}
+.score-bar .fill{height:100%;background:linear-gradient(90deg,var(--f1-cyan),var(--good));border-radius:999px}
+.score-bar .fill.warn{background:linear-gradient(90deg,var(--f1-amber),var(--warn))}
+.score-row{display:flex;align-items:center;gap:12px}
+.score-row .pct{font-family:var(--mono);font-weight:700;color:var(--ink);font-size:13px;min-width:42px;text-align:right}
+
+/* ────────── pole position (industry inspirations) ────────── */
+.poles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.pole{
+  padding:20px;border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  position:relative;overflow:hidden;
+}
+.pole:before{
+  content:attr(data-num);
+  position:absolute;top:14px;right:18px;
+  font-family:var(--serif);font-size:48px;font-weight:900;line-height:1;
+  color:rgba(255,255,255,.04);
+}
+.pole .from{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+.pole h4{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:-.01em;margin:0 0 10px;color:var(--ink)}
+.pole p{font-size:13px;color:var(--ink-2);line-height:1.55;margin:0 0 12px}
+.pole .borrow{font-family:var(--mono);font-size:11px;color:var(--cad-champagne);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:10px;margin-top:auto}
+.pole .borrow strong{color:var(--ink);font-weight:600;letter-spacing:.02em}
+
+/* ────────── delighters / podium ────────── */
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.podium-step{
+  padding:24px;border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,var(--carbon),var(--pit));
+  position:relative;overflow:hidden;
+}
+.podium-step:before{
+  content:attr(data-pos);
+  position:absolute;top:18px;right:22px;
+  font-family:var(--serif);font-style:italic;font-weight:900;font-size:80px;line-height:1;
+  color:rgba(255,255,255,.04);
+}
+.podium-step.gold{border-color:rgba(200,178,115,.32);background:linear-gradient(180deg,rgba(200,178,115,.06),var(--pit))}
+.podium-step.gold:before{color:rgba(200,178,115,.14)}
+.podium-step.silver{border-color:rgba(216,220,224,.18);background:linear-gradient(180deg,rgba(216,220,224,.04),var(--pit))}
+.podium-step.bronze{border-color:rgba(255,107,0,.22);background:linear-gradient(180deg,rgba(255,107,0,.05),var(--pit))}
+.podium-step .name{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.podium-step h4{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.015em;margin:8px 0 12px;color:var(--ink)}
+.podium-step p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.55}
+.podium-step ul{margin:14px 0 0;padding:0;list-style:none}
+.podium-step ul li{padding:6px 0 6px 16px;position:relative;font-size:13px;color:var(--ink-2)}
+.podium-step ul li:before{content:"›";position:absolute;left:0;color:var(--accent);font-weight:700}
+
+/* ────────── pit crew (RACI) ────────── */
+.crew{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.crew-card{
+  padding:18px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);
+}
+.crew-card .role{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+.crew-card .person{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-.01em}
+.crew-card .desc{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+/* ────────── HIBT log ────────── */
+.hibt-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}
+
+/* ────────── tests ────────── */
+.tests-card{margin-top:18px}
+.test-log{display:grid;gap:8px;margin-top:16px}
+.test-row{
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:12px 16px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);
+}
+.test-row .name{font-family:var(--sans);font-weight:600;font-size:13px}
+.test-row .notes{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+.test-row .verdict{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;padding:5px 12px;border-radius:999px;font-weight:700;
+}
+.test-row .verdict.pass{background:rgba(35,209,139,.14);color:var(--good);border:1px solid rgba(35,209,139,.32)}
+.test-row .verdict.fail{background:rgba(255,69,58,.14);color:var(--risk);border:1px solid rgba(255,69,58,.32)}
+
+/* ────────── footer ────────── */
+.footer{
+  border-top:1px solid var(--line);padding:50px 0 60px;
+  color:var(--muted);font-size:12.5px;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.4));
+}
+.footer .row{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;flex-wrap:wrap}
+.footer .col h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);margin:0 0 12px}
+.footer .col p,.footer .col a{font-size:12.5px;color:var(--muted)}
+.footer .col a{display:block;padding:3px 0}
+
+/* ────────── responsive ────────── */
+@media (max-width: 1180px){
+  .pit-wall{grid-template-columns:1fr}
+  .ring{grid-template-columns:repeat(2,1fr)}
+  .race-stops{grid-template-columns:repeat(2,1fr)}
+  .stop{border-right:0;border-bottom:1px solid var(--line)}
+  .poles{grid-template-columns:repeat(2,1fr)}
+  .podium{grid-template-columns:1fr}
+  .crew{grid-template-columns:1fr 1fr}
+  .hibt-grid{grid-template-columns:1fr}
+  .studio{grid-template-columns:1fr}
+  .seats{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width: 720px){
+  .topbar-inner{padding:12px 18px}
+  .shell{padding:0 18px}
+  .section-frame{padding:60px 0}
+  .ring{grid-template-columns:1fr}
+  .race-stops{grid-template-columns:1fr}
+  .poles{grid-template-columns:1fr}
+  .crew{grid-template-columns:1fr}
+  .seats{grid-template-columns:repeat(2,1fr)}
+  .topnav{display:none}
+  .number-meta{grid-template-columns:repeat(2,1fr)}
+  .fields{grid-template-columns:1fr}
+  .scenario-row{grid-template-columns:1fr}
+}
+
+/* selection */
+::selection{background:var(--f1-amber);color:#1a0f00}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ────────── persona-aware swapping ────────── */
+.action-panel{display:none}
+body[data-persona="analyst"]    .action-panel.for-analyst,
+body[data-persona="leadership"] .action-panel.for-leadership,
+body[data-persona="sme"]        .action-panel.for-sme,
+body[data-persona="ops"]        .action-panel.for-ops,
+body[data-persona="govops"]     .action-panel.for-govops{display:block}
+body[data-persona="leadership"] .for-leader-only,
+body[data-persona="ops"]        .for-ops-only,
+body[data-persona="govops"]     .for-govops-only,
+body[data-persona="sme"]        .for-sme-only{display:block}
+.for-leader-only,.for-ops-only,.for-govops-only,.for-sme-only{display:none}
+
+/* tile elevation for primary surfaces */
+.tile.primary{
+  box-shadow:0 0 0 1px var(--accent), 0 20px 60px rgba(0,229,255,.18);
+  border-color:transparent;
+  transform:translateY(-2px);
+}
+.tile.primary .tile-icon{background:rgba(0,229,255,.16);color:#9beeff;border-color:rgba(0,229,255,.5)}
+.tile.demoted{opacity:.55;filter:grayscale(.4)}
+.tile.demoted:hover{opacity:1;filter:none}
+
+/* activity filter */
+.act{transition:opacity .3s ease, transform .3s ease}
+.act.hidden{display:none}
+
+/* persona briefing banner */
+.persona-briefing{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;border-radius:var(--radius-sm);
+  background:linear-gradient(90deg, rgba(0,229,255,.06), transparent);
+  border:1px solid rgba(0,229,255,.22);
+  margin-bottom:20px;
+}
+.persona-briefing .badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:5px 12px;border-radius:999px;
+  background:var(--accent);color:#001a1f;font-weight:700;
+  flex-shrink:0;
+}
+.persona-briefing .text{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.persona-briefing .text strong{color:var(--ink);font-family:var(--serif);font-weight:600}
+
+/* decision rights badge ladder */
+.rights-row{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+}
+.right-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 11px;border-radius:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--ink-2);
+}
+.right-badge.granted{
+  background:rgba(35,209,139,.1);
+  border-color:rgba(35,209,139,.32);
+  color:var(--good);
+}
+.right-badge.denied{
+  background:rgba(94,99,115,.08);
+  border-color:rgba(94,99,115,.18);
+  color:var(--muted);
+  text-decoration:line-through;
+  text-decoration-thickness:1px;
+}
+.right-badge.granted:before{content:"✓ ";color:var(--good)}
+.right-badge.denied:before{content:"✕ ";color:var(--muted);text-decoration:none;display:inline-block}
+
+/* approval row (leadership) */
+.approval-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;
+}
+.approval-card{
+  padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);cursor:pointer;transition:all .2s ease;
+}
+.approval-card:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.approval-card.gold{border-color:rgba(200,178,115,.4);background:rgba(200,178,115,.05)}
+.approval-card .label{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.approval-card .name{font-family:var(--serif);font-weight:600;font-size:16px;margin-top:4px}
+.approval-card .meta{font-family:var(--mono);font-size:10.5px;color:var(--ink-2);margin-top:6px}
+
+/* pipeline health (ops) */
+.pipe-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.pipe-row{
+  padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(255,255,255,.02);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.pipe-row .name{font-family:var(--mono);font-size:12px;color:var(--ink)}
+.pipe-row .meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.08em;text-transform:uppercase}
+.pipe-row .light{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pipe-row .light.ok{background:var(--good);box-shadow:0 0 10px var(--good)}
+.pipe-row .light.warn{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+.pipe-row .light.risk{background:var(--risk);box-shadow:0 0 10px var(--risk)}
+
+/* SME challenge inbox */
+.challenge-list{display:grid;gap:10px;margin-top:14px}
+.chal-item{
+  padding:14px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);
+  display:grid;grid-template-columns:1fr auto;gap:10px;
+}
+.chal-item .h{font-family:var(--serif);font-weight:600;font-size:15px}
+.chal-item .m{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.06em}
+.chal-item .acts{display:flex;gap:6px;align-items:flex-start}
+
+/* GovOps version diff */
+.version-row{
+  padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);
+  margin-top:10px;
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+}
+.version-row .head{font-family:var(--serif);font-weight:600;font-size:15px}
+.version-row .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px}
+.version-row .diff{font-family:var(--mono);font-size:11px;margin-top:6px}
+.version-row .diff .plus{color:var(--good)}
+.version-row .diff .minus{color:var(--risk)}
+</style>
+</head>
+<body data-persona="analyst">
+
+<!-- ════════════════════ topbar ════════════════════ -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">NAMA</div>
+      <div>
+        <div class="brand-name">NAMA Pit&nbsp;Wall</div>
+        <div class="brand-sub">Agentic Ensemble · Forecasting Co-Workspace</div>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a href="#telemetry">Telemetry</a>
+      <a href="#seats">Take your seat</a>
+      <a href="#pit-wall">The Pit Wall</a>
+      <a href="#ring">Surface Ring</a>
+      <a href="#race">15-min race</a>
+      <a href="#monthly">Monthly S&amp;OP</a>
+      <a href="#studio">Agent Studio</a>
+      <a href="#pole">Pole position</a>
+      <a href="#podium">Podium</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="ver-chip mono">v2.4 · 2026-05-12</span>
+      <a href="#seats" class="cta"><span class="dot"></span>Take your seat</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ hero ════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-title-wrap">
+      <div class="hero-flag">
+        <span class="pill">Lights out</span>
+        <span class="pill amber">Agentic ensemble</span>
+        <span class="pill champagne">One trusted substrate</span>
+        <span class="pill cyan">Choose your seat</span>
+      </div>
+      <h1 class="hero-headline">
+        One planning brain.<br>
+        <em>Every</em> tool you love.<br>
+        <span class="amber">Zero</span> shadow spreadsheets.
+      </h1>
+      <p class="hero-lead">
+        The NAMA Pit Wall is a co-working space where Leadership, Analysts, SMEs, Ops, and GovOps stay in the surfaces they prefer — Outlook, Teams, Excel, SharePoint, Power BI, Glean, Workbench — while every comment, challenge, override, and approval lands on the same governed forecast set. Agents take care of the rework and toil. People bring the judgment. Lineage is automatic.
+      </p>
+      <div class="hero-ctas">
+        <a href="#seats" class="btn primary">Choose your seat <span aria-hidden="true">→</span></a>
+        <a href="#pit-wall" class="btn">Enter the Pit Wall</a>
+        <a href="#race" class="btn ghost">Run the 15-minute race</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ race-control telemetry strip (persona-aware) ════════════════════ -->
+<div class="telemetry-strip" id="telemetry">
+  <div class="telemetry" id="telemetry-row">
+    <!-- analyst default — replaced by renderTelemetry() on every seat change -->
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">Plan-of-record</span><br><span class="val good">COMMITTED · v2026.05A</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">My open overrides</span><br><span class="val cyan">3 staged</span></span></div>
+    <div class="tel-cell"><span class="tel-led amber"></span><span><span class="lbl">Anomaly queue</span><br><span class="val amber">5 routed to me</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">Forecast accuracy (MAPE)</span><br><span class="val good">8.2%</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">Override value-add</span><br><span class="val cyan">+1.9 pts</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">Compare mode active</span><br><span class="val cyan">14 numbers</span></span></div>
+    <div class="tel-cell"><span class="tel-led amber"></span><span><span class="lbl">Drift score</span><br><span class="val warn">0.41 · watch</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">Challenge resolution</span><br><span class="val good">11 min p50</span></span></div>
+    <div class="tel-cell"><span class="tel-led"></span><span><span class="lbl">People on the wall</span><br><span class="val cyan">14 live</span></span></div>
+  </div>
+</div>
+
+<main class="shell">
+
+<!-- ════════════════════ Take your seat ════════════════════ -->
+<section class="section-frame" id="seats">
+  <span class="eyebrow">Step 01 · Choose your own adventure</span>
+  <h2 class="h1 reveal">Take your seat on the wall.</h2>
+  <p class="lead reveal">Five seats. One number. Pick the one that fits how you work — and watch the whole workspace adapt below. Your action panel swaps (override → approve → challenge → pause → promote), the activity feed filters to what matters to you, your preferred surfaces get elevated, decision rights reframe. Every action still writes back to the same trusted forecast set. <em>Click a seat to see it.</em></p>
+
+  <div class="seats">
+    <div class="seat" data-seat="leadership" onclick="setSeat('leadership')">
+      <div class="seat-num">SEAT · 01</div>
+      <div class="seat-role">Leadership</div>
+      <div class="seat-brand">Cadillac line · Champagne</div>
+      <p class="seat-summary">Approve the scenario, commit the plan-of-record, push it everywhere. Open in Outlook, end on a Teams approval card.</p>
+      <div class="seat-tools">
+        <span class="t">Outlook</span><span class="t">Teams</span><span class="t">PBI</span><span class="t">Morning Brief</span>
+      </div>
+    </div>
+    <div class="seat active" data-seat="analyst" onclick="setSeat('analyst')">
+      <div class="seat-num">SEAT · 02</div>
+      <div class="seat-role">Analyst</div>
+      <div class="seat-brand">Race engineer · Cyan</div>
+      <p class="seat-summary">Live in the Workbench. Validate the baseline, build the consensus, push structured overrides — never break lineage.</p>
+      <div class="seat-tools">
+        <span class="t">Workbench</span><span class="t">Excel</span><span class="t">PA Agent</span><span class="t">Compare</span>
+      </div>
+    </div>
+    <div class="seat" data-seat="sme" onclick="setSeat('sme')">
+      <div class="seat-num">SEAT · 03</div>
+      <div class="seat-role">SME / Markets</div>
+      <div class="seat-brand">Buick line · Teal</div>
+      <p class="seat-summary">Challenge any number with evidence in under ninety seconds. Discussion stays on the number, not in email.</p>
+      <div class="seat-tools">
+        <span class="t">Teams</span><span class="t">Glean</span><span class="t">SharePoint</span><span class="t">Avista</span>
+      </div>
+    </div>
+    <div class="seat" data-seat="ops" onclick="setSeat('ops')">
+      <div class="seat-num">SEAT · 04</div>
+      <div class="seat-role">Ops / IT</div>
+      <div class="seat-brand">Chevy line · Halo yellow</div>
+      <p class="seat-summary">Read the pit-wall like a race engineer. Pause stale state, retry pipelines, signoff release-readiness.</p>
+      <div class="seat-tools">
+        <span class="t">Ops Control</span><span class="t">PBI Health</span><span class="t">Incidents</span><span class="t">Guardrails</span>
+      </div>
+    </div>
+    <div class="seat" data-seat="govops" onclick="setSeat('govops')">
+      <div class="seat-num">SEAT · 05</div>
+      <div class="seat-role">AI GovOps</div>
+      <div class="seat-brand">Race director · Ignition red</div>
+      <p class="seat-summary">Promote agent versions, curate memory, replay any decision. NAMA-certified agents only ship through this seat.</p>
+      <div class="seat-tools">
+        <span class="t">Agent Studio</span><span class="t">HIBT</span><span class="t">Eval board</span><span class="t">Replay</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ The Pit Wall (main workbench) ════════════════════ -->
+<section class="section-frame" id="pit-wall">
+  <span class="eyebrow">Step 02 · The workbench</span>
+  <h2 class="h1 reveal">The Pit Wall.</h2>
+  <p class="lead reveal">Forecast set <span class="mono" style="color:var(--ink)">FS-2026Q3-NA-TRK-001</span> · U.S. Full-Size Trucks · Q3 2026 horizon. Everyone on the wall sees the same number, the same quantile fan, the same scenarios, the same challenges. The only thing that changes is the seat.</p>
+
+  <!-- persona briefing -- swaps with seat -->
+  <div class="persona-briefing" id="persona-briefing">
+    <span class="badge" id="persona-badge">ANALYST · SEAT 02</span>
+    <span class="text" id="persona-text"><strong>You're in the race-engineer seat.</strong> Validate the baseline, build the consensus, stage structured overrides. Decision rights below — you can author and propose, but only owners commit plan-of-record.</span>
+  </div>
+
+  <div class="pit-wall">
+    <!-- LEFT: chart + scenarios + override -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>U.S. Full-Size Trucks · Q3 2026</h3>
+            <div class="sub">Forecast Set FS-2026Q3-NA-TRK-001 · v2026.05A</div>
+          </div>
+          <div class="state-pill challenged"><span class="pip"></span>Challenged · Owner review</div>
+        </div>
+
+        <div class="number-hero">
+          <div class="label">Consensus volume — Q3 2026</div>
+          <div class="big">312,400 <span class="unit">units</span></div>
+          <div class="delta down">Δ -8,100 vs prior commit</div>
+          <div class="number-meta">
+            <div class="nm"><div class="k">P10 / P90</div><div class="v">287.6k / 338.9k</div></div>
+            <div class="nm"><div class="k">Owner</div><div class="v">K. Gilezan</div></div>
+            <div class="nm"><div class="k">Freshness</div><div class="v">42 min</div></div>
+            <div class="nm"><div class="k">Confidence</div><div class="v">Medium · 0.71</div></div>
+          </div>
+        </div>
+
+        <svg id="fan-chart" viewBox="0 0 760 340" preserveAspectRatio="none" role="img" aria-label="Quantile fan forecast chart"></svg>
+        <div class="fan-legend">
+          <span><i class="sw p10"></i>P10–P90 band</span>
+          <span><i class="sw p50"></i>P50 median model</span>
+          <span><i class="sw consensus"></i>Consensus override</span>
+          <span><i class="sw actual"></i>Actuals · YTD</span>
+        </div>
+
+        <h4 style="margin-top:24px;margin-bottom:10px">Scenario compare</h4>
+        <div class="scenario-row">
+          <div class="scenario active" data-scen="base"><div class="name">Base · Plan-of-record</div><div class="val">312,400 units</div><div class="delta">P50 median · 0.71 confidence</div></div>
+          <div class="scenario" data-scen="incentive"><div class="name">+$1,500 incentive</div><div class="val">324,800 units</div><div class="delta">+3.9% · MIA bias</div></div>
+          <div class="scenario" data-scen="downside"><div class="name">Tariff shock</div><div class="val">289,100 units</div><div class="delta">-7.5% · J. Kyle hypothesis</div></div>
+        </div>
+      </div>
+
+      <!-- ═══ analyst action panel ═══ -->
+      <div class="panel action-panel for-analyst" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Submit an override</h3>
+            <div class="sub">Reason coded · evidence required · staging-only write path</div>
+          </div>
+          <div class="state-pill draft"><span class="pip"></span>Draft</div>
+        </div>
+
+        <div class="override">
+          <h4>Structured override · Silverado EV + Sierra HD</h4>
+          <div class="fields">
+            <div class="field">
+              <label>Nameplate slice</label>
+              <select><option>Silverado 1500</option><option>Silverado EV</option><option>Silverado HD</option><option>Sierra 1500</option><option>Sierra HD</option></select>
+            </div>
+            <div class="field">
+              <label>Reason code</label>
+              <select><option>R-12 · Incentive shift</option><option>R-04 · Inventory constraint</option><option>R-09 · Tariff exposure</option><option>R-18 · Competitive launch</option></select>
+            </div>
+            <div class="field">
+              <label>New value (units)</label>
+              <input type="text" value="304,200">
+            </div>
+            <div class="field">
+              <label>Confidence</label>
+              <select><option>High</option><option selected>Medium</option><option>Low</option></select>
+            </div>
+          </div>
+          <div class="field field-row">
+            <label>Note · evidence link</label>
+            <textarea>Pulling Sierra HD down 2.1k based on Avista cross-shop signal from Texas dealers (memo attached). Holding Silverado 1500 flat. Net delta vs baseline: -8.2k. See SharePoint /MIA/Q3-2026/dealer-pulse-week19.pptx</textarea>
+          </div>
+          <div class="override-actions">
+            <button class="btn-sm primary">Stage override</button>
+            <button class="btn-sm warn">Open in Excel</button>
+            <button class="btn-sm">Discuss in Teams</button>
+            <span class="mono" style="margin-left:auto;color:var(--muted);font-size:11px">Lineage preserved · HIBT logged · staging → review queue</span>
+          </div>
+        </div>
+        <div class="rights-row">
+          <span class="right-badge granted">Author override</span>
+          <span class="right-badge granted">Stage scenario</span>
+          <span class="right-badge granted">Comment · challenge response</span>
+          <span class="right-badge denied">Promote plan-of-record</span>
+          <span class="right-badge denied">Certify agent</span>
+        </div>
+      </div>
+
+      <!-- ═══ leadership action panel ═══ -->
+      <div class="panel action-panel for-leadership" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Approval queue</h3>
+            <div class="sub">Promote a scenario to plan-of-record · or send back for review</div>
+          </div>
+          <div class="state-pill final"><span class="pip"></span>Owner: Ramzi A.</div>
+        </div>
+
+        <p style="margin:0 0 10px;font-size:13.5px;color:var(--ink-2)">Three scenarios are pre-S&amp;OP-ready and waiting on your seat. Pick one to ship across every surface. The post-decision exec brief is pre-drafted by the narrative-drafter agent — you edit and sign.</p>
+
+        <div class="approval-row">
+          <div class="approval-card">
+            <div class="label">Scenario A</div>
+            <div class="name">Base · 312.4k</div>
+            <div class="meta">P50 model · 0.71 confidence</div>
+            <div class="meta" style="color:var(--muted);margin-top:2px">2 challenges open</div>
+          </div>
+          <div class="approval-card gold">
+            <div class="label">Scenario B · recommended</div>
+            <div class="name">+$1,500 incentive · 324.8k</div>
+            <div class="meta">+3.9% vs base · MIA bias</div>
+            <div class="meta" style="color:var(--good);margin-top:2px">Krisztina + Jim aligned</div>
+          </div>
+          <div class="approval-card">
+            <div class="label">Scenario C</div>
+            <div class="name">Tariff shock · 289.1k</div>
+            <div class="meta">-7.5% · downside guard</div>
+            <div class="meta" style="color:var(--warn);margin-top:2px">Hold as contingency</div>
+          </div>
+        </div>
+
+        <div class="override-actions" style="margin-top:18px">
+          <button class="btn-sm primary">Promote Scenario B · commit</button>
+          <button class="btn-sm">Send back · request review</button>
+          <button class="btn-sm warn">Open Morning Brief draft</button>
+          <span class="mono" style="margin-left:auto;color:var(--muted);font-size:11px">Commit logs HIBT entry · broadcasts to Outlook + Teams + PBI</span>
+        </div>
+        <div class="rights-row">
+          <span class="right-badge granted">Promote plan-of-record</span>
+          <span class="right-badge granted">Approve scenario</span>
+          <span class="right-badge granted">Sign exec brief</span>
+          <span class="right-badge denied">Author override</span>
+          <span class="right-badge denied">Certify agent</span>
+        </div>
+      </div>
+
+      <!-- ═══ SME action panel ═══ -->
+      <div class="panel action-panel for-sme" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Challenge inbox · MIA</h3>
+            <div class="sub">Adversarial-but-positive · evidence attached · stays on the number</div>
+          </div>
+          <div class="state-pill challenged"><span class="pip"></span>3 active · J. Kyle</div>
+        </div>
+
+        <div class="challenge-list">
+          <div class="chal-item">
+            <div>
+              <div class="h">Silverado HD · Q3 over-forecast?</div>
+              <div class="m">Reason R-18 · Texas dealer pulse · evidence in /MIA/dealer-pulse-week19.pptx · raised 3 min ago</div>
+            </div>
+            <div class="acts">
+              <button class="btn-sm primary">Reply with evidence</button>
+            </div>
+          </div>
+          <div class="chal-item">
+            <div>
+              <div class="h">Sierra 1500 incentive elasticity</div>
+              <div class="m">Reason R-12 · Avista cross-shop signal · awaiting Pricing response · raised 28 min ago</div>
+            </div>
+            <div class="acts">
+              <button class="btn-sm">Add evidence</button>
+            </div>
+          </div>
+          <div class="chal-item">
+            <div>
+              <div class="h">Tariff exposure · Mexico imports</div>
+              <div class="m">Reason R-09 · trade-press signal · routed to Govinda · raised 1h 12m ago</div>
+            </div>
+            <div class="acts">
+              <button class="btn-sm">Track</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="override" style="margin-top:18px">
+          <h4>Raise a new challenge</h4>
+          <div class="fields">
+            <div class="field">
+              <label>Number / slice</label>
+              <select><option>Silverado HD · Q3</option><option>Silverado 1500 · Q3</option><option>Silverado EV · Q3</option><option>Sierra 1500 · Q3</option><option>Sierra HD · Q3</option></select>
+            </div>
+            <div class="field">
+              <label>Reason code</label>
+              <select><option>R-12 · Incentive shift</option><option>R-04 · Inventory constraint</option><option>R-09 · Tariff exposure</option><option>R-18 · Competitive launch</option><option>R-21 · Dealer pulse anomaly</option></select>
+            </div>
+          </div>
+          <div class="field field-row">
+            <label>Evidence · attach SharePoint / Glean link</label>
+            <textarea>Avista shows Texas dealer cross-shop at Sierra HD increasing 8% week-over-week. Suggests our Silverado HD forecast may overstate by ~2-3k units. See attached deck slide 14.</textarea>
+          </div>
+          <div class="override-actions">
+            <button class="btn-sm primary">Raise challenge</button>
+            <button class="btn-sm">Attach evidence</button>
+            <button class="btn-sm">Ask Avista agent</button>
+          </div>
+        </div>
+
+        <div class="rights-row">
+          <span class="right-badge granted">Raise challenge</span>
+          <span class="right-badge granted">Attach evidence</span>
+          <span class="right-badge granted">Comment</span>
+          <span class="right-badge denied">Author override</span>
+          <span class="right-badge denied">Promote plan-of-record</span>
+        </div>
+      </div>
+
+      <!-- ═══ ops action panel ═══ -->
+      <div class="panel action-panel for-ops" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Pipeline health · Ops Control</h3>
+            <div class="sub">Freshness SLAs · stale-state guardrails · release readiness</div>
+          </div>
+          <div class="state-pill challenged"><span class="pip"></span>1 amber</div>
+        </div>
+
+        <p style="margin:0;font-size:13.5px;color:var(--ink-2)">Forecast set <span class="mono" style="color:var(--ink)">FS-2026Q3-NA-TRK-001</span> depends on 6 upstream pipelines. Guardrail-classifier-v1.4 watches every one. You can pause stale state, retry on demand, and sign off release readiness.</p>
+
+        <div class="pipe-grid">
+          <div class="pipe-row">
+            <div>
+              <div class="name">databricks · curated_truck_signals</div>
+              <div class="meta">last refresh 4m ago · SLA 15m</div>
+            </div>
+            <span class="light ok"></span>
+          </div>
+          <div class="pipe-row">
+            <div>
+              <div class="name">model · q3_baseline_run</div>
+              <div class="meta">last refresh 11m ago · SLA 30m</div>
+            </div>
+            <span class="light ok"></span>
+          </div>
+          <div class="pipe-row">
+            <div>
+              <div class="name">avista · cross_shop_index</div>
+              <div class="meta">last refresh 38m ago · SLA 30m · STALE</div>
+            </div>
+            <span class="light warn"></span>
+          </div>
+          <div class="pipe-row">
+            <div>
+              <div class="name">glean · forecast_corpus_index</div>
+              <div class="meta">last refresh 2m ago · SLA 10m</div>
+            </div>
+            <span class="light ok"></span>
+          </div>
+          <div class="pipe-row">
+            <div>
+              <div class="name">pbi · exec_trucks_tile</div>
+              <div class="meta">last publish 42m ago · auto-paused</div>
+            </div>
+            <span class="light warn"></span>
+          </div>
+          <div class="pipe-row">
+            <div>
+              <div class="name">sharepoint · intake_agent</div>
+              <div class="meta">last event 4m ago · 1 file routed</div>
+            </div>
+            <span class="light ok"></span>
+          </div>
+        </div>
+
+        <div class="override-actions" style="margin-top:18px">
+          <button class="btn-sm warn">Retry avista pipeline</button>
+          <button class="btn-sm">Pause PBI publish</button>
+          <button class="btn-sm primary">Sign off release-readiness</button>
+          <span class="mono" style="margin-left:auto;color:var(--muted);font-size:11px">All actions logged to HIBT · auto-notify GovOps on signoff</span>
+        </div>
+        <div class="rights-row">
+          <span class="right-badge granted">Pause / retry pipelines</span>
+          <span class="right-badge granted">Release-readiness signoff</span>
+          <span class="right-badge granted">Escalate incidents</span>
+          <span class="right-badge denied">Author override</span>
+          <span class="right-badge denied">Promote plan-of-record</span>
+        </div>
+      </div>
+
+      <!-- ═══ govops action panel ═══ -->
+      <div class="panel action-panel for-govops" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Agent promotion · NAMA-certified gate</h3>
+            <div class="sub">Eval gates · prompt diffs · canary windows · replay archive</div>
+          </div>
+          <div class="state-pill committed"><span class="pip"></span>3 in queue</div>
+        </div>
+
+        <p style="margin:0;font-size:13.5px;color:var(--ink-2)">Every agent that ships to a NAMA surface goes through this seat. Eval gates green? Prompt diff acceptable? Replay clean? Promote. Otherwise hold, canary, or rollback.</p>
+
+        <div class="version-row">
+          <div>
+            <div class="head">workbench-anomaly · v3.4 → v3.5</div>
+            <div class="meta">12 regression tests · 96.4% pass · canary 24h clean</div>
+            <div class="diff"><span class="plus">+ tighter elasticity CI</span> · <span class="plus">+ Avista source weighting</span> · <span class="minus">- legacy tariff coefficient</span></div>
+          </div>
+          <button class="btn-sm primary">Promote</button>
+        </div>
+        <div class="version-row">
+          <div>
+            <div class="head">narrative-drafter · v2.2 → v2.3</div>
+            <div class="meta">eval slipped 82 → 78 · executive readability regression</div>
+            <div class="diff"><span class="plus">+ new exec template</span> · <span class="minus">- tone shifted formal → corporate</span></div>
+          </div>
+          <button class="btn-sm warn">Hold</button>
+        </div>
+        <div class="version-row">
+          <div>
+            <div class="head">intake-agent · v1.9 → v2.0</div>
+            <div class="meta">canary 5% traffic · 24h window · tag accuracy 94%</div>
+            <div class="diff"><span class="plus">+ competitor-memo classifier</span> · <span class="plus">+ regional auto-routing</span></div>
+          </div>
+          <button class="btn-sm">Inspect canary</button>
+        </div>
+
+        <div class="override-actions" style="margin-top:18px">
+          <button class="btn-sm primary">Open replay-prompt-ledger</button>
+          <button class="btn-sm">Curate memory</button>
+          <button class="btn-sm warn">Rollback workbench-anomaly v3.3</button>
+          <span class="mono" style="margin-left:auto;color:var(--muted);font-size:11px">Every action immutable · feeds Agent Development Lifecycle gates</span>
+        </div>
+        <div class="rights-row">
+          <span class="right-badge granted">Promote / rollback agent</span>
+          <span class="right-badge granted">Curate memory</span>
+          <span class="right-badge granted">Audit replay-ledger</span>
+          <span class="right-badge denied">Author forecast override</span>
+          <span class="right-badge denied">Commit plan-of-record</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: presence + activity -->
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>On the wall</h3>
+            <div class="sub">Live presence · same number · cross-surface</div>
+          </div>
+          <div class="state-pill committed"><span class="pip"></span>14 live</div>
+        </div>
+        <div class="presence-rail">
+          <div class="av" data-color="champagne">RA<span class="ring"></span></div>
+          <div class="av" data-color="cyan">BR<span class="ring"></span></div>
+          <div class="av" data-color="cyan">KG<span class="ring"></span></div>
+          <div class="av" data-color="teal">JK<span class="ring"></span></div>
+          <div class="av" data-color="amber">MA<span class="ring"></span></div>
+          <div class="av busy" data-color="amber">GC<span class="ring"></span></div>
+          <div class="av" data-color="red">DS<span class="ring"></span></div>
+          <div class="av away" data-color="teal">SM<span class="ring"></span></div>
+          <div class="av" data-color="cyan">+6<span class="ring"></span></div>
+          <span class="presence-line"><span class="now">●</span> RAMZI · KRISZTINA · BOB · JIM editing now</span>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Activity</h3>
+            <div class="sub">Last 18 min · all surfaces</div>
+          </div>
+        </div>
+        <div class="activity" id="activity-feed">
+          <div class="act commit" data-personas="analyst leadership govops">
+            <div class="who" data-color="champagne">RA</div>
+            <div class="body">
+              <div><span class="name">Ramzi A.</span> <span class="verb">approved scenario</span> <span class="target">+$1,500 incentive</span></div>
+              <div class="note">"Tracks the May Avista pull. Promote this for the urgent refresh and route the post-decision exec brief by 17:00 ET."</div>
+            </div>
+            <div class="time">just now</div>
+          </div>
+          <div class="act challenge" data-personas="analyst leadership sme">
+            <div class="who" data-color="teal">JK</div>
+            <div class="body">
+              <div><span class="name">Jim K.</span> <span class="verb">challenged</span> <span class="target">Silverado HD · Q3</span></div>
+              <div class="note">"Texas dealer pulse is softer than the model — Sierra HD demand may pull volume from us. Reason R-18, evidence in /MIA/dealer-pulse-week19."</div>
+            </div>
+            <div class="time">3 min</div>
+          </div>
+          <div class="act agent" data-personas="analyst ops govops sme">
+            <div class="who" data-color="cyan">AI</div>
+            <div class="body">
+              <div><span class="name">Workbench agent</span> <span class="verb">flagged anomaly on</span> <span class="target">Incentive elasticity drift</span></div>
+              <div class="note">Drift 0.41 (warn). Model coefficient on April incentive moves outside historical 95% CI. Suggested action: open challenge to Pricing team. Routed to Krisztina.</div>
+            </div>
+            <div class="time">6 min</div>
+          </div>
+          <div class="act" data-personas="analyst leadership sme">
+            <div class="who" data-color="cyan">KG</div>
+            <div class="body">
+              <div><span class="name">Krisztina G.</span> <span class="verb">staged override on</span> <span class="target">Sierra 1500</span></div>
+              <div class="note">"Holding flat at 84.6k pending Jim's incentive memo. Will revisit before Pre-S&amp;OP."</div>
+            </div>
+            <div class="time">9 min</div>
+          </div>
+          <div class="act" data-personas="analyst ops leadership">
+            <div class="who" data-color="amber">MA</div>
+            <div class="body">
+              <div><span class="name">Mansoor A.</span> <span class="verb">released</span> <span class="target">PBI tile refresh</span></div>
+              <div class="note">All exec tiles synced · 14 viewers refreshed in under 3s · surface-consistency SLA green.</div>
+            </div>
+            <div class="time">11 min</div>
+          </div>
+          <div class="act agent" data-personas="analyst sme govops">
+            <div class="who" data-color="cyan">AI</div>
+            <div class="body">
+              <div><span class="name">Glean copilot</span> <span class="verb">answered</span> <span class="target">"What changed and why?"</span></div>
+              <div class="note">Deterministic answer from forecast-set v2026.05A · 4 source documents cited · freshness 42 min. Read by 7 viewers.</div>
+            </div>
+            <div class="time">14 min</div>
+          </div>
+          <div class="act" data-personas="analyst ops govops">
+            <div class="who" data-color="red">DS</div>
+            <div class="body">
+              <div><span class="name">Don S. (GovOps)</span> <span class="verb">promoted agent</span> <span class="target">workbench-anomaly-v3.4</span></div>
+              <div class="note">Eval pass-rate 96.4% · 12-point regression test green · NAMA-certified.</div>
+            </div>
+            <div class="time">18 min</div>
+          </div>
+          <div class="act" data-personas="ops govops">
+            <div class="who" data-color="amber">GC</div>
+            <div class="body">
+              <div><span class="name">Govinda C.</span> <span class="verb">paused</span> <span class="target">PBI exec_trucks_tile</span></div>
+              <div class="note">Auto-paused by guardrail-classifier-v1.4 · upstream avista stale 38m. Retry queued · investigating freshness.</div>
+            </div>
+            <div class="time">22 min</div>
+          </div>
+          <div class="act agent" data-personas="sme analyst ops">
+            <div class="who" data-color="cyan">AI</div>
+            <div class="body">
+              <div><span class="name">Intake agent</span> <span class="verb">tagged + routed</span> <span class="target">dealer-pulse-week19.pptx</span></div>
+              <div class="note">Attached as evidence to Number Object NO-TRK-Q3-001 · routed to Krisztina for review · linked in Jim's open challenge.</div>
+            </div>
+            <div class="time">26 min</div>
+          </div>
+          <div class="act commit" data-personas="leadership analyst govops">
+            <div class="who" data-color="champagne">RA</div>
+            <div class="body">
+              <div><span class="name">Ramzi A.</span> <span class="verb">signed</span> <span class="target">Morning Brief · 06:14 ET</span></div>
+              <div class="note">Exec brief broadcast to NAMA distribution list · 47 recipients · Q3 Trucks revision flagged urgent.</div>
+            </div>
+            <div class="time">38 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ Surface Ring ════════════════════ -->
+<section class="section-frame" id="ring">
+  <span class="eyebrow">Step 03 · Surface ring</span>
+  <h2 class="h1 reveal">Same number. Every surface.</h2>
+  <p class="lead reveal">Eight tiles. Eight tools. One Number Object. Each surface speaks its native idiom — Outlook brief, Teams card, Excel slice — but every one writes back through the Planning Access API and inherits the same trust chips, freshness stamps, and replay links. <em>The tiles reorder based on your seat — your primary surfaces come first; the rest stay one click away.</em></p>
+
+  <div class="ring">
+    <div class="tile outlook">
+      <div class="tile-head"><div class="tile-icon">⌘O</div><span class="tile-name">Outlook</span></div>
+      <div class="tile-body">
+        <strong>Q3 Trucks · -8.1k consensus shift.</strong> Pre-read summary with delta, P10/P90 band, owner, and one-paragraph why. Tap to open Number Room.
+        <br><br><span class="mono" style="font-size:11px;color:var(--muted)">FROM: NAMA Pit Wall &lt;ops@nama&gt; · 06:14 ET</span>
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>synced 2.4s ago</span>
+        <span class="mini-btn primary">Open Number Room</span>
+      </div>
+    </div>
+
+    <div class="tile teams">
+      <div class="tile-head"><div class="tile-icon">⌘T</div><span class="tile-name">Teams / Slack</span></div>
+      <div class="tile-body">
+        <strong>Adaptive challenge card</strong> · "Urgent: Silverado HD — 2 inputs changed, confidence dropped High → Medium." Buttons: <em>Open Workbench · Challenge · Approve.</em>
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>synced</span>
+        <span class="mini-btn">Challenge</span><span class="mini-btn primary">Approve</span>
+      </div>
+    </div>
+
+    <div class="tile excel">
+      <div class="tile-head"><div class="tile-icon">∑</div><span class="tile-name">Excel add-in</span></div>
+      <div class="tile-body">
+        <strong>Workbook NAMA-Q3-Trucks.xlsx</strong> opens the same slice. Baseline · Consensus · Actuals columns prefilled. Override cells write to staging only. No shadow tabs.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>synced</span>
+        <span class="mini-btn">Pull slice</span>
+      </div>
+    </div>
+
+    <div class="tile sharepoint">
+      <div class="tile-head"><div class="tile-icon">⌘S</div><span class="tile-name">SharePoint</span></div>
+      <div class="tile-body">
+        <strong>/MIA/Q3-2026/dealer-pulse-week19.pptx</strong> just dropped. Intake agent tagged it, attached to Number Object NO-TRK-Q3-001, routed to Krisztina as evidence.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>tagged · 4 min</span>
+        <span class="mini-btn">Open evidence</span>
+      </div>
+    </div>
+
+    <div class="tile pbi">
+      <div class="tile-head"><div class="tile-icon">⏶</div><span class="tile-name">Power BI</span></div>
+      <div class="tile-body">
+        <strong>Executive dashboard</strong> shows urgent-revision badge on Trucks tile. Current 312.4k · prior 320.5k · freshness 42 min. Click drills to Forecast Workbench.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>tile fresh</span>
+        <span class="mini-btn primary">Drill in</span>
+      </div>
+    </div>
+
+    <div class="tile glean">
+      <div class="tile-head"><div class="tile-icon">G</div><span class="tile-name">Glean</span></div>
+      <div class="tile-body">
+        Ask: <em>"What changed on Q3 Trucks and why?"</em> Routed to forecast copilot · deterministic answer · cites 4 sources · freshness chip · replay link.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>routed</span>
+        <span class="mini-btn">Try a question</span>
+      </div>
+    </div>
+
+    <div class="tile workbench">
+      <div class="tile-head"><div class="tile-icon">◐</div><span class="tile-name">Forecast Workbench</span></div>
+      <div class="tile-body">
+        Primary analyst cockpit. Compare mode, anomaly queue, scenario lab, override forms. Live cursors. Everyone on this wall is in here right now.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>14 live</span>
+        <span class="mini-btn primary">Enter</span>
+      </div>
+    </div>
+
+    <div class="tile agent">
+      <div class="tile-head"><div class="tile-icon">⌬</div><span class="tile-name">PA Agent</span></div>
+      <div class="tile-body">
+        Personal-assistant agent prepped your morning: 3 file comparisons, 1 cleaning suggestion, 2 validation flags. Staging-only writes. You ship the judgment.
+      </div>
+      <div class="tile-foot">
+        <span class="tile-sync"><span class="pip"></span>ready</span>
+        <span class="mini-btn">View prep</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ 15-minute race ════════════════════ -->
+<section class="section-frame" id="race">
+  <span class="eyebrow">Step 04 · Lights out</span>
+  <h2 class="h1 reveal">The 15-minute race.</h2>
+  <p class="lead reveal">High-urgency forecast events run on a fifteen-minute clock. Signal arrives, agents do the first pass, humans inject judgment, owner commits, the new number ships to every surface. Race-engineered, lineage preserved, replay archived. <em>Click <strong>Run race</strong> and watch the seat hand the baton — Ops → Analyst → SME → Leadership → GovOps — with the Pit Wall above reframing in real time at each stage.</em></p>
+
+  <div class="race-card">
+    <div class="race-head">
+      <div>
+        <h3>Urgent forecast · Q3 Trucks revision</h3>
+        <div class="sub">Trigger: Texas dealer pulse delta · started 14:02:11 ET</div>
+      </div>
+      <div class="race-clock">
+        <div class="lights">
+          <div class="light on"></div><div class="light on"></div><div class="light on"></div><div class="light"></div><div class="light"></div>
+        </div>
+        <div class="clock" id="raceClock">06:47</div>
+      </div>
+      <div class="baton" id="baton">
+        <span class="baton-label">Baton</span>
+        <span class="baton-seat" id="baton-seat">SME · Markets</span>
+      </div>
+      <div class="race-controls">
+        <button class="btn-sm primary" onclick="runRace()">Run race</button>
+        <button class="btn-sm" onclick="resetRace()">Reset</button>
+      </div>
+    </div>
+
+    <div class="race-stops">
+      <div class="stop done" data-stop="0">
+        <div class="ribbon">Trigger</div>
+        <div class="stage">Pit stop 1</div>
+        <div class="min">Minute 0–2</div>
+        <div class="h">Signal arrives</div>
+        <p>Anomaly or market event triggers an urgent refresh. The wall lights up — Teams, Outlook, PBI badge.</p>
+        <ul>
+          <li>Teams / Slack alert</li>
+          <li>Ops event from stale source</li>
+          <li>Exec request from Outlook</li>
+        </ul>
+        <span class="owner">Baton · Ops / IT</span>
+      </div>
+      <div class="stop done" data-stop="1">
+        <div class="ribbon">Agent</div>
+        <div class="stage">Pit stop 2</div>
+        <div class="min">Minute 2–5</div>
+        <div class="h">Agent first pass</div>
+        <p>Retrieve freshest sources, validate trust state, assemble draft explanation. No human keystrokes yet.</p>
+        <ul>
+          <li>Databricks refresh check</li>
+          <li>Glean source retrieval</li>
+          <li>Anomaly + freshness summary</li>
+        </ul>
+        <span class="owner">Baton · Analyst</span>
+      </div>
+      <div class="stop active" data-stop="2">
+        <div class="ribbon">Human review</div>
+        <div class="stage">Pit stop 3</div>
+        <div class="min">Minute 5–9</div>
+        <div class="h">Analyst + SME review</div>
+        <p>Analyst inspects compare mode; SME can challenge or confirm via chat card. Discussion stays on the Number Object.</p>
+        <ul>
+          <li>Forecast Workbench</li>
+          <li>Excel quick compare</li>
+          <li>Teams challenge card</li>
+        </ul>
+        <span class="owner">Baton · SME · Markets</span>
+      </div>
+      <div class="stop" data-stop="3">
+        <div class="ribbon">Decision</div>
+        <div class="stage">Pit stop 4</div>
+        <div class="min">Minute 9–12</div>
+        <div class="h">Owner commits</div>
+        <p>Owner approves updated number and selects communication mode. State machine writes the commit.</p>
+        <ul>
+          <li>Outlook summary</li>
+          <li>Teams approval</li>
+          <li>Number Room state change</li>
+        </ul>
+        <span class="owner">Baton · Leadership</span>
+      </div>
+      <div class="stop" data-stop="4">
+        <div class="ribbon">Published</div>
+        <div class="stage">Pit stop 5</div>
+        <div class="min">Minute 12–15</div>
+        <div class="h">Release + replay</div>
+        <p>Updated number ships to every surface with trust chips. HIBT entry written. Replay link available to anyone.</p>
+        <ul>
+          <li>PBI tile refresh</li>
+          <li>Executive brief sent</li>
+          <li>HIBT replay logged</li>
+        </ul>
+        <span class="owner">Baton · AI GovOps</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ Monthly S&OP swimlane ════════════════════ -->
+<section class="section-frame" id="monthly">
+  <span class="eyebrow">Step 05 · The long lap</span>
+  <h2 class="h1 reveal">Monthly S&amp;OP cycle.</h2>
+  <p class="lead reveal">Six stages. Six lanes. Three state gates. Agents handle the mechanical prep — refresh, anomaly packs, narrative drafts. People handle the things that matter — conflict, dissent, scenario choice, commitment.</p>
+
+  <div class="swim">
+    <table>
+      <thead>
+        <tr>
+          <th class="lane">Lane</th>
+          <th>Model run</th>
+          <th>Analyst review</th>
+          <th>SME challenge</th>
+          <th>Pre-S&amp;OP</th>
+          <th>Exec S&amp;OP</th>
+          <th>Post-cycle review</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="lane">Data &amp; model</td>
+          <td><span class="gtag g1">Gate 1</span>Ingest internal + external signals, run models, emit quantiles + baseline forecast set.</td>
+          <td>Refresh compare views and anomaly packs.</td>
+          <td>Attach challenge evidence, re-score confidence.</td>
+          <td><span class="gtag g2">Gate 2</span>Freeze review-package candidate.</td>
+          <td><span class="gtag g3">Gate 3</span>Promote selected scenario to plan-of-record.</td>
+          <td><span class="gtag g4">Closed lap</span>Compare actuals to forecast and overrides.</td>
+        </tr>
+        <tr>
+          <td class="lane">Analysts</td>
+          <td>Receive task queue.</td>
+          <td>Use Workbench + Excel to validate and override.</td>
+          <td>Respond to SME challenges.</td>
+          <td>Prepare consensus recommendation.</td>
+          <td>Support live decisions.</td>
+          <td>Review override value-add and feature gaps.</td>
+        </tr>
+        <tr>
+          <td class="lane">SMEs</td>
+          <td>Heads-up in Teams.</td>
+          <td>Optional early comments.</td>
+          <td>Use Teams / Glean / SharePoint to challenge or enrich.</td>
+          <td>Review conflict summary.</td>
+          <td>Attend specific decision items only.</td>
+          <td>Flag missed signals for next cycle.</td>
+        </tr>
+        <tr>
+          <td class="lane">Leadership</td>
+          <td>No action.</td>
+          <td>Monitor status via Morning Brief.</td>
+          <td>See top disputes forming.</td>
+          <td>Receive pre-read in Outlook + PBI.</td>
+          <td>Approve plan-of-record + scenario choices.</td>
+          <td>Review accuracy + process health.</td>
+        </tr>
+        <tr>
+          <td class="lane">Ops / IT</td>
+          <td>Monitor freshness + dependencies.</td>
+          <td>Resolve pipeline issues fast.</td>
+          <td>Protect against stale-state publishing.</td>
+          <td>Confirm release readiness.</td>
+          <td>Support live refreshes if needed.</td>
+          <td>Log incidents and improve SLAs.</td>
+        </tr>
+        <tr>
+          <td class="lane">GovOps</td>
+          <td>Observe agent health.</td>
+          <td>Track prompt + tool lineage.</td>
+          <td>Monitor override + challenge patterns.</td>
+          <td>Ensure evals + guardrails intact.</td>
+          <td>Log final decisions + artifact lineage.</td>
+          <td>Promote lessons into prompts / memory / tests.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════════ Agent Studio + HIBT ════════════════════ -->
+<section class="section-frame" id="studio">
+  <span class="eyebrow">Step 06 · Race director</span>
+  <h2 class="h1 reveal">Agent Studio + HIBT.</h2>
+  <p class="lead reveal">Every prompt, tool call, override, approval, and replay leaves a trace. The GovOps seat sees the whole grid — version diffs, eval scores, override outcomes, certified-agent badges. Nothing gets to production without passing the gate.</p>
+
+  <div class="studio">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h3>Replay-Prompt-Ledger</h3>
+          <div class="sub">Last 6 hours · all agents · all seats</div>
+        </div>
+        <span class="state-pill final"><span class="pip"></span>NAMA-certified</span>
+      </div>
+      <div class="ledger">
+        <table>
+          <thead>
+            <tr><th>Agent · version</th><th>Action</th><th>Surface</th><th>Eval</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>workbench-anomaly</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v3.4 · 06:42 ET</span></td>
+              <td class="mono">Flag · incentive-elasticity drift</td>
+              <td class="mono">Workbench</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill" style="width:96%"></div></div><span class="pct">96%</span></div></td>
+              <td><span class="state-pill committed"><span class="pip"></span>routed</span></td>
+            </tr>
+            <tr>
+              <td><strong>glean-copilot</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v2.7 · 06:39 ET</span></td>
+              <td class="mono">Deterministic Q&amp;A · "what changed?"</td>
+              <td class="mono">Glean</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill" style="width:99%"></div></div><span class="pct">99%</span></div></td>
+              <td><span class="state-pill committed"><span class="pip"></span>answered</span></td>
+            </tr>
+            <tr>
+              <td><strong>intake-agent</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v1.9 · 06:33 ET</span></td>
+              <td class="mono">Tag SharePoint · attach evidence</td>
+              <td class="mono">SharePoint</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill" style="width:94%"></div></div><span class="pct">94%</span></div></td>
+              <td><span class="state-pill challenged"><span class="pip"></span>routed</span></td>
+            </tr>
+            <tr>
+              <td><strong>pa-agent · BR</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v4.1 · 06:01 ET</span></td>
+              <td class="mono">Prep · file compare + cleaning</td>
+              <td class="mono">PA Agent</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill" style="width:91%"></div></div><span class="pct">91%</span></div></td>
+              <td><span class="state-pill final"><span class="pip"></span>handed off</span></td>
+            </tr>
+            <tr>
+              <td><strong>narrative-drafter</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v2.2 · 05:55 ET</span></td>
+              <td class="mono">Draft exec brief · Q3 Trucks</td>
+              <td class="mono">Outlook</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill warn" style="width:82%"></div></div><span class="pct">82%</span></div></td>
+              <td><span class="state-pill challenged"><span class="pip"></span>edited by RA</span></td>
+            </tr>
+            <tr>
+              <td><strong>guardrail-classifier</strong><br><span class="mono" style="color:var(--muted);font-size:11px">v1.4 · 05:48 ET</span></td>
+              <td class="mono">Classify · stale-state pause</td>
+              <td class="mono">Ops Control</td>
+              <td><div class="score-row"><div class="score-bar"><div class="fill" style="width:97%"></div></div><span class="pct">97%</span></div></td>
+              <td><span class="state-pill committed"><span class="pip"></span>auto-paused</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Promotion queue</h3>
+            <div class="sub">Agent Development Lifecycle · gated rollouts</div>
+          </div>
+        </div>
+        <div class="eval-row">
+          <div>
+            <div class="n">workbench-anomaly v3.5</div>
+            <div class="meta">12 regression tests · 96.4% pass</div>
+          </div>
+          <button class="btn-sm primary">Promote</button>
+        </div>
+        <div class="eval-row">
+          <div>
+            <div class="n">narrative-drafter v2.3</div>
+            <div class="meta">eval slipped 82 → 78 · hold</div>
+          </div>
+          <button class="btn-sm warn">Hold</button>
+        </div>
+        <div class="eval-row">
+          <div>
+            <div class="n">intake-agent v2.0</div>
+            <div class="meta">canary · 5% traffic · 24h</div>
+          </div>
+          <button class="btn-sm">Inspect</button>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-head">
+          <div>
+            <h3>Decision rights</h3>
+            <div class="sub">Role-aware · enforced at the API</div>
+          </div>
+        </div>
+        <ul style="margin:0;padding:0;list-style:none;display:grid;gap:10px">
+          <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)"><strong style="color:var(--ink);font-family:var(--serif)">Analysts</strong><br><span style="font-size:12.5px;color:var(--ink-2)">Create overrides, scenarios, narratives. Cannot finalize plan-of-record alone.</span></li>
+          <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)"><strong style="color:var(--ink);font-family:var(--serif)">SMEs</strong><br><span style="font-size:12.5px;color:var(--ink-2)">Challenge with evidence. Influence consensus. Cannot silently overwrite baseline.</span></li>
+          <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)"><strong style="color:var(--ink);font-family:var(--serif)">Owners</strong><br><span style="font-size:12.5px;color:var(--ink-2)">Promote scenario or forecast set to committed plan-of-record.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ Pole position (industry inspirations) ════════════════════ -->
+<section class="section-frame" id="pole">
+  <span class="eyebrow">Step 07 · What the best are doing</span>
+  <h2 class="h1 reveal">Pole position.</h2>
+  <p class="lead reveal">Eight ideas borrowed from the best planners and racers in the world — automotive, aerospace, agriculture, logistics, lithography, and the F1 pit wall. Each one is wired into the Pit Wall as a delighter.</p>
+
+  <div class="poles">
+    <div class="pole" data-num="01">
+      <div class="from">Toyota · TPS</div>
+      <h4>Andon stop-the-line for forecasts</h4>
+      <p>When a forecast number drifts past tolerance, the lane stops. Stale data does not get published; the wall lights amber until a human accepts or fixes it.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Stale-state pause is a first-class state, not a fallback.</div>
+    </div>
+    <div class="pole" data-num="02">
+      <div class="from">Mercedes-AMG F1 · Strategy</div>
+      <h4>Pit wall as a co-working seat</h4>
+      <p>Strategists, engineers, and the race director sit at one curved wall watching the same telemetry. Any one of them can call a stop. The driver still drives.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Curved-monitor co-working metaphor for the Forecast Workbench.</div>
+    </div>
+    <div class="pole" data-num="03">
+      <div class="from">Tesla · Production-to-demand</div>
+      <h4>Closed feedback loop</h4>
+      <p>Build rate and demand signal share a single source of truth. Forecast adjustments propagate to plant constraints in hours, not weeks.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Constraint Link object connects forecast deltas to supplier + plant impact in real time.</div>
+    </div>
+    <div class="pole" data-num="04">
+      <div class="from">Boeing PDM · Aerospace</div>
+      <h4>Gate reviews with full lineage</h4>
+      <p>Nothing promotes through a gate without traceable evidence and a named approver. Replay is required for audit, not optional.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Three monthly state gates · Gate 3 (plan-of-record) cannot bypass HIBT.</div>
+    </div>
+    <div class="pole" data-num="05">
+      <div class="from">ASML · Lithography ops</div>
+      <h4>Digital twin for capacity</h4>
+      <p>The forecast is paired with a live capacity twin. Scenario compare shows volume and producibility together.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Scenarios show units AND constraint risk side-by-side, not just volume.</div>
+    </div>
+    <div class="pole" data-num="06">
+      <div class="from">John Deere · Ops Center</div>
+      <h4>Decisions in your tractor cab</h4>
+      <p>Operators get tailored decision support in the seat they already occupy — the cab. We get tailored decision support in Outlook, Teams, or Excel.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Persona-fit surfaces are the cab — meet people where they already work.</div>
+    </div>
+    <div class="pole" data-num="07">
+      <div class="from">Maersk · Port operations</div>
+      <h4>Live constraint-based replanning</h4>
+      <p>When a port slot closes, the system replans within minutes. The plan-of-record evolves continuously, not on a calendar.</p>
+      <div class="borrow"><strong>Borrowed:</strong> 15-minute race flow for urgent revisions runs alongside the monthly cycle.</div>
+    </div>
+    <div class="pole" data-num="08">
+      <div class="from">Ferrari / McLaren · Race engineer</div>
+      <h4>The voice in the headset</h4>
+      <p>The race engineer is one trusted voice, not a chorus. They translate telemetry into calls. The agent is your race engineer.</p>
+      <div class="borrow"><strong>Borrowed:</strong> Single Personal-Assistant Agent per seat · all surfaces speak through it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ Podium (delighters) ════════════════════ -->
+<section class="section-frame" id="podium">
+  <span class="eyebrow">Step 08 · The delighters</span>
+  <h2 class="h1 reveal">Podium finishes.</h2>
+  <p class="lead reveal">Three modes the Pit Wall ships with on day one — plus three we hold back for v2.1. The goal is simple: make co-working in NAMA feel like the best Sunday afternoon you'll have all week.</p>
+
+  <div class="podium">
+    <div class="podium-step gold" data-pos="P1">
+      <div class="name">Pole · gold</div>
+      <h4>Race Mode</h4>
+      <p>The 15-minute clock takes over the screen. Telemetry strip becomes a lap timer. Everyone on the wall sees the same countdown. When the chequered flag drops, the new number ships to all surfaces.</p>
+      <ul>
+        <li>Lights-out countdown to start</li>
+        <li>Shared real-time clock across all seats</li>
+        <li>Chequered-flag commit moment</li>
+      </ul>
+    </div>
+    <div class="podium-step silver" data-pos="P2">
+      <div class="name">P2 · silver</div>
+      <h4>Garage Mode</h4>
+      <p>Deep analyst workspace. Lights dim, telemetry compresses, the quantile fan takes the screen. Cmd-K opens the agent. No notifications unless the wall calls you back.</p>
+      <ul>
+        <li>Compare-mode hotkeys</li>
+        <li>Notification quiet mode</li>
+        <li>Auto-save staging snapshots every 30s</li>
+      </ul>
+    </div>
+    <div class="podium-step bronze" data-pos="P3">
+      <div class="name">P3 · bronze</div>
+      <h4>Podium Replay</h4>
+      <p>After every decision, the system replays the lap. Every prompt, every challenge, every override — scrubbable, shareable. Great for onboarding, post-mortems, and audit.</p>
+      <ul>
+        <li>Scrubbable timeline of any forecast commit</li>
+        <li>One-click share to onboarding</li>
+        <li>Auto-archived in HIBT</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="podium" style="margin-top:18px">
+    <div class="podium-step" data-pos="v2.1">
+      <div class="name">Coming in v2.1</div>
+      <h4>Second-Opinion Agent</h4>
+      <p>One click and a second NAMA-certified agent re-runs the analysis with a deliberately different prompt and source mix. If they disagree, the wall lights amber and routes to a SME — adversarial collaboration as a service.</p>
+    </div>
+    <div class="podium-step" data-pos="v2.1">
+      <div class="name">Coming in v2.1</div>
+      <h4>Ghost Lap</h4>
+      <p>Overlay last cycle's forecast on this cycle's chart. See exactly where you got better, where you drifted, and where the same SME challenge keeps coming back unresolved.</p>
+    </div>
+    <div class="podium-step" data-pos="v2.1">
+      <div class="name">Coming in v2.1</div>
+      <h4>Championship Table</h4>
+      <p>Lighthearted leaderboard for override value-add, challenge-to-commit conversion, agent eval lift. Not a performance review — a way to celebrate the engineers who consistently improve the plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ Pit Crew (RACI) ════════════════════ -->
+<section class="section-frame" id="crew">
+  <span class="eyebrow">Step 09 · The pit crew</span>
+  <h2 class="h1 reveal">Who's on the wall.</h2>
+  <p class="lead reveal">Anchors for the operating model. Sponsorship, architecture, forecasting, market intelligence, data and ops — every seat has a named owner. Decision rights map back to these people.</p>
+
+  <div class="crew">
+    <div class="crew-card">
+      <div class="role">Business sponsor</div>
+      <div class="person">Ramzi Abdelmoula</div>
+      <div class="desc">Commits plan-of-record · approves scenario promotion · owner of the executive seat.</div>
+    </div>
+    <div class="crew-card">
+      <div class="role">Project architect</div>
+      <div class="person">Bob Rapp</div>
+      <div class="desc">Operating model, Pit Wall architecture, persona surface design, HIBT discipline.</div>
+    </div>
+    <div class="crew-card">
+      <div class="role">Forecasting lead</div>
+      <div class="person">Krisztina Gilezan</div>
+      <div class="desc">Owner of the Q3 Trucks forecast set · daily Workbench user · drives the consensus cycle.</div>
+    </div>
+    <div class="crew-card">
+      <div class="role">Market signals · MIA</div>
+      <div class="person">Jim Kyle &amp; team</div>
+      <div class="desc">Brings the SME challenge. Avista, competitor pulse, regional dealer signal. Adversarial-but-positive.</div>
+    </div>
+    <div class="crew-card">
+      <div class="role">Data &amp; ops</div>
+      <div class="person">Mansoor Alghooneh · Govinda Chaluvadi</div>
+      <div class="desc">Owners of the Planning Fabric, pipelines, freshness SLAs, and stale-state guardrails.</div>
+    </div>
+    <div class="crew-card">
+      <div class="role">AI GovOps</div>
+      <div class="person">Bob Rapp (interim) &amp; Don S.</div>
+      <div class="desc">Agent Development Lifecycle, NAMA-certified agent gate, replay-ledger discipline.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ HIBT version log + self-tests ════════════════════ -->
+<section class="section-frame" id="hibt">
+  <span class="eyebrow">Provenance · HIBT</span>
+  <h2 class="h1 reveal">How I built this.</h2>
+  <p class="lead reveal">Replay-Prompt-Ledger for this build. Every NAMA artifact carries one. Another architect should be able to pick this up and continue without losing context.</p>
+
+  <div class="hibt-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <div><h3>Version history</h3><div class="sub">This artifact</div></div>
+      </div>
+      <div class="ledger">
+        <table>
+          <thead>
+            <tr><th>Version</th><th>Timestamp · UTC</th><th>Prompt summary</th><th>Outcome</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v1.0</strong></td>
+              <td class="mono">2026-05-12 09:00 PDT</td>
+              <td>Refine persona/role screens for choose-your-own-adventure forecasting across Slack/Outlook/Excel/SharePoint/PBI/Glean/PA agent.</td>
+              <td>NAMA Agentic Ensemble Engine v2 concept doc.</td>
+            </tr>
+            <tr>
+              <td><strong>v1.1</strong></td>
+              <td class="mono">2026-05-12 09:22 PDT</td>
+              <td>Append stakeholder deck context; ground architecture in March 2026 deck.</td>
+              <td>Source deck attached as evidence.</td>
+            </tr>
+            <tr>
+              <td><strong>v2.0</strong></td>
+              <td class="mono">2026-05-12 13:42 UTC</td>
+              <td>Build end-to-end NAMA Pit Wall application — GM consumer-brand + F1 aesthetic, real-time co-working, every persona surface live.</td>
+              <td>This HTML application. Single-file. CDN-only. Self-tested.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div><h3>Build inputs</h3><div class="sub">Sources, models, tools used</div></div>
+      </div>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;gap:10px">
+        <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);font-size:13px;color:var(--ink-2)"><strong style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase">Source doc</strong><br>nama_agentic_ensemble_v2.html (47.3 KB)</li>
+        <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);font-size:13px;color:var(--ink-2)"><strong style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase">Imagery</strong><br>13 sourced photos (Silverado EV, Escalade IQ, Celestiq, Wildcat EV, Corvette Z06, F1 pit wall + telemetry, GM Renaissance Center) · 3 generated cinematic frames (Gemini Pro Image)</li>
+        <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);font-size:13px;color:var(--ink-2)"><strong style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase">Libs · CDN-only</strong><br>D3 v7 (quantile fan), Google Fonts (Fraunces, Inter, JetBrains Mono). No build step.</li>
+        <li style="padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);font-size:13px;color:var(--ink-2)"><strong style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase">Industry inspirations</strong><br>Toyota TPS, Mercedes-AMG F1 strategy, Tesla production-to-demand, Boeing PDM, ASML lithography ops, John Deere Ops Center, Maersk port ops, Ferrari/McLaren race-engineer pattern</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel tests-card">
+    <div class="panel-head">
+      <div><h3>Built-in self-tests</h3><div class="sub">Per Bob's standing standard · run on load · persisted to localStorage</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm primary" onclick="runTests()">Run tests</button>
+        <button class="btn-sm" onclick="clearTestLog()">Clear log</button>
+      </div>
+    </div>
+    <div class="test-log" id="test-log"></div>
+  </div>
+</section>
+
+<!-- ════════════════════ footer ════════════════════ -->
+<footer class="footer">
+  <div class="shell">
+    <div class="row">
+      <div class="col" style="max-width:380px">
+        <h4>NAMA Pit Wall · v2.0</h4>
+        <p>One planning brain. Many surfaces. Human judgment preserved. Designed to operationalize the NAMA Agentic Ensemble Engine v2 doc set.</p>
+      </div>
+      <div class="col">
+        <h4>Companion artifacts</h4>
+        <a href="#telemetry">Race-control telemetry</a>
+        <a href="#seats">Persona seat selector</a>
+        <a href="#pit-wall">The Pit Wall workbench</a>
+        <a href="#ring">Surface ring</a>
+        <a href="#race">15-minute race flow</a>
+        <a href="#monthly">Monthly S&amp;OP swimlane</a>
+      </div>
+      <div class="col">
+        <h4>Governance</h4>
+        <a href="#studio">Agent Studio · HIBT</a>
+        <a href="#pole">Pole position · inspirations</a>
+        <a href="#podium">Podium · delighters</a>
+        <a href="#hibt">Replay-Prompt-Ledger</a>
+      </div>
+      <div class="col">
+        <h4>Build chip</h4>
+        <p class="mono">v2.4 · 2026-05-12 · single-file HTML · CDN-only · offline-shareable</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════ pit-to-driver hand-off radio ════════════════════ -->
+<div class="handoff-toast" id="handoff-toast" role="status" aria-live="polite">
+  <button class="handoff-close" onclick="dismissHandoff()" aria-label="dismiss">×</button>
+  <div class="handoff-head"><span class="pulse"></span>NAMA Pit Wall · Hand-off Radio</div>
+  <div class="handoff-route" id="handoff-route"></div>
+  <div class="handoff-msg" id="handoff-msg"></div>
+</div>
+
+<!-- ════════════════════ scripts ════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script>
+// ───────────── persona-specific telemetry strip ─────────────
+const TELEMETRY = {
+  leadership: [
+    { lbl:'Plan-of-record',          val:'COMMITTED · v2026.05A', cls:'good',  led:'' },
+    { lbl:'Approvals waiting',       val:'3 scenarios',           cls:'amber', led:'amber' },
+    { lbl:'Top dispute',             val:'Silverado HD · -2.8k',  cls:'warn',  led:'amber' },
+    { lbl:'Δ vs prior commit',       val:'-8.1k units',           cls:'warn',  led:'amber' },
+    { lbl:'Exec briefs queued',      val:'2 awaiting signoff',    cls:'cyan',  led:'' },
+    { lbl:'Scenario alignment',      val:'2 of 3 aligned',        cls:'good',  led:'' },
+    { lbl:'Surface SLA',             val:'2.4 s · single-value',  cls:'good',  led:'' },
+    { lbl:'Override value-add YTD',  val:'+1.9 pts',              cls:'cyan',  led:'' },
+    { lbl:'People on the wall',      val:'14 live',               cls:'cyan',  led:'' },
+  ],
+  analyst: [
+    { lbl:'Plan-of-record',           val:'COMMITTED · v2026.05A', cls:'good',  led:'' },
+    { lbl:'My open overrides',        val:'3 staged',              cls:'cyan',  led:'' },
+    { lbl:'Anomaly queue',            val:'5 routed to me',        cls:'amber', led:'amber' },
+    { lbl:'Forecast accuracy (MAPE)', val:'8.2%',                  cls:'good',  led:'' },
+    { lbl:'Override value-add',       val:'+1.9 pts',              cls:'cyan',  led:'' },
+    { lbl:'Compare mode active',      val:'14 numbers',            cls:'cyan',  led:'' },
+    { lbl:'Drift score',              val:'0.41 · watch',          cls:'warn',  led:'amber' },
+    { lbl:'Challenge resolution',     val:'11 min p50',            cls:'good',  led:'' },
+    { lbl:'People on the wall',       val:'14 live',               cls:'cyan',  led:'' },
+  ],
+  sme: [
+    { lbl:'Plan-of-record',         val:'COMMITTED · v2026.05A', cls:'good',  led:'' },
+    { lbl:'My open challenges',     val:'3 active',              cls:'amber', led:'amber' },
+    { lbl:'Evidence routed today',  val:'7 items',               cls:'cyan',  led:'' },
+    { lbl:'Avista freshness',       val:'38 min · STALE',        cls:'warn',  led:'amber' },
+    { lbl:'Challenges resolved · wk', val:'12 closed',           cls:'good',  led:'' },
+    { lbl:'Pricing escalations',    val:'1 pending',             cls:'amber', led:'amber' },
+    { lbl:'Dealer pulse alerts',    val:'4 amber regions',       cls:'warn',  led:'amber' },
+    { lbl:'Top dispute',            val:'Silverado HD',          cls:'cyan',  led:'' },
+    { lbl:'People on the wall',     val:'14 live',               cls:'cyan',  led:'' },
+  ],
+  ops: [
+    { lbl:'Plan-of-record',       val:'COMMITTED · v2026.05A', cls:'good',  led:'' },
+    { lbl:'Pipeline freshness',   val:'5 of 6 green',          cls:'amber', led:'amber' },
+    { lbl:'Stale pipelines',      val:'1 amber · avista',      cls:'warn',  led:'amber' },
+    { lbl:'Incidents open',       val:'0',                     cls:'good',  led:'' },
+    { lbl:'Release SLA',          val:'2.4 s · on target',     cls:'good',  led:'' },
+    { lbl:'Auto-pauses · 24h',    val:'2 stale-state',         cls:'amber', led:'amber' },
+    { lbl:'Guardrail eval',       val:'97% pass',              cls:'good',  led:'' },
+    { lbl:'Storage growth',       val:'2.1 TB / mo',           cls:'cyan',  led:'' },
+    { lbl:'People on the wall',   val:'14 live',               cls:'cyan',  led:'' },
+  ],
+  govops: [
+    { lbl:'Plan-of-record',        val:'COMMITTED · v2026.05A', cls:'good',  led:'' },
+    { lbl:'Agents in queue',       val:'3 versions',            cls:'cyan',  led:'' },
+    { lbl:'Eval lift · this cycle',val:'+4.2 pts',              cls:'good',  led:'' },
+    { lbl:'Canary windows',        val:'1 active · 24h',        cls:'amber', led:'amber' },
+    { lbl:'Rollbacks · week',      val:'0',                     cls:'good',  led:'' },
+    { lbl:'NAMA-certified agents', val:'27 / 31',               cls:'cyan',  led:'' },
+    { lbl:'Drift score',           val:'0.41 · watch',          cls:'warn',  led:'amber' },
+    { lbl:'HIBT events · 24h',     val:'184 logged',            cls:'cyan',  led:'' },
+    { lbl:'People on the wall',    val:'14 live',               cls:'cyan',  led:'' },
+  ]
+};
+
+function renderTelemetry(seat){
+  const row = document.getElementById('telemetry-row');
+  if(!row) return;
+  const cells = TELEMETRY[seat] || TELEMETRY.analyst;
+  row.innerHTML = cells.map(c => `
+    <div class="tel-cell">
+      <span class="tel-led${c.led?' '+c.led:''}"></span>
+      <span>
+        <span class="lbl">${c.lbl}</span><br>
+        <span class="val${c.cls?' '+c.cls:''}">${c.val}</span>
+      </span>
+    </div>
+  `).join('');
+}
+
+// ───────────── seat configuration ─────────────
+const SEAT_CONFIG = {
+  leadership: {
+    accent:'#c8b273', accent2:'#0e1014',
+    badge:'LEADERSHIP · SEAT 01',
+    briefing:'<strong>You\'re in the race-director seat.</strong> Approve the scenario, commit plan-of-record, broadcast the exec brief. You don\'t author numbers — you bless them and ship them.',
+    primaryTiles:['outlook','pbi','teams']
+  },
+  analyst: {
+    accent:'#00e5ff', accent2:'#ff6b00',
+    badge:'ANALYST · SEAT 02',
+    briefing:'<strong>You\'re in the race-engineer seat.</strong> Validate the baseline, build the consensus, stage structured overrides. Decision rights below — you can author and propose, but only owners commit plan-of-record.',
+    primaryTiles:['workbench','excel','agent']
+  },
+  sme: {
+    accent:'#7fb0bf', accent2:'#d8dce0',
+    badge:'SME · MARKETS · SEAT 03',
+    briefing:'<strong>You\'re in the trackside-spotter seat.</strong> Challenge any number with evidence in under ninety seconds. You don\'t overwrite the baseline — you reshape consensus by surfacing what the model can\'t see.',
+    primaryTiles:['teams','glean','sharepoint']
+  },
+  ops: {
+    accent:'#ffc72c', accent2:'#da1a2e',
+    badge:'OPS · IT · SEAT 04',
+    briefing:'<strong>You\'re in the pit-crew chief seat.</strong> Watch the pipelines, pause stale state, retry failed jobs, sign off release readiness. You don\'t author numbers — you protect the surfaces that publish them.',
+    primaryTiles:['workbench','pbi','sharepoint']
+  },
+  govops: {
+    accent:'#da1a2e', accent2:'#0e1014',
+    badge:'AI GOVOPS · SEAT 05',
+    briefing:'<strong>You\'re in the race-stewards seat.</strong> Certify which agents ship. Promote versions, rollback regressions, curate memory, audit the replay-prompt-ledger. NAMA-certified means it went through you.',
+    primaryTiles:['agent','glean','workbench']
+  }
+};
+
+function setSeat(seat){
+  const cfg = SEAT_CONFIG[seat];
+  if(!cfg) return;
+
+  // 1. persona on body (drives CSS swaps for action panels + briefing helpers)
+  document.body.setAttribute('data-persona', seat);
+
+  // 2. seat card active
+  document.querySelectorAll('.seat').forEach(s=>s.classList.toggle('active', s.dataset.seat===seat));
+
+  // 3. accent CSS variables
+  document.documentElement.style.setProperty('--accent', cfg.accent);
+  document.documentElement.style.setProperty('--accent-2', cfg.accent2);
+
+  // 4. persona briefing banner
+  const badge = document.getElementById('persona-badge');
+  const txt = document.getElementById('persona-text');
+  if(badge) badge.textContent = cfg.badge;
+  if(txt) txt.innerHTML = cfg.briefing;
+
+  // 5. tile elevation + reorder in the surface ring (CSS order works in grid)
+  let demotedCount = 0;
+  document.querySelectorAll('.tile').forEach(tile=>{
+    tile.classList.remove('primary','demoted');
+    const kind = Array.from(tile.classList).find(c=>['outlook','teams','excel','sharepoint','pbi','glean','workbench','agent'].includes(c));
+    if(!kind) return;
+    if(cfg.primaryTiles.includes(kind)){
+      tile.classList.add('primary');
+      tile.style.order = cfg.primaryTiles.indexOf(kind);
+    } else {
+      tile.classList.add('demoted');
+      tile.style.order = 10 + (demotedCount++);
+    }
+  });
+
+  // 6. activity feed filtering
+  document.querySelectorAll('#activity-feed .act').forEach(act=>{
+    const personas = (act.dataset.personas || 'analyst leadership sme ops govops').split(/\s+/);
+    act.classList.toggle('hidden', !personas.includes(seat));
+  });
+
+  // 7. telemetry strip reframe
+  renderTelemetry(seat);
+
+  // 8. persist
+  try{ localStorage.setItem('nama_seat', seat); }catch(e){}
+}
+
+// hydrate from storage
+try{
+  const saved = localStorage.getItem('nama_seat');
+  if(saved && SEAT_CONFIG[saved]) setSeat(saved);
+  else setSeat('analyst');
+}catch(e){ setSeat('analyst'); }
+
+// ───────────── scenario row ─────────────
+document.querySelectorAll('.scenario').forEach(s=>{
+  s.addEventListener('click', ()=>{
+    document.querySelectorAll('.scenario').forEach(x=>x.classList.remove('active'));
+    s.classList.add('active');
+    redrawFan(s.dataset.scen);
+  });
+});
+
+// ───────────── quantile fan chart (D3) ─────────────
+const fanData = {
+  labels: ['Jan-26','Feb-26','Mar-26','Apr-26','May-26','Jun-26','Jul-26','Aug-26','Sep-26'],
+  actual: [98.1, 102.4, 108.7, 106.2, 104.9, null, null, null, null], // YTD (thousands)
+  base: {
+    p10:  [95.0, 99.0, 105.0, 102.0, 100.0, 96.0, 91.0, 92.0, 93.5],
+    p50:  [98.1, 102.4, 108.7, 106.2, 104.9, 103.1, 102.5, 104.0, 105.9],
+    p90:  [101.2, 105.6, 112.4, 110.0, 109.4, 110.0, 113.0, 116.0, 118.8],
+    consensus:[98.1, 102.4, 108.7, 106.2, 104.9, 102.0, 100.5, 103.4, 108.5]
+  },
+  incentive: {
+    p10:  [95.0, 99.0, 105.0, 102.0, 100.0, 99.0, 96.0, 99.0, 102.5],
+    p50:  [98.1, 102.4, 108.7, 106.2, 104.9, 105.9, 107.0, 110.5, 113.2],
+    p90:  [101.2, 105.6, 112.4, 110.0, 109.4, 112.0, 115.5, 119.0, 122.4],
+    consensus:[98.1, 102.4, 108.7, 106.2, 104.9, 104.8, 105.4, 109.0, 112.6]
+  },
+  downside: {
+    p10:  [95.0, 99.0, 105.0, 102.0, 100.0, 92.0, 86.0, 84.0, 84.5],
+    p50:  [98.1, 102.4, 108.7, 106.2, 104.9, 99.5, 96.0, 95.4, 97.6],
+    p90:  [101.2, 105.6, 112.4, 110.0, 109.4, 106.5, 105.5, 107.8, 110.0],
+    consensus:[98.1, 102.4, 108.7, 106.2, 104.9, 99.0, 93.8, 94.0, 96.0]
+  }
+};
+
+function redrawFan(scenario){
+  scenario = scenario || 'base';
+  const svg = d3.select('#fan-chart');
+  const node = svg.node();
+  if(!node) return;
+  const W = node.clientWidth || 760;
+  const H = 340;
+  svg.attr('viewBox', `0 0 ${W} ${H}`).selectAll('*').remove();
+
+  const m = { top: 16, right: 24, bottom: 32, left: 44 };
+  const innerW = W - m.left - m.right;
+  const innerH = H - m.top - m.bottom;
+  const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
+
+  const data = fanData[scenario];
+  const x = d3.scalePoint().domain(fanData.labels).range([0, innerW]).padding(0.2);
+  const yMin = 80, yMax = 130;
+  const y = d3.scaleLinear().domain([yMin, yMax]).range([innerH, 0]);
+
+  // gridlines
+  const gridY = g.append('g').attr('class','grid');
+  y.ticks(5).forEach(t=>{
+    gridY.append('line')
+      .attr('x1',0).attr('x2',innerW).attr('y1',y(t)).attr('y2',y(t))
+      .attr('stroke','rgba(255,255,255,0.05)').attr('stroke-dasharray','2,3');
+  });
+
+  // band P10-P90
+  const band = d3.area()
+    .x((_, i) => x(fanData.labels[i]))
+    .y0((_, i) => y(data.p10[i]))
+    .y1((_, i) => y(data.p90[i]))
+    .curve(d3.curveCatmullRom.alpha(0.6));
+  g.append('path')
+    .datum(data.p50)
+    .attr('d', band)
+    .attr('fill', 'rgba(0, 229, 255, 0.16)')
+    .attr('stroke','rgba(0,229,255,0.22)')
+    .attr('stroke-width', 1);
+
+  // P50 median line
+  const line = d3.line()
+    .x((_, i) => x(fanData.labels[i]))
+    .y(d => y(d))
+    .curve(d3.curveCatmullRom.alpha(0.6));
+  g.append('path')
+    .datum(data.p50)
+    .attr('d', line)
+    .attr('fill','none')
+    .attr('stroke', 'rgba(0, 229, 255, 0.85)')
+    .attr('stroke-width', 2);
+
+  // Consensus override (champagne dashed)
+  g.append('path')
+    .datum(data.consensus)
+    .attr('d', line)
+    .attr('fill','none')
+    .attr('stroke', '#c8b273')
+    .attr('stroke-width', 2.5)
+    .attr('stroke-dasharray', '6,4');
+
+  // Actuals YTD (yellow solid)
+  const actualPts = fanData.actual.map((v,i)=>v==null?null:{v,i}).filter(Boolean);
+  g.append('path')
+    .datum(actualPts.map(p=>p.v))
+    .attr('d', d3.line()
+      .x((_,i)=>x(fanData.labels[actualPts[i].i]))
+      .y(d=>y(d))
+      .curve(d3.curveCatmullRom.alpha(0.6))
+    )
+    .attr('fill','none')
+    .attr('stroke', '#ffc72c')
+    .attr('stroke-width', 3);
+  g.selectAll('circle.actual').data(actualPts).enter().append('circle')
+    .attr('class','actual')
+    .attr('cx', d=>x(fanData.labels[d.i]))
+    .attr('cy', d=>y(d.v))
+    .attr('r', 4)
+    .attr('fill', '#ffc72c')
+    .attr('stroke', '#0a0c10').attr('stroke-width', 2);
+
+  // commit marker
+  const commitIdx = 8;
+  g.append('circle')
+    .attr('cx', x(fanData.labels[commitIdx]))
+    .attr('cy', y(data.consensus[commitIdx]))
+    .attr('r', 8)
+    .attr('fill','none').attr('stroke','#c8b273').attr('stroke-width', 2)
+    .attr('stroke-dasharray','3,2');
+  g.append('text')
+    .attr('x', x(fanData.labels[commitIdx]))
+    .attr('y', y(data.consensus[commitIdx]) - 18)
+    .attr('fill','#c8b273')
+    .attr('font-family','JetBrains Mono, monospace')
+    .attr('font-size', '10px')
+    .attr('text-anchor','end')
+    .attr('letter-spacing', '0.14em')
+    .text('COMMIT · Q3');
+
+  // x axis
+  const ax = g.append('g').attr('transform', `translate(0,${innerH})`);
+  fanData.labels.forEach(lbl=>{
+    ax.append('text')
+      .attr('x', x(lbl))
+      .attr('y', 20)
+      .attr('fill','#5e6373')
+      .attr('font-family','JetBrains Mono, monospace')
+      .attr('font-size','10px')
+      .attr('text-anchor','middle')
+      .attr('letter-spacing','0.1em')
+      .text(lbl.toUpperCase());
+  });
+  // y axis
+  y.ticks(5).forEach(t=>{
+    g.append('text')
+      .attr('x', -10).attr('y', y(t) + 4)
+      .attr('fill','#5e6373')
+      .attr('font-family','JetBrains Mono, monospace')
+      .attr('font-size','10px')
+      .attr('text-anchor','end')
+      .text(t + 'k');
+  });
+
+  // separator between actuals and forecast
+  const sepX = x(fanData.labels[4]) + (x(fanData.labels[5]) - x(fanData.labels[4]))/2;
+  g.append('line').attr('x1',sepX).attr('x2',sepX).attr('y1',0).attr('y2',innerH)
+    .attr('stroke','rgba(255,255,255,0.12)').attr('stroke-dasharray','3,4');
+  g.append('text').attr('x', sepX+6).attr('y', 14)
+    .attr('fill','#8a8f9e').attr('font-family','JetBrains Mono, monospace')
+    .attr('font-size','9.5px').attr('letter-spacing','0.18em')
+    .text('FORECAST →');
+}
+window.addEventListener('resize', ()=>{
+  const active = document.querySelector('.scenario.active');
+  redrawFan(active ? active.dataset.scen : 'base');
+});
+redrawFan('base');
+
+// ───────────── race simulator with baton pass ─────────────
+let raceTimer = null;
+let raceStart = null;
+let savedSeatForRace = null;
+let handoffTimer = null;
+
+// stop index → owning seat (the wall hands the baton through these in order)
+const RACE_BATON = ['ops','analyst','sme','leadership','govops'];
+const SEAT_LABEL = {
+  ops:        'Ops · IT',
+  analyst:    'Analyst',
+  sme:        'SME · Markets',
+  leadership: 'Leadership',
+  govops:     'AI GovOps'
+};
+
+// pit-to-driver radio messages — fired on each baton pass
+const HANDOFFS = [
+  { // index 0 — Ops takes baton (signal arrived)
+    from: 'Pit Wall',
+    to: 'Ops · IT',
+    completed: 'Texas dealer-pulse anomaly detected · Q3 Trucks · confidence dropped High → Medium · all surfaces notified.',
+    next: 'Validate pipeline freshness · clear stale-state guardrails · open the lane for agent prep.'
+  },
+  { // index 1 — Ops → Analyst (agent prep complete)
+    from: 'Ops · IT',
+    to: 'Analyst',
+    completed: 'Pipelines green except avista (paused & retrying) · anomaly pack staged · drift score 0.41 flagged for human review.',
+    next: 'Open compare mode in the Workbench · scan baseline vs consensus · stage a structured override with reason code.'
+  },
+  { // index 2 — Analyst → SME (override staged)
+    from: 'Analyst',
+    to: 'SME · Markets',
+    completed: 'Override staged: Silverado HD −2.1k · reason R-18 · evidence linked to /MIA/dealer-pulse-week19.pptx · routed to MIA.',
+    next: 'Confirm Texas pulse signal or push back with counter-evidence · resolve the challenge in under 90 seconds.'
+  },
+  { // index 3 — SME → Leadership (consensus reached)
+    from: 'SME · Markets',
+    to: 'Leadership',
+    completed: 'Challenge resolved · MIA + Forecasting aligned · 3 scenarios pre-S&OP-ready · Scenario B flagged as recommended.',
+    next: 'Pick a scenario (B: +$1,500 incentive · 324.8k recommended) · commit plan-of-record · sign the exec brief.'
+  },
+  { // index 4 — Leadership → GovOps (commit done)
+    from: 'Leadership',
+    to: 'AI GovOps',
+    completed: 'Scenario B approved · plan-of-record committed v2026.05B · exec brief signed and broadcast queued.',
+    next: 'Log HIBT entry · certify replay · push to Outlook + Teams + PBI + Glean · archive the lap for the championship table.'
+  }
+];
+
+function showHandoff(stopIdx){
+  const h = HANDOFFS[stopIdx];
+  if(!h) return;
+  const route = document.getElementById('handoff-route');
+  const msg = document.getElementById('handoff-msg');
+  const toast = document.getElementById('handoff-toast');
+  if(!route || !msg || !toast) return;
+  route.innerHTML = `
+    <span class="from">${h.from}</span>
+    <span class="arrow">→</span>
+    <span class="to">${h.to}</span>
+  `;
+  msg.innerHTML = `
+    <span class="label completed">✓ Completed</span>${h.completed}
+    <span class="label next">→ Next</span>${h.next}
+  `;
+  toast.classList.add('show');
+  if(handoffTimer) clearTimeout(handoffTimer);
+  handoffTimer = setTimeout(()=>dismissHandoff(), 4500);
+}
+
+function dismissHandoff(){
+  const toast = document.getElementById('handoff-toast');
+  if(toast) toast.classList.remove('show');
+  if(handoffTimer){ clearTimeout(handoffTimer); handoffTimer = null; }
+}
+
+function fmtClock(ms){
+  const t = Math.max(0, ms);
+  const totalSec = Math.floor(t/1000);
+  const m = Math.floor(totalSec/60).toString().padStart(2,'0');
+  const s = (totalSec%60).toString().padStart(2,'0');
+  return m + ':' + s;
+}
+function setStop(idx){
+  document.querySelectorAll('.stop').forEach((el,i)=>{
+    el.classList.remove('active');
+    el.classList.remove('done');
+    if(i < idx) el.classList.add('done');
+    else if(i === idx) el.classList.add('active');
+  });
+}
+function updateBaton(seat){
+  const el = document.getElementById('baton-seat');
+  if(el) el.textContent = SEAT_LABEL[seat] || seat;
+}
+
+function runRace(){
+  // remember where the user was before we start passing the baton
+  savedSeatForRace = document.body.getAttribute('data-persona') || 'analyst';
+
+  // local cleanup (don't restore the seat yet — runRace itself will drive it)
+  if(raceTimer){ clearInterval(raceTimer); raceTimer = null; }
+  document.getElementById('raceClock').textContent = '00:00';
+
+  const total = 15 * 60 * 1000;          // 15 minutes simulated
+  const demoStart = Date.now();
+  const demoDuration = 30 * 1000;        // 30-second runtime demo
+  let lastStopIdx = -1;
+
+  raceTimer = setInterval(()=>{
+    const demoElapsed = Date.now() - demoStart;
+    const ratio = Math.min(1, demoElapsed / demoDuration);
+    const simElapsed = ratio * total;
+    document.getElementById('raceClock').textContent = fmtClock(simElapsed);
+    const stopIdx = Math.min(4, Math.floor(ratio * 5));
+    setStop(stopIdx);
+
+    // hand the baton when we cross into a new stop
+    if(stopIdx !== lastStopIdx){
+      lastStopIdx = stopIdx;
+      const nextSeat = RACE_BATON[stopIdx];
+      setSeat(nextSeat);
+      updateBaton(nextSeat);
+      showHandoff(stopIdx);   // pit-to-driver radio
+    }
+
+    if(ratio >= 1){
+      clearInterval(raceTimer); raceTimer = null;
+      document.querySelectorAll('.stop').forEach(s=>{s.classList.remove('active');s.classList.add('done');});
+      document.getElementById('raceClock').textContent = '15:00';
+      // race finishes on the GovOps seat (release stage); leave it there
+    }
+  }, 100);
+}
+
+function resetRace(){
+  if(raceTimer){ clearInterval(raceTimer); raceTimer=null; }
+  dismissHandoff();
+  document.getElementById('raceClock').textContent = '06:47';
+  document.querySelectorAll('.stop').forEach((el,i)=>{
+    el.classList.remove('active');
+    el.classList.remove('done');
+    if(i<2) el.classList.add('done');
+    else if(i===2) el.classList.add('active');
+  });
+  // restore the seat the user had before the race started
+  if(savedSeatForRace){
+    setSeat(savedSeatForRace);
+    updateBaton(savedSeatForRace);
+    savedSeatForRace = null;
+  } else {
+    // default static baton reflects the active stop (SME during stop 3)
+    updateBaton('sme');
+  }
+}
+
+// ───────────── reveal on scroll ─────────────
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);}});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ───────────── self-tests ─────────────
+function addTest(name, pass, notes){
+  const row = document.createElement('div');
+  row.className = 'test-row';
+  row.innerHTML = `<div><div class="name">${name}</div><div class="notes">${notes}</div></div><div class="verdict ${pass?'pass':'fail'}">${pass?'PASS':'FAIL'}</div>`;
+  document.getElementById('test-log').appendChild(row);
+  try{
+    const log = JSON.parse(localStorage.getItem('nama_pitwall_tests') || '[]');
+    log.unshift({ts:new Date().toISOString(), name, pass, notes});
+    localStorage.setItem('nama_pitwall_tests', JSON.stringify(log.slice(0,30)));
+  }catch(e){}
+}
+function clearTestLog(){
+  try{ localStorage.removeItem('nama_pitwall_tests'); }catch(e){}
+  document.getElementById('test-log').innerHTML = '';
+}
+function runTests(){
+  document.getElementById('test-log').innerHTML = '';
+  addTest('Version chip rendered', document.body.innerText.includes('v2.4'), 'Checks artifact version string is rendered.');
+  addTest('All five seats present', document.querySelectorAll('.seat').length === 5, 'Leadership, Analyst, SME, Ops, GovOps.');
+  addTest('Telemetry strip has 9 cells', document.querySelectorAll('.tel-cell').length === 9, 'Race-control KPIs from PRD non-functional requirements.');
+  addTest('Pit wall quantile fan SVG rendered', !!document.querySelector('#fan-chart path'), 'D3 quantile fan with P10-P90 band, P50 line, consensus override, actuals.');
+  addTest('Surface ring has 8 tiles', document.querySelectorAll('.tile').length === 8, 'Outlook, Teams, Excel, SharePoint, PBI, Glean, Workbench, PA Agent.');
+  addTest('15-minute race has 5 stops', document.querySelectorAll('.stop').length === 5, 'Signal · Agent · Human · Commit · Release.');
+  addTest('Monthly S&OP swimlane has 6 lanes', document.querySelectorAll('.swim tbody tr').length === 6, 'Data, Analysts, SMEs, Leadership, Ops, GovOps.');
+  addTest('Agent Studio ledger present', document.querySelectorAll('.ledger tbody tr').length >= 6, 'Replay-Prompt-Ledger renders at least 6 agent events.');
+  addTest('Pole position has 8 inspirations', document.querySelectorAll('.pole').length === 8, 'Toyota, F1 strategy, Tesla, Boeing, ASML, John Deere, Maersk, race engineer.');
+  addTest('Podium has 3 delighters + 3 v2.1', document.querySelectorAll('.podium-step').length === 6, 'Race Mode, Garage Mode, Replay + Second Opinion, Ghost Lap, Championship.');
+  addTest('localStorage available', !!window.localStorage, 'Supports seat preference and test log persistence.');
+  addTest('Seat selector wired', typeof setSeat === 'function', 'setSeat exists and switches accent CSS variable.');
+  addTest('Race simulator wired', typeof runRace === 'function', 'runRace + resetRace functions present.');
+
+  // ─── persona swap behavior ───
+  addTest('All 5 persona action panels present', document.querySelectorAll('.action-panel').length === 5, 'Analyst override, Leadership approval, SME challenge, Ops pipeline, GovOps promote.');
+  addTest('Persona briefing banner renders', !!document.getElementById('persona-briefing'), 'Updates badge + text when seat changes.');
+  // simulate a few persona swaps
+  const wasSeat = document.body.getAttribute('data-persona');
+  setSeat('leadership');
+  const leadVisible = document.querySelector('.action-panel.for-leadership') && getComputedStyle(document.querySelector('.action-panel.for-leadership')).display !== 'none';
+  const leadHidden = document.querySelector('.action-panel.for-analyst') && getComputedStyle(document.querySelector('.action-panel.for-analyst')).display === 'none';
+  addTest('Leadership seat shows approval queue', leadVisible && leadHidden, 'Leadership panel visible; analyst panel hidden.');
+  setSeat('sme');
+  const smeBadge = document.getElementById('persona-badge').textContent.includes('SME');
+  addTest('SME seat updates briefing badge', smeBadge, 'Badge text reflects current seat.');
+  setSeat('ops');
+  const opsPrimary = document.querySelectorAll('.tile.primary').length === 3;
+  addTest('Ops seat elevates 3 primary tiles', opsPrimary, 'Surface ring reorders to ops-priority tiles.');
+  setSeat('govops');
+  const govopsFiltered = Array.from(document.querySelectorAll('#activity-feed .act')).some(a=>a.classList.contains('hidden'));
+  addTest('GovOps filters activity feed', govopsFiltered, 'At least one activity item hidden for GovOps view.');
+
+  // ─── telemetry reframe ───
+  setSeat('leadership');
+  const leadTelem = document.getElementById('telemetry-row').innerText.includes('Approvals waiting');
+  addTest('Leadership telemetry shows approvals', leadTelem, 'Strip rebuilds with role-specific KPIs.');
+  setSeat('ops');
+  const opsTelem = document.getElementById('telemetry-row').innerText.includes('Pipeline freshness');
+  addTest('Ops telemetry shows pipeline freshness', opsTelem, 'Strip rebuilds with pipe health for Ops seat.');
+  setSeat('govops');
+  const govTelem = document.getElementById('telemetry-row').innerText.includes('Eval lift');
+  addTest('GovOps telemetry shows eval lift', govTelem, 'Strip rebuilds with agent governance KPIs.');
+  setSeat('sme');
+  const smeTelem = document.getElementById('telemetry-row').innerText.includes('Evidence routed');
+  addTest('SME telemetry shows evidence routing', smeTelem, 'Strip rebuilds with market-signal KPIs.');
+
+  // ─── race baton-pass ───
+  addTest('Baton chip rendered', !!document.getElementById('baton-seat'), 'Race header shows current baton seat.');
+  addTest('5 stops have owner badges', document.querySelectorAll('.stop .owner').length === 5, 'Each pit stop shows which seat owns it.');
+  addTest('Baton sequence wired', Array.isArray(RACE_BATON) && RACE_BATON.length === 5 && RACE_BATON[0] === 'ops' && RACE_BATON[4] === 'govops', 'Sequence: Ops → Analyst → SME → Leadership → GovOps.');
+
+  // ─── pit-to-driver radio handoffs ───
+  addTest('Handoff toast element present', !!document.getElementById('handoff-toast'), 'Fixed-position radio overlay exists.');
+  addTest('5 handoff messages defined', Array.isArray(HANDOFFS) && HANDOFFS.length === 5, 'One radio call per baton pass.');
+  // simulate a handoff to verify content rendering
+  showHandoff(2);
+  const handoffShown = document.getElementById('handoff-toast').classList.contains('show');
+  const handoffHasFrom = document.getElementById('handoff-route').innerText.includes('Analyst');
+  const handoffHasTo = document.getElementById('handoff-route').innerText.includes('SME');
+  addTest('Handoff renders FROM/TO route', handoffShown && handoffHasFrom && handoffHasTo, 'Analyst → SME handoff shows correct seats.');
+  dismissHandoff();
+
+  // restore
+  setSeat(wasSeat || 'analyst');
+  updateBaton(wasSeat || 'sme');
+}
+// auto-run on load
+window.addEventListener('load', runTests);
+</script>
+
+</body>
+</html>
