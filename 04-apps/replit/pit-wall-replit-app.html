@@ -1440,7 +1440,7 @@ function calcScore(dims, weights) {
   return Math.round(score);
 }
 
-function updatePreview() {
+function updatePreview(broadcast) {
   const weights = getWeights();
   const total = weights.reduce((a, b) => a + b, 0);
   const totalEl = document.getElementById('weight-total');
@@ -1450,7 +1450,8 @@ function updatePreview() {
   else if (total < 100) totalEl.classList.add('under');
 
   // Broadcast Silverado HD score to shared state (drives lovable DQ ring + gate)
-  if (window.PW && total > 0) {
+  // Only when user is actively adjusting sliders, not on initial page load
+  if (broadcast && window.PW && total > 0) {
     PW.set({ dqScore: calcScore(nameplateBaseline[0].dims, weights) });
   }
 
@@ -1484,7 +1485,7 @@ sliderIds.forEach((slId, i) => {
 
   slider.addEventListener('input', () => {
     inp.value = slider.value + '%';
-    updatePreview();
+    updatePreview(true);
   });
 
   inp.addEventListener('change', () => {
@@ -1495,7 +1496,7 @@ sliderIds.forEach((slId, i) => {
     } else {
       inp.value = slider.value + '%';
     }
-    updatePreview();
+    updatePreview(true);
   });
 });
 
