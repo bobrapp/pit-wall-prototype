@@ -675,6 +675,7 @@ const CMD_ITEMS = [
   {g:'Pages',icon:'📋',label:'Decisions & Workflows',hint:'Platform reference — formulas, governance',url:'decisions.html',tags:'decisions workflows versions formulas dq mds got'},
   {g:'Pages',icon:'🎯',label:'Demo Script',hint:'Stakeholder playbook — 3 scenarios',url:'demo.html',tags:'demo script playbook scenarios walkthrough'},
   {g:'Pages',icon:'🎭',label:'Generic Demo',hint:'Share-safe — GM names removed',url:'generic/index.html',tags:'generic external share anonymous'},
+  {g:'Actions',icon:'🔄',label:'Reset Demo State',hint:'Clear shared state — DQ, gate, nameplate back to defaults',url:'#reset',tags:'reset state demo clear dq gate'},
 ];
 
 let cpSelIdx = 0;
@@ -750,7 +751,7 @@ document.getElementById('cmdpal-input').addEventListener('keydown', function(e) 
   else if (e.key === 'Enter') {
     e.preventDefault();
     const sel = document.querySelector('.cmdpal-item.sel');
-    if (sel) { window.location.href = sel.href; closeCmdPal(); }
+    if (sel) { activateCmdItem(sel); }
   } else if (e.key === 'Escape') { closeCmdPal(); }
 });
 
@@ -764,6 +765,26 @@ document.addEventListener('keydown', function(e) {
     closeCmdPal();
   }
 });
+
+// Handle cmdpal item clicks — special actions before navigation
+document.getElementById('cmdpal-results').addEventListener('click', function(e) {
+  const item = e.target.closest('.cmdpal-item');
+  if (item) { e.preventDefault(); activateCmdItem(item); }
+});
+
+function activateCmdItem(el) {
+  if (!el) return;
+  if (el.href && el.href.endsWith('#reset')) {
+    if (window.PW) PW.reset();
+    const label = el.querySelector('.cmdpal-item-label');
+    if (label) { const orig = label.textContent; label.textContent = '✓ State reset'; setTimeout(() => label.textContent = orig, 1800); }
+    closeCmdPal();
+  } else {
+    window.location.href = el.href;
+    closeCmdPal();
+  }
+}
 </script>
+<script src="shared/pit-wall-state.js"></script>
 </body>
 </html>

@@ -658,6 +658,12 @@ body{
 .msg-time{font-family:var(--mono);font-size:9px;color:var(--muted-2);margin-top:4px;
   display:block;}
 .msg.user .msg-time{text-align:right}
+/* typing indicator */
+.typing-dots{display:inline-flex;gap:4px;padding:2px 0;align-items:center}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--muted);display:block;animation:td-bounce .9s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes td-bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 .chat-input-wrap{
   margin-top:12px;
   display:flex;gap:10px;align-items:flex-end;
@@ -768,6 +774,20 @@ body{
 }
 .gate-action-btn:hover{background:rgba(255,149,0,.22)}
 .gate-banner.urgent .gate-action-btn{border-color:rgba(255,69,58,.35);color:var(--risk);background:rgba(255,69,58,.1)}
+
+/* ── gate states: blocked / cleared ── */
+.gate-banner.blocked{background:rgba(255,69,58,.12);border-bottom-color:rgba(255,69,58,.5)}
+.gate-banner.blocked .gate-banner-inner{color:var(--risk)}
+.gate-banner.blocked .gate-progress-wrap{background:rgba(255,69,58,.2)}
+.gate-banner.blocked .gate-progress-bar{background:var(--risk);animation:gp-pulse .9s ease-in-out infinite alternate}
+.gate-banner.blocked .gate-action-btn{border-color:rgba(255,69,58,.5);color:var(--risk);background:rgba(255,69,58,.18)}
+@keyframes gp-pulse{from{opacity:.55}to{opacity:1}}
+.gate-banner.cleared{background:rgba(35,209,139,.07);border-bottom-color:rgba(35,209,139,.25);transition:background .6s,border-color .6s}
+.gate-banner.cleared .gate-banner-inner{color:var(--good)}
+.gate-banner.cleared .gate-progress-wrap{background:rgba(35,209,139,.12)}
+.gate-banner.cleared .gate-progress-bar{background:var(--good);width:100%!important;transition:width .8s ease}
+.gate-banner.cleared .gate-action-btn{border-color:rgba(35,209,139,.35);color:var(--good);background:rgba(35,209,139,.1)}
+.gate-banner.cleared .gate-action-btn:hover{background:rgba(35,209,139,.2)}
 
 /* ── mobile responsive ── */
 @media(max-width:768px){
@@ -913,11 +933,11 @@ body{
     <!-- ── GATE 3 COUNTDOWN BANNER ── -->
     <div class="gate-banner" id="gate-banner">
       <div class="gate-banner-inner">
-        <span class="gate-icon">⏱</span>
-        <span class="gate-time-txt">Gate 3 in <strong id="gate-time">35h 59m</strong></span>
+        <span class="gate-icon" id="gate-icon-sp">⏱</span>
+        <span class="gate-time-txt" id="gate-time-txt">Gate 3 in <strong id="gate-time">35h 59m</strong></span>
         <div class="gate-progress-wrap"><div class="gate-progress-bar" id="gate-bar"></div></div>
-        <span class="gate-items">Silverado HD · Equinox EV pending resolution</span>
-        <button class="gate-action-btn" onclick="showTab('secondopinion')">Review →</button>
+        <span class="gate-items" id="gate-items-txt">Silverado HD · Equinox EV pending resolution</span>
+        <button class="gate-action-btn" id="gate-action-btn" onclick="showTab('secondopinion')">Review →</button>
       </div>
     </div>
 
@@ -1991,7 +2011,7 @@ body{
   <div class="toast-bar"><div class="toast-bar-fill"></div></div>
 </div>
 
-
+<script src="../../shared/pit-wall-state.js"></script>
 <script>
 // ── tab navigation ──
 function showTab(name) {
@@ -2023,6 +2043,7 @@ function acceptOverride() {
   btn.style.background = 'linear-gradient(135deg,var(--good),#2fe899)';
   btn.style.color = '#001a10';
   btn.disabled = true;
+  if (window.PW) PW.set({ overrideSubmitted: true, dqScore: currentDQ + 2 });
   setTimeout(() => showToast('lc'), 800);
   setTimeout(() => updateDQRing(currentDQ + 2), 1000);
 }
@@ -2067,8 +2088,19 @@ function sendMessage() {
   input.value = '';
   msgs.scrollTop = msgs.scrollHeight;
 
-  // AI response with small delay
+  // Show typing indicator then real response
+  const typingMsg = document.createElement('div');
+  typingMsg.className = 'msg ai';
+  typingMsg.id = 'typing-indicator';
+  typingMsg.innerHTML = `
+    <div class="msg-avatar ai">PW</div>
+    <div><div class="msg-bubble"><span class="typing-dots"><span></span><span></span><span></span></span></div></div>`;
+  msgs.appendChild(typingMsg);
+  msgs.scrollTop = msgs.scrollHeight;
+
   setTimeout(() => {
+    const old = document.getElementById('typing-indicator');
+    if (old) old.remove();
     const aiMsg = document.createElement('div');
     aiMsg.className = 'msg ai';
     aiMsg.innerHTML = `
@@ -2079,13 +2111,33 @@ function sendMessage() {
       </div>`;
     msgs.appendChild(aiMsg);
     msgs.scrollTop = msgs.scrollHeight;
-  }, 700);
+  }, 900);
 }
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function getAIResponse(text) {
   const t = text.toLowerCase();
+  const st = (window.PW ? PW.get() : { dqScore: currentDQ, gateStatus: 'ok', nameplate: 'silverado' });
+
+  if (t.includes('gate') || t.includes('blocked') || t.includes('status')) {
+    if (st.gateStatus === 'blocked') {
+      return '🚨 <strong>Gate 3 is currently BLOCKED.</strong> DQ score is <span class="mono">' + st.dqScore + '</span> — below the 68-point threshold. To unblock: submit your Silverado HD override in Second Opinion. That should bring DQ above threshold immediately.';
+    }
+    if (st.gateStatus === 'at-risk') {
+      return '⚠️ Gate 3 is <strong>at risk</strong>. DQ score is <span class="mono">' + st.dqScore + '</span> — above minimum but tighter than I\'d like. Submit overrides before the timer runs down to clear it safely.';
+    }
+    if (st.gateStatus === 'clear') {
+      return '✅ Gate 3 is <strong>cleared</strong>. DQ score is <span class="mono">' + st.dqScore + '</span> — overrides submitted and logged to HIBT. You\'re good to close the cycle.';
+    }
+    return 'Gate 3 is <strong>on track</strong>. DQ score is <span class="mono">' + st.dqScore + '</span>. Timer at ' + (document.getElementById('gate-time')||{textContent:'35h 59m'}).textContent + '. Two challenges pending: Silverado HD and Equinox EV.';
+  }
+  if (t.includes('dq') || t.includes('score') || t.includes('data quality')) {
+    return 'Current Cycle DQ: <span class="mono">' + st.dqScore + '</span>. ' +
+      (st.dqScore >= 85 ? '14 of 16 checks green — tariff freshness and override accuracy are your strongest dims.' :
+       st.dqScore >= 78 ? 'Some dimensions are degraded. Tariff feed is stale (72h). Override accuracy has dipped — resolve Second Opinion to recover.' :
+       '⚠️ DQ is below safe threshold. Primary issue: tariff data stale beyond acceptable limit. Submit overrides immediately.');
+  }
   if (t.includes('equinox') && t.includes('accuracy')) {
     return 'Your 6-cycle MAPE on <strong>Equinox EV</strong> is <span class="mono">4.2%</span> — slightly above the primary model (3.9%). The tariff signal has been the main source of divergence. Your C3 override was 5.1% off actuals. Want me to pull the full Ghost Lap?';
   }
@@ -2097,6 +2149,9 @@ function getAIResponse(text) {
   }
   if (t.includes('tahoe') && t.includes('ghost')) {
     return 'Tahoe LTZ Ghost Lap: your 6-cycle MAPE is <span class="mono">2.4%</span> vs primary <span class="mono">3.1%</span>. You\'ve beaten the model in 5 of 6 cycles — your dealer pull-forward signal has been particularly accurate. Want me to open the Ghost Lap view?';
+  }
+  if (t.includes(st.nameplateLabel.toLowerCase().split(' ')[0]) || t.includes(st.nameplate)) {
+    return 'Currently viewing <strong>' + st.nameplateLabel + '</strong>. DQ: <span class="mono">' + st.dqScore + '</span>. This nameplate has an active Second Opinion challenge. Want me to summarize the key divergence factors?';
   }
   return 'I\'m analyzing your request. To be more specific, I can look up any nameplate\'s forecast, DQ score, override history, Ghost Lap comparison, or Championship points. What would you like to know?';
 }
@@ -2168,6 +2223,7 @@ function switchGhostLap(key, btn) {
   btn.classList.add('active');
   currentGlKey = key;
   const d = GL_DATA[key];
+  if (window.PW) PW.set({ nameplate: key, nameplateLabel: d.label });
   document.getElementById('gl-title').textContent     = d.title;
   document.getElementById('gl-np-label').textContent  = d.label;
   document.getElementById('gl-axis-low').textContent  = d.axisLabels[0];
@@ -2282,8 +2338,10 @@ function submitOverride() {
     </div>`;
   inboxList.prepend(newItem);
 
-  // update DQ ring
-  setTimeout(() => updateDQRing(currentDQ + 2), 600);
+  // update DQ ring + shared state
+  const newDq = currentDQ + 2;
+  if (window.PW) PW.set({ overrideSubmitted: true, dqScore: newDq });
+  setTimeout(() => updateDQRing(newDq), 600);
   // show submit toast
   showSubmitToast(Number(vol).toLocaleString());
 }
@@ -2358,6 +2416,7 @@ function acceptEquinox() {
   actions.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
   const pill = document.getElementById('equinox-pill');
   if (pill) { pill.innerHTML = '✓ Accepted'; pill.style.background='rgba(35,209,139,.12)'; pill.style.color='var(--good)'; }
+  if (window.PW) PW.set({ equinoxSubmitted: true, dqScore: currentDQ + 1 });
   updateDQRing(currentDQ + 1);
 }
 function escalateEquinox() {
@@ -2372,6 +2431,7 @@ function submitEquinoxOverride() {
   actions.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
   const pill = document.getElementById('equinox-pill');
   if (pill) { pill.innerHTML = '✓ Override Submitted'; pill.style.background='rgba(35,209,139,.12)'; pill.style.color='var(--good)'; }
+  if (window.PW) PW.set({ equinoxSubmitted: true, dqScore: currentDQ + 1 });
   updateDQRing(currentDQ + 1);
   const inboxList = document.querySelector('#tab-inbox > div');
   const item = document.createElement('div');
@@ -2389,8 +2449,92 @@ function submitEquinoxOverride() {
   inboxList.prepend(item);
 }
 
+// ── gate banner state rendering ──
+function renderGateBanner(status, state) {
+  const banner   = document.getElementById('gate-banner');
+  const iconEl   = document.getElementById('gate-icon-sp');
+  const timeTxt  = document.getElementById('gate-time-txt');
+  const itemsEl  = document.getElementById('gate-items-txt');
+  const actionEl = document.getElementById('gate-action-btn');
+  if (!banner) return;
+  banner.classList.remove('blocked','cleared','urgent');
+  if (status === 'blocked') {
+    banner.classList.add('blocked');
+    if (iconEl)   iconEl.textContent = '🚨';
+    if (timeTxt)  timeTxt.innerHTML  = '<strong>Gate 3 BLOCKED</strong>';
+    const dq = (state && state.dqScore) || currentDQ;
+    if (itemsEl)  itemsEl.textContent = 'DQ score ' + dq + ' — below threshold. Resolve overrides to proceed.';
+    if (actionEl) { actionEl.textContent = 'Fix Now →'; actionEl.setAttribute('onclick', "showTab('secondopinion')"); }
+  } else if (status === 'at-risk') {
+    banner.classList.add('urgent');
+    if (iconEl)   iconEl.textContent = '⚠️';
+    if (timeTxt)  timeTxt.innerHTML  = 'Gate 3 at risk — <strong id="gate-time">' + (document.getElementById('gate-time')||{}).textContent + '</strong>';
+    if (itemsEl)  itemsEl.textContent = 'DQ score low — raise above 78 to clear gate';
+    if (actionEl) { actionEl.textContent = 'Review →'; actionEl.setAttribute('onclick', "showTab('secondopinion')"); }
+  } else if (status === 'clear') {
+    banner.classList.add('cleared');
+    if (iconEl)   iconEl.textContent = '✅';
+    if (timeTxt)  timeTxt.innerHTML  = '<strong>Gate 3 cleared</strong>';
+    if (itemsEl)  itemsEl.textContent = 'Overrides submitted — ready to close';
+    if (actionEl) { actionEl.textContent = 'View Summary'; actionEl.setAttribute('onclick', "showTab('inbox')"); }
+  } else {
+    // ok — restore default
+    if (iconEl)   iconEl.textContent = '⏱';
+    if (timeTxt && !timeTxt.querySelector('#gate-time')) {
+      timeTxt.innerHTML = 'Gate 3 in <strong id="gate-time">35h 59m</strong>';
+    }
+    if (itemsEl)  itemsEl.textContent = 'Silverado HD · Equinox EV pending resolution';
+    if (actionEl) { actionEl.textContent = 'Review →'; actionEl.setAttribute('onclick', "showTab('secondopinion')"); }
+  }
+}
+
+// ── cross-tab state sync (pw:change from other tabs) ──
+var _pwLocalUpdate = false;
+window.addEventListener('pw:change', function (e) {
+  if (_pwLocalUpdate) return;  // ignore events we fired ourselves
+  const s = e.detail;
+  if (typeof s.dqScore === 'number' && s.dqScore !== currentDQ) {
+    // Update ring in both directions (cross-app sync)
+    currentDQ = s.dqScore;
+    const circ  = 87.96;
+    const off   = circ * (1 - s.dqScore / 100);
+    const sc = document.getElementById('dq-sidebar-circle');
+    const sv = document.getElementById('dq-sidebar-val');
+    const mc = document.getElementById('dq-main-circle');
+    const mt = document.getElementById('dq-main-text');
+    if (sc) sc.setAttribute('stroke-dashoffset', off.toFixed(2));
+    if (sv) sv.textContent = s.dqScore;
+    if (mc) mc.setAttribute('stroke-dashoffset', (238.76 * (1 - s.dqScore / 100)).toFixed(2));
+    if (mt) mt.textContent = s.dqScore;
+  }
+  renderGateBanner(s.gateStatus || 'ok', s);
+});
+
+// Wrap PW.set so same-tab dispatches don't re-enter the listener
+if (window.PW) {
+  const _origSet = PW.set.bind(PW);
+  PW.set = function(updates) {
+    _pwLocalUpdate = true;
+    const result = _origSet(updates);
+    _pwLocalUpdate = false;
+    // Still render gate banner locally
+    renderGateBanner(result.gateStatus || 'ok', result);
+    return result;
+  };
+}
+
 // ── auto show toast on load ──
 window.addEventListener('load', () => {
+  // Sync DQ ring and gate banner from shared state
+  if (window.PW) {
+    const s = PW.get();
+    if (s.dqScore !== 88) {
+      currentDQ = s.dqScore - 1; // allow updateDQRing to accept it
+      updateDQRing(s.dqScore);
+    }
+    renderGateBanner(s.gateStatus || 'ok', s);
+  }
+
   // hash-based deep link on load
   const hash = location.hash.replace('#', '');
   const validTabs = ['dashboard','forecasts','ghostlap','secondopinion','championship','aichat','inbox'];
