@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pit Wall — Engineering Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── design tokens ── */
+:root {
+  --void:#0a0c10;
+  --carbon:#13161e;
+  --pit:#1c2030;
+  --pit-2:#252a3b;
+  --line:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.14);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --buick-teal:#7fb0bf;
+  --cad-champagne:#c8b273;
+  --f1-amber:#ff6b00;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --risk:#ff453a;
+  --good:#23d18b;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --radius:16px;
+  --radius-sm:10px;
+  --accent:var(--buick-teal);
+  --sidebar-w:220px;
+  --topbar-h:56px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── topbar ── */
+.topbar{
+  height:var(--topbar-h);
+  min-height:var(--topbar-h);
+  background:rgba(13,15,20,.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  gap:16px;
+  position:relative;
+  z-index:200;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.mark{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,#1a2a2e,#0c1416);
+  border:1px solid rgba(127,176,191,.25);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.15em;color:var(--buick-teal);
+  box-shadow:0 0 16px rgba(127,176,191,.15);
+  flex-shrink:0;
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.brand-ver{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:1px}
+.topbar-sep{flex:1}
+.env-chip{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:4px 12px;border-radius:999px;
+  background:rgba(127,176,191,.1);color:var(--buick-teal);
+  border:1px solid rgba(127,176,191,.28);
+  font-weight:700;
+}
+
+/* ── shell ── */
+.shell{
+  flex:1;
+  display:flex;
+  overflow:hidden;
+}
+
+/* ── sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);
+  min-width:var(--sidebar-w);
+  background:var(--carbon);
+  border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.nav-section{
+  padding:12px 14px 4px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted-2);
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;
+  border-radius:8px;
+  margin:1px 6px;
+  cursor:pointer;
+  color:var(--ink-2);
+  font-size:13px;font-weight:500;
+  transition:all .15s ease;
+  position:relative;
+  user-select:none;
+}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+.nav-item.active{
+  background:rgba(127,176,191,.08);
+  color:var(--buick-teal);
+}
+.nav-item.active::before{
+  content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;border-radius:0 2px 2px 0;
+  background:var(--buick-teal);
+}
+.nav-icon{
+  width:16px;height:16px;flex-shrink:0;opacity:.65;
+  display:grid;place-items:center;
+}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{
+  margin-left:auto;
+  min-width:20px;height:18px;
+  border-radius:9px;
+  padding:0 6px;
+  background:rgba(255,149,0,.18);
+  color:var(--warn);
+  border:1px solid rgba(255,149,0,.3);
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  display:grid;place-items:center;
+  animation:badge-pulse 2.5s ease-in-out infinite;
+}
+@keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,149,0,.4)}50%{box-shadow:0 0 0 5px rgba(255,149,0,0)}}
+.sidebar-footer{
+  margin-top:auto;
+  padding:14px 10px;
+  border-top:1px solid var(--line);
+}
+.sys-info{
+  padding:10px 12px;
+  background:rgba(127,176,191,.04);
+  border:1px solid rgba(127,176,191,.12);
+  border-radius:var(--radius-sm);
+}
+.sys-info-row{
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;
+  color:var(--muted);margin-bottom:4px;
+}
+.sys-info-row:last-child{margin-bottom:0}
+.sys-info-val{color:var(--buick-teal);font-weight:700}
+.sys-info-val.good{color:var(--good)}
+.sys-info-val.warn{color:var(--warn)}
+
+/* ── main ── */
+.main{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:
+    radial-gradient(900px 500px at 80% -5%, rgba(127,176,191,.04), transparent 55%),
+    radial-gradient(700px 400px at -5% 60%, rgba(255,107,0,.02), transparent 65%),
+    var(--void);
+}
+.main::-webkit-scrollbar{width:5px}
+.main::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:3px}
+
+/* ── tabs ── */
+.tab-panel{display:none;padding:24px 28px;max-width:1200px}
+.tab-panel.active{display:block}
+
+/* ── section headers ── */
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:700;margin-bottom:4px;
+}
+.section-eyebrow::before{content:"";width:18px;height:1px;background:currentColor;display:inline-block}
+.section-title{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.015em;margin-bottom:20px;color:var(--ink)}
+
+/* ── card ── */
+.card{
+  background:linear-gradient(160deg,rgba(255,255,255,.03) 0%,rgba(255,255,255,.01) 100%);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+}
+.card-title{
+  font-family:var(--serif);font-weight:600;font-size:16px;letter-spacing:-.01em;
+  margin-bottom:4px;
+}
+.card-sub{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+
+/* ── btn ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:var(--radius-sm);
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;border:none;transition:all .18s ease;
+}
+.btn-primary{
+  background:rgba(127,176,191,.15);
+  color:var(--buick-teal);
+  border:1px solid rgba(127,176,191,.35);
+}
+.btn-primary:hover{background:rgba(127,176,191,.25);border-color:rgba(127,176,191,.5)}
+.btn-sm{padding:5px 12px;font-size:10px}
+.btn-ghost{
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  border:1px solid var(--line);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.08);color:var(--ink-2)}
+
+/* ── toast ── */
+#toast{
+  position:fixed;bottom:32px;right:32px;
+  background:rgba(127,176,191,.15);
+  border:1px solid rgba(127,176,191,.35);
+  border-radius:var(--radius-sm);
+  padding:12px 20px;
+  font-family:var(--mono);font-size:12px;color:var(--buick-teal);
+  opacity:0;transform:translateY(12px);
+  transition:all .25s ease;
+  pointer-events:none;z-index:999;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* =====================================================
+   TAB 1: DQ SCORE ENGINE TUNER
+   ===================================================== */
+.dq-layout{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+@media(max-width:900px){.dq-layout{grid-template-columns:1fr}}
+
+.slider-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+.slider-row:last-child{border-bottom:none}
+.slider-label-col{width:200px;flex-shrink:0}
+.slider-dim-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.05em}
+.slider-dim-desc{font-size:10px;color:var(--muted);margin-top:2px}
+.slider-track{flex:1;position:relative;display:flex;align-items:center;gap:10px}
+input[type=range].dq-slider{
+  flex:1;
+  -webkit-appearance:none;
+  height:4px;
+  border-radius:2px;
+  background:var(--line-strong);
+  outline:none;cursor:pointer;
+}
+input[type=range].dq-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--buick-teal);
+  border:2px solid rgba(127,176,191,.5);
+  box-shadow:0 0 8px rgba(127,176,191,.4);
+  cursor:pointer;
+}
+input[type=range].dq-slider::-moz-range-thumb{
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--buick-teal);
+  border:2px solid rgba(127,176,191,.5);
+  cursor:pointer;
+}
+.slider-pct-input{
+  width:52px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  color:var(--buick-teal);
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  padding:4px 6px;
+  text-align:center;
+  outline:none;
+}
+.slider-pct-input:focus{border-color:rgba(127,176,191,.4)}
+
+.weight-total-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:16px;
+  padding:12px 16px;
+  border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;
+}
+.weight-total-label{color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+.weight-total-val{font-size:18px;font-weight:700;color:var(--good)}
+.weight-total-val.over{color:var(--risk)}
+.weight-total-val.under{color:var(--warn)}
+
+/* preview panel */
+.preview-panel{
+  background:rgba(127,176,191,.04);
+  border:1px solid rgba(127,176,191,.15);
+  border-radius:var(--radius);
+  padding:18px;
+}
+.preview-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--buick-teal);margin-bottom:14px}
+.preview-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;
+}
+.preview-row:last-child{border-bottom:none}
+.preview-name{color:var(--ink-2);flex:1}
+.preview-arrow{color:var(--muted-2);margin:0 8px}
+.preview-old{color:var(--muted)}
+.preview-new{font-weight:700;min-width:36px;text-align:right}
+.preview-new.improved{color:var(--good)}
+.preview-new.declined{color:var(--risk)}
+.preview-new.same{color:var(--buick-teal)}
+.preview-delta{font-size:10px;margin-left:6px}
+.preview-delta.up{color:var(--good)}
+.preview-delta.down{color:var(--risk)}
+
+/* =====================================================
+   TAB 2: HIBT LEDGER
+   ===================================================== */
+.filter-bar{
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.filter-bar label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+select.filter-select,input.filter-input{
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  color:var(--ink-2);
+  font-family:var(--mono);font-size:11px;
+  padding:5px 10px;
+  outline:none;
+}
+select.filter-select:focus,input.filter-input:focus{border-color:rgba(127,176,191,.4)}
+input.filter-input{width:130px}
+input[type="date"].filter-input{width:130px;color-scheme:dark}
+
+.ledger-table{width:100%;border-collapse:collapse;font-size:12px}
+.ledger-table th{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);text-align:left;
+  padding:8px 10px;
+  border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+.ledger-table td{
+  padding:9px 10px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+  font-family:var(--mono);
+}
+.ledger-table tr:hover td{background:rgba(255,255,255,.02)}
+.hibt-id{color:var(--buick-teal);font-size:11px;white-space:nowrap}
+.ts{color:var(--muted);white-space:nowrap;font-size:10px}
+.analyst{color:var(--ink-2)}
+.surface-tag{
+  display:inline-block;
+  padding:1px 6px;border-radius:4px;
+  background:rgba(255,255,255,.06);
+  font-size:9px;letter-spacing:.08em;
+  color:var(--muted);
+}
+.nameplate{color:var(--ink-2)}
+.action-badge{
+  display:inline-block;
+  padding:2px 8px;border-radius:4px;
+  font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.action-OVERRIDE{background:rgba(200,178,115,.14);color:var(--cad-champagne);border:1px solid rgba(200,178,115,.25)}
+.action-SO_TRIGGER{background:rgba(255,149,0,.12);color:var(--warn);border:1px solid rgba(255,149,0,.25)}
+.action-CONFIRM{background:rgba(35,209,139,.1);color:var(--good);border:1px solid rgba(35,209,139,.22)}
+.action-ACCURACY_CONFIRM{background:rgba(35,209,139,.08);color:#1aab6d;border:1px solid rgba(35,209,139,.18)}
+.action-DQ_RECALC{background:rgba(127,176,191,.1);color:var(--buick-teal);border:1px solid rgba(127,176,191,.22)}
+.action-REPLAY{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.action-PIPELINE_SYNC{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.action-DQ_ALERT{background:rgba(255,69,58,.12);color:var(--risk);border:1px solid rgba(255,69,58,.25)}
+.value-col{color:var(--ink);font-size:11px}
+.reason-col{color:var(--muted);font-size:11px;max-width:200px}
+
+.replay-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;
+  background:rgba(127,176,191,.08);
+  border:1px solid rgba(127,176,191,.2);
+  border-radius:4px;
+  color:var(--buick-teal);
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  cursor:pointer;white-space:nowrap;
+  transition:all .15s;
+}
+.replay-btn:hover{background:rgba(127,176,191,.16);border-color:rgba(127,176,191,.35)}
+
+.replay-output{
+  display:none;
+  margin-top:6px;
+  padding:8px 12px;
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(127,176,191,.2);
+  border-radius:6px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--buick-teal);
+  line-height:1.7;
+}
+.replay-output.visible{display:block}
+.replay-ok{color:var(--good)}
+.replay-muted{color:var(--muted)}
+
+/* =====================================================
+   TAB 3: SURFACE ADAPTER
+   ===================================================== */
+.surface-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.surface-chip{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;
+  border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line-strong);
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;
+  color:var(--muted);
+  cursor:pointer;transition:all .15s;
+  user-select:none;
+}
+.surface-chip:hover{background:rgba(255,255,255,.07);color:var(--ink-2)}
+.surface-chip.active{
+  background:rgba(127,176,191,.1);
+  border-color:rgba(127,176,191,.35);
+  color:var(--buick-teal);
+}
+.surface-chip input[type=radio]{display:none}
+
+.adapter-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:800px){.adapter-layout{grid-template-columns:1fr}}
+
+.payload-area{
+  width:100%;
+  min-height:240px;
+  background:rgba(0,0,0,.35);
+  border:1px solid var(--line-strong);
+  border-radius:var(--radius-sm);
+  color:var(--ink-2);
+  font-family:var(--mono);font-size:11px;
+  padding:14px;
+  resize:vertical;
+  outline:none;
+  line-height:1.7;
+}
+.payload-area:focus{border-color:rgba(127,176,191,.35)}
+.payload-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+
+.parse-output{
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(127,176,191,.15);
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  font-family:var(--mono);font-size:12px;
+  line-height:2;
+  min-height:240px;
+}
+.parse-field{display:flex;gap:0}
+.parse-key{color:var(--muted);width:120px;flex-shrink:0;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding-top:1px}
+.parse-val{color:var(--ink)}
+.parse-val.teal{color:var(--buick-teal)}
+.parse-val.amber{color:var(--cad-champagne)}
+.parse-val.green{color:var(--good)}
+.parse-val.warn{color:var(--warn)}
+.parse-ready{color:var(--good);font-size:14px}
+
+/* =====================================================
+   TAB 4: MDS CALCULATOR
+   ===================================================== */
+.mds-inputs{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:700px){.mds-inputs{grid-template-columns:1fr}}
+
+.mds-input-group{
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.mds-input-group h4{
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--buick-teal);margin-bottom:14px;
+}
+.field-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.field-label{font-size:12px;color:var(--muted);font-family:var(--mono);font-size:10px}
+.num-input{
+  width:110px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  color:var(--ink);
+  font-family:var(--mono);font-size:12px;
+  padding:5px 9px;
+  text-align:right;
+  outline:none;
+}
+.num-input:focus{border-color:rgba(127,176,191,.4);background:rgba(127,176,191,.06)}
+select.conf-select{
+  width:110px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  color:var(--ink);
+  font-family:var(--mono);font-size:12px;
+  padding:5px 9px;
+  outline:none;
+}
+
+.mds-output{
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+}
+.mds-score-hero{
+  display:flex;align-items:baseline;gap:10px;
+  margin-bottom:6px;
+}
+.mds-score-num{
+  font-family:var(--serif);font-weight:900;font-size:56px;line-height:1;letter-spacing:-.03em;
+  color:var(--warn);
+}
+.mds-score-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.mds-threshold{
+  font-family:var(--mono);font-size:10px;color:var(--warn);
+  background:rgba(255,149,0,.08);border:1px solid rgba(255,149,0,.2);
+  display:inline-block;padding:4px 10px;border-radius:4px;margin-bottom:16px;
+}
+.mds-routing{
+  font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:20px;
+}
+.mds-routing strong{color:var(--buick-teal)}
+
+.sub-scores{display:flex;flex-direction:column;gap:12px;margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+.sub-score-row{display:flex;align-items:center;gap:12px}
+.sub-score-name{font-family:var(--mono);font-size:10px;color:var(--muted);width:200px;flex-shrink:0}
+.sub-score-bar-track{flex:1;height:4px;background:var(--line-strong);border-radius:2px;overflow:hidden}
+.sub-score-bar-fill{height:100%;border-radius:2px;background:var(--buick-teal);transition:width .4s ease}
+.sub-score-val{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink-2);width:36px;text-align:right}
+.sub-score-desc{font-size:10px;color:var(--muted-2);flex:1}
+
+/* =====================================================
+   TAB 5: PIPELINE HEALTH
+   ===================================================== */
+.heatmap-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+.heat-cell{
+  border-radius:var(--radius-sm);
+  padding:14px 16px;
+  cursor:default;
+  position:relative;
+  transition:all .15s;
+  border:1px solid transparent;
+}
+.heat-cell:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.heat-cell.fresh{background:rgba(35,209,139,.1);border-color:rgba(35,209,139,.25)}
+.heat-cell.warn{background:rgba(255,149,0,.1);border-color:rgba(255,149,0,.25)}
+.heat-cell.stale{background:rgba(255,69,58,.1);border-color:rgba(255,69,58,.25)}
+.heat-cell.offline{background:rgba(255,255,255,.03);border-color:var(--line)}
+.heat-source-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.heat-age{font-family:var(--mono);font-size:11px}
+.heat-cell.fresh .heat-age{color:var(--good)}
+.heat-cell.warn .heat-age{color:var(--warn)}
+.heat-cell.stale .heat-age{color:var(--risk)}
+.heat-cell.offline .heat-age{color:var(--muted)}
+.heat-status{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;margin-top:4px;
+}
+.heat-cell.fresh .heat-status{color:var(--good)}
+.heat-cell.warn .heat-status{color:var(--warn)}
+.heat-cell.stale .heat-status{color:var(--risk)}
+.heat-threshold{font-size:9px;color:var(--muted-2);margin-top:2px;font-family:var(--mono)}
+
+/* tooltip */
+.heat-tooltip{
+  display:none;
+  position:absolute;top:calc(100% + 8px);left:0;right:0;
+  background:#1a1f2e;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  padding:10px 12px;
+  font-family:var(--mono);font-size:10px;
+  line-height:1.8;
+  color:var(--ink-2);
+  z-index:100;
+  white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  pointer-events:none;
+}
+.heat-cell:hover .heat-tooltip{display:block}
+.tt-key{color:var(--muted);display:inline-block;width:90px}
+.tt-val{color:var(--buick-teal)}
+
+.sync-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.sync-table th{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);text-align:left;padding:8px 12px;
+  border-bottom:1px solid var(--line-strong);
+}
+.sync-table td{
+  padding:9px 12px;
+  border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;
+  color:var(--ink-2);
+}
+.sync-table tr:hover td{background:rgba(255,255,255,.02)}
+.sync-ok{color:var(--good)}
+.sync-warn{color:var(--warn)}
+
+.job-queue{display:flex;flex-direction:column;gap:8px}
+.job-item{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 16px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+}
+.job-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink);flex:1}
+.job-status-pill{
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 10px;border-radius:999px;
+}
+.job-running{background:rgba(127,176,191,.12);color:var(--buick-teal);border:1px solid rgba(127,176,191,.25)}
+.job-queued{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
+.job-elapsed{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.job-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+.job-dot.running{background:var(--buick-teal);box-shadow:0 0 6px rgba(127,176,191,.5);animation:dot-blink 1.2s ease-in-out infinite}
+.job-dot.queued{background:var(--muted-2)}
+@keyframes dot-blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── utility ── */
+.row-gap-16{display:flex;gap:16px;align-items:flex-start}
+.mt-16{margin-top:16px}
+.mt-20{margin-top:20px}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="brand" href="#">
+    <div class="mark">PW</div>
+    <div>
+      <div class="brand-name">Pit Wall — Engineering</div>
+      <div class="brand-ver">v4.0 · GovOps Sandbox</div>
+    </div>
+  </a>
+  <div class="topbar-sep"></div>
+  <div class="env-chip">DEV · DuckDB</div>
+</header>
+
+<!-- SHELL -->
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-section">Tools</div>
+
+    <!-- DQ Tuner -->
+    <div class="nav-item active" data-tab="dq">
+      <div class="nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="7" width="12" height="2" rx="1" fill="currentColor" opacity=".4"/>
+          <circle cx="6" cy="8" r="2.5" fill="currentColor"/>
+          <rect x="2" y="3" width="12" height="2" rx="1" fill="currentColor" opacity=".4"/>
+          <circle cx="10" cy="4" r="2.5" fill="currentColor"/>
+          <rect x="2" y="11" width="12" height="2" rx="1" fill="currentColor" opacity=".4"/>
+          <circle cx="7" cy="12" r="2.5" fill="currentColor"/>
+        </svg>
+      </div>
+      DQ Tuner
+    </div>
+
+    <!-- HIBT Ledger -->
+    <div class="nav-item" data-tab="hibt">
+      <div class="nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      HIBT Ledger
+    </div>
+
+    <!-- Surface Adapter -->
+    <div class="nav-item" data-tab="surface">
+      <div class="nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 8H13a1 1 0 011 1v3a1 1 0 01-1 1H10a1 1 0 01-1-1V9a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="5" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M7.5 5h1.5M7.5 5l.5-1M7.5 5l.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M9 9V7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+        </svg>
+      </div>
+      Surface Adapter
+    </div>
+
+    <!-- MDS Calculator -->
+    <div class="nav-item" data-tab="mds">
+      <div class="nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      MDS Calculator
+    </div>
+
+    <!-- Pipeline Health -->
+    <div class="nav-item" data-tab="pipeline">
+      <div class="nav-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="10" width="12" height="4" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <rect x="2" y="5" width="12" height="4" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="12.5" cy="7" r="1" fill="currentColor"/>
+          <circle cx="12.5" cy="12" r="1" fill="currentColor" opacity=".5"/>
+        </svg>
+      </div>
+      Pipeline Health
+      <span class="nav-badge">2</span>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sys-info">
+        <div class="sys-info-row">
+          <span>Cycle</span>
+          <span class="sys-info-val">5 / Active</span>
+        </div>
+        <div class="sys-info-row">
+          <span>DQ Engine</span>
+          <span class="sys-info-val good">Online</span>
+        </div>
+        <div class="sys-info-row">
+          <span>Alerts</span>
+          <span class="sys-info-val warn">2 warn</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ══════════════════════════════════════════════
+         TAB 1: DQ SCORE ENGINE TUNER
+         ══════════════════════════════════════════════ -->
+    <section class="tab-panel active" id="tab-dq">
+      <div class="section-eyebrow">Algorithm Tuning</div>
+      <h1 class="section-title">DQ Score Engine</h1>
+
+      <div class="dq-layout">
+        <!-- Sliders card -->
+        <div class="card">
+          <div class="card-title">Dimension Weights</div>
+          <div class="card-sub">Cycle 5 · Active Config</div>
+
+          <!-- Source Freshness -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">SOURCE_FRESHNESS</div>
+              <div class="slider-dim-desc">Last ingest recency vs threshold</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-0" min="0" max="60" value="25" step="1">
+              <input type="text" class="slider-pct-input" id="inp-0" value="25%">
+            </div>
+          </div>
+
+          <!-- Lineage Completeness -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">LINEAGE_COMPLETENESS</div>
+              <div class="slider-dim-desc">% of upstream lineage fully traced</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-1" min="0" max="60" value="20" step="1">
+              <input type="text" class="slider-pct-input" id="inp-1" value="20%">
+            </div>
+          </div>
+
+          <!-- Override Accuracy -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">OVERRIDE_ACCURACY</div>
+              <div class="slider-dim-desc">Historical MAPE on analyst overrides</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-2" min="0" max="60" value="20" step="1">
+              <input type="text" class="slider-pct-input" id="inp-2" value="20%">
+            </div>
+          </div>
+
+          <!-- Cross-Surface Consistency -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">CROSS_SURFACE_CONSISTENCY</div>
+              <div class="slider-dim-desc">Agreement across all active surfaces</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-3" min="0" max="60" value="15" step="1">
+              <input type="text" class="slider-pct-input" id="inp-3" value="15%">
+            </div>
+          </div>
+
+          <!-- Replay Determinism -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">REPLAY_DETERMINISM</div>
+              <div class="slider-dim-desc">Ghost-lap replay match rate</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-4" min="0" max="60" value="10" step="1">
+              <input type="text" class="slider-pct-input" id="inp-4" value="10%">
+            </div>
+          </div>
+
+          <!-- Signal Coverage -->
+          <div class="slider-row">
+            <div class="slider-label-col">
+              <div class="slider-dim-name">SIGNAL_COVERAGE</div>
+              <div class="slider-dim-desc">% of required signals present</div>
+            </div>
+            <div class="slider-track">
+              <input type="range" class="dq-slider" id="sl-5" min="0" max="60" value="10" step="1">
+              <input type="text" class="slider-pct-input" id="inp-5" value="10%">
+            </div>
+          </div>
+
+          <!-- Total bar -->
+          <div class="weight-total-bar">
+            <span class="weight-total-label">Total Weight</span>
+            <span class="weight-total-val" id="weight-total">100%</span>
+          </div>
+
+          <div class="mt-16">
+            <button class="btn btn-primary" id="btn-apply-weights">Apply to Cycle 5</button>
+          </div>
+        </div>
+
+        <!-- Live preview panel -->
+        <div class="preview-panel">
+          <div class="preview-title">Live Score Preview</div>
+
+          <div class="preview-row">
+            <div class="preview-name">Silverado HD</div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
+              <span class="preview-old">75</span>
+              <span class="preview-arrow">→</span>
+              <span class="preview-new" id="prev-0">75</span>
+              <span class="preview-delta" id="delta-0"></span>
+            </div>
+          </div>
+
+          <div class="preview-row">
+            <div class="preview-name">Tahoe LTZ</div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
+              <span class="preview-old">91</span>
+              <span class="preview-arrow">→</span>
+              <span class="preview-new" id="prev-1">91</span>
+              <span class="preview-delta" id="delta-1"></span>
+            </div>
+          </div>
+
+          <div class="preview-row">
+            <div class="preview-name">Equinox EV</div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
+              <span class="preview-old">72</span>
+              <span class="preview-arrow">→</span>
+              <span class="preview-new" id="prev-2">72</span>
+              <span class="preview-delta" id="delta-2"></span>
+            </div>
+          </div>
+
+          <div class="preview-row">
+            <div class="preview-name">Colorado Z71</div>
+            <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
+              <span class="preview-old">93</span>
+              <span class="preview-arrow">→</span>
+              <span class="preview-new" id="prev-3">93</span>
+              <span class="preview-delta" id="delta-3"></span>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--line)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Dimension Baseline Scores</div>
+            <div style="font-family:var(--mono);font-size:10px;line-height:2;color:var(--muted-2)">
+              Silverado HD:&nbsp; 80·70·68·72·85·74<br>
+              Tahoe LTZ:&nbsp;&nbsp;&nbsp;&nbsp; 95·88·92·90·94·91<br>
+              Equinox EV:&nbsp;&nbsp;&nbsp; 58·75·72·68·80·76<br>
+              Colorado Z71:&nbsp; 96·90·94·92·98·93
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 2: HIBT LEDGER EXPLORER
+         ══════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-hibt">
+      <div class="section-eyebrow">Immutable Audit Log</div>
+      <h1 class="section-title">HIBT Ledger Explorer</h1>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <label>Analyst</label>
+        <select class="filter-select" id="filter-analyst">
+          <option value="">All Analysts</option>
+          <option>Krisztina G.</option>
+          <option>Adriel V.</option>
+          <option>Marcus R.</option>
+          <option>Yuna K.</option>
+          <option>Don S.</option>
+          <option>Mansoor A.</option>
+          <option>System</option>
+        </select>
+        <label>Action</label>
+        <select class="filter-select" id="filter-action">
+          <option value="">All Actions</option>
+          <option>OVERRIDE</option>
+          <option>SO_TRIGGER</option>
+          <option>CONFIRM</option>
+          <option>ACCURACY_CONFIRM</option>
+          <option>DQ_RECALC</option>
+          <option>REPLAY</option>
+          <option>PIPELINE_SYNC</option>
+          <option>DQ_ALERT</option>
+        </select>
+        <label>Nameplate</label>
+        <input type="text" class="filter-input" id="filter-nameplate" placeholder="e.g. Silverado">
+        <label>From</label>
+        <input type="date" class="filter-input" id="filter-from" value="2026-05-25">
+        <label>To</label>
+        <input type="date" class="filter-input" id="filter-to" value="2026-05-27">
+        <button class="btn btn-primary btn-sm" id="btn-search">Search</button>
+        <button class="btn btn-ghost btn-sm" id="btn-clear-filter">Clear</button>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <table class="ledger-table" id="ledger-table">
+          <thead>
+            <tr>
+              <th>HIBT-ID</th>
+              <th>Timestamp</th>
+              <th>Analyst</th>
+              <th>Surface</th>
+              <th>Nameplate</th>
+              <th>Action</th>
+              <th>Value</th>
+              <th>Reason</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ledger-tbody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 3: SURFACE ADAPTER TEST HARNESS
+         ══════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-surface">
+      <div class="section-eyebrow">Surface Adapter</div>
+      <h1 class="section-title">Surface Adapter Test Harness</h1>
+
+      <!-- Surface selector -->
+      <div class="surface-chips">
+        <label class="surface-chip active" id="chip-slack">
+          <input type="radio" name="surface" value="Slack" checked>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="4" height="4" rx="1" fill="currentColor" opacity=".7"/><rect x="8" y="2" width="4" height="4" rx="1" fill="currentColor"/><rect x="2" y="8" width="4" height="4" rx="1" fill="currentColor"/><rect x="8" y="8" width="4" height="4" rx="1" fill="currentColor" opacity=".7"/></svg>
+          Slack
+        </label>
+        <label class="surface-chip" id="chip-outlook">
+          <input type="radio" name="surface" value="Outlook">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="3" width="11" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1.5 5l5.5 3.5L12.5 5" stroke="currentColor" stroke-width="1.3"/></svg>
+          Outlook
+        </label>
+        <label class="surface-chip" id="chip-teams">
+          <input type="radio" name="surface" value="Teams">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5" r="2" fill="currentColor"/><circle cx="10" cy="4" r="1.5" fill="currentColor" opacity=".7"/><path d="M1 12c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Teams
+        </label>
+        <label class="surface-chip" id="chip-copilot">
+          <input type="radio" name="surface" value="Copilot">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Copilot
+        </label>
+        <label class="surface-chip" id="chip-glean">
+          <input type="radio" name="surface" value="Glean">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Glean
+        </label>
+      </div>
+
+      <div class="adapter-layout">
+        <!-- Input panel -->
+        <div>
+          <div class="payload-label">Paste Surface Payload</div>
+          <textarea class="payload-area" id="payload-input" spellcheck="false"></textarea>
+          <div class="mt-16">
+            <button class="btn btn-primary" id="btn-parse">Parse Payload →</button>
+          </div>
+        </div>
+
+        <!-- Output panel -->
+        <div>
+          <div class="payload-label">Parsed Output</div>
+          <div class="parse-output" id="parse-output">
+            <div class="parse-field"><span class="parse-key">Surface</span><span class="parse-val teal" id="out-surface">Slack</span></div>
+            <div class="parse-field"><span class="parse-key">Intent</span><span class="parse-val amber" id="out-intent">OVERRIDE</span></div>
+            <div class="parse-field"><span class="parse-key">Analyst</span><span class="parse-val" id="out-analyst">Krisztina G.</span></div>
+            <div class="parse-field"><span class="parse-key">Forecast</span><span class="parse-val" id="out-forecast">284,200</span></div>
+            <div class="parse-field"><span class="parse-key">Reason</span><span class="parse-val" id="out-reason">incentive elasticity confirmed with dealer network</span></div>
+            <div class="parse-field"><span class="parse-key">Nameplate</span><span class="parse-val" id="out-nameplate">Silverado HD 1500</span></div>
+            <div class="parse-field"><span class="parse-key">Confidence</span><span class="parse-val green" id="out-confidence">High</span></div>
+            <div class="parse-field"><span class="parse-key">HIBT-ready</span><span class="parse-val green parse-ready" id="out-hibt">✓</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 4: MDS CALCULATOR
+         ══════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-mds">
+      <div class="section-eyebrow">Multi-Dimensional Skepticism</div>
+      <h1 class="section-title">MDS Calculator</h1>
+
+      <div class="mds-inputs">
+        <!-- Primary Model -->
+        <div class="mds-input-group">
+          <h4>Primary Model</h4>
+          <div class="field-row">
+            <span class="field-label">Volume</span>
+            <input type="number" class="num-input" id="m-vol" value="301400">
+          </div>
+          <div class="field-row">
+            <span class="field-label">P10</span>
+            <input type="number" class="num-input" id="m-p10" value="271260">
+          </div>
+          <div class="field-row">
+            <span class="field-label">P90</span>
+            <input type="number" class="num-input" id="m-p90" value="331540">
+          </div>
+          <div class="field-row">
+            <span class="field-label">Confidence</span>
+            <select class="conf-select" id="m-conf">
+              <option value="High" selected>High</option>
+              <option value="Med">Med</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Analyst Estimate -->
+        <div class="mds-input-group">
+          <h4>Analyst Estimate</h4>
+          <div class="field-row">
+            <span class="field-label">Volume</span>
+            <input type="number" class="num-input" id="a-vol" value="284200">
+          </div>
+          <div class="field-row">
+            <span class="field-label">P10</span>
+            <input type="number" class="num-input" id="a-p10" value="270990">
+          </div>
+          <div class="field-row">
+            <span class="field-label">P90</span>
+            <input type="number" class="num-input" id="a-p90" value="297410">
+          </div>
+          <div class="field-row">
+            <span class="field-label">Confidence</span>
+            <select class="conf-select" id="a-conf">
+              <option value="High" selected>High</option>
+              <option value="Med">Med</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <button class="btn btn-primary" id="btn-calc-mds">Calculate MDS →</button>
+      </div>
+
+      <!-- MDS Output -->
+      <div class="mds-output">
+        <div class="mds-score-hero">
+          <span class="mds-score-num" id="mds-score-display">0.72</span>
+          <span class="mds-score-label">MDS Score</span>
+        </div>
+        <div class="mds-threshold" id="mds-threshold-msg">Above 0.65 → Second Opinion triggered automatically</div>
+        <div class="mds-routing">
+          Route to: <strong id="mds-routing-val">Krisztina G. (nameplate owner) + Jim Kyle (MIA pricing SME)</strong>
+        </div>
+
+        <div class="sub-scores">
+          <div class="sub-score-row">
+            <span class="sub-score-name">Variance Magnitude</span>
+            <div class="sub-score-bar-track"><div class="sub-score-bar-fill" id="bar-vm" style="width:41%"></div></div>
+            <span class="sub-score-val" id="val-vm">0.41</span>
+            <span class="sub-score-desc" id="desc-vm">unit gap / model range</span>
+          </div>
+          <div class="sub-score-row">
+            <span class="sub-score-name">Direction Confidence</span>
+            <div class="sub-score-bar-track"><div class="sub-score-bar-fill" id="bar-dc" style="width:18%"></div></div>
+            <span class="sub-score-val" id="val-dc">0.18</span>
+            <span class="sub-score-desc" id="desc-dc">directional alignment of estimates</span>
+          </div>
+          <div class="sub-score-row">
+            <span class="sub-score-name">Signal Gap</span>
+            <div class="sub-score-bar-track"><div class="sub-score-bar-fill" id="bar-sg" style="width:31%"></div></div>
+            <span class="sub-score-val" id="val-sg">0.31</span>
+            <span class="sub-score-desc" id="desc-sg">tariff feed stale · fleet demand divergence</span>
+          </div>
+          <div class="sub-score-row">
+            <span class="sub-score-name">Range Overlap</span>
+            <div class="sub-score-bar-track"><div class="sub-score-bar-fill" id="bar-ro" style="width:22%"></div></div>
+            <span class="sub-score-val" id="val-ro">0.22</span>
+            <span class="sub-score-desc" id="desc-ro">P10–P90 bands overlap 87%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         TAB 5: PIPELINE HEALTH
+         ══════════════════════════════════════════════ -->
+    <section class="tab-panel" id="tab-pipeline">
+      <div class="section-eyebrow">Pipeline Health</div>
+      <h1 class="section-title">Source & Sync Status</h1>
+
+      <!-- Source staleness heatmap -->
+      <div class="card-title" style="margin-bottom:12px">Source Staleness Heatmap</div>
+      <div class="heatmap-grid">
+
+        <div class="heat-cell fresh">
+          <div class="heat-source-name">Dealer Pulse</div>
+          <div class="heat-age">1d old</div>
+          <div class="heat-status">FRESH</div>
+          <div class="heat-threshold">Threshold: 3d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-26 22:14 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">2026-05-27 22:14 UTC</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">4,812,007</span></div>
+          </div>
+        </div>
+
+        <div class="heat-cell warn">
+          <div class="heat-source-name">Tariff Feeds</div>
+          <div class="heat-age">3d old ⚠</div>
+          <div class="heat-status">WARN</div>
+          <div class="heat-threshold">Threshold: 2d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-24 06:00 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">Manually triggered</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">14,221</span></div>
+          </div>
+        </div>
+
+        <div class="heat-cell fresh">
+          <div class="heat-source-name">MIA Comp Scan</div>
+          <div class="heat-age">2d old</div>
+          <div class="heat-status">FRESH</div>
+          <div class="heat-threshold">Threshold: 3d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-25 08:30 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">2026-05-28 08:30 UTC</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">228,440</span></div>
+          </div>
+        </div>
+
+        <div class="heat-cell fresh">
+          <div class="heat-source-name">Macro Consumer Index</div>
+          <div class="heat-age">5d old</div>
+          <div class="heat-status">FRESH</div>
+          <div class="heat-threshold">Threshold: 7d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-22 00:00 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">2026-05-29 00:00 UTC</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">1,042</span></div>
+          </div>
+        </div>
+
+        <div class="heat-cell fresh">
+          <div class="heat-source-name">Fleet Demand Signal</div>
+          <div class="heat-age">1d old</div>
+          <div class="heat-status">FRESH</div>
+          <div class="heat-threshold">Threshold: 2d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-26 18:00 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">2026-05-27 18:00 UTC</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">78,910</span></div>
+          </div>
+        </div>
+
+        <div class="heat-cell fresh">
+          <div class="heat-source-name">Incentive Elasticity</div>
+          <div class="heat-age">6d old</div>
+          <div class="heat-status">FRESH</div>
+          <div class="heat-threshold">Threshold: 7d</div>
+          <div class="heat-tooltip">
+            <div><span class="tt-key">Last refresh</span><span class="tt-val">2026-05-21 12:00 UTC</span></div>
+            <div><span class="tt-key">Next run</span><span class="tt-val">2026-05-28 12:00 UTC</span></div>
+            <div><span class="tt-key">Records</span><span class="tt-val">6,288</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Cross-surface sync table -->
+      <div class="card-title" style="margin-bottom:12px">Cross-Surface Sync Status</div>
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:24px">
+        <table class="sync-table">
+          <thead>
+            <tr>
+              <th>Surface</th>
+              <th>Last Sync</th>
+              <th>Value</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Workbench</td>
+              <td>2 min ago</td>
+              <td>284,200</td>
+              <td class="sync-ok">✓ Sync</td>
+            </tr>
+            <tr>
+              <td>Slack</td>
+              <td>2 min ago</td>
+              <td>284,200</td>
+              <td class="sync-ok">✓ Sync</td>
+            </tr>
+            <tr>
+              <td>Power BI</td>
+              <td>18 min ago</td>
+              <td>284,200</td>
+              <td class="sync-ok">✓ Sync</td>
+            </tr>
+            <tr>
+              <td>Excel Add-in</td>
+              <td>47 min ago</td>
+              <td>284,200</td>
+              <td class="sync-warn">⚠ Stale</td>
+            </tr>
+            <tr>
+              <td>SharePoint</td>
+              <td>2 min ago</td>
+              <td>284,200</td>
+              <td class="sync-ok">✓ Sync</td>
+            </tr>
+            <tr>
+              <td>Teams</td>
+              <td>3 min ago</td>
+              <td>284,200</td>
+              <td class="sync-ok">✓ Sync</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Job queue -->
+      <div class="card-title" style="margin-bottom:12px">Job Queue</div>
+      <div class="job-queue">
+        <div class="job-item">
+          <div class="job-dot running"></div>
+          <div class="job-name">DQ_RECALC Cycle 5</div>
+          <span class="job-status-pill job-running">Running</span>
+          <span class="job-elapsed" id="job-elapsed">00:23 elapsed</span>
+        </div>
+        <div class="job-item">
+          <div class="job-dot queued"></div>
+          <div class="job-name">GHOST_LAP_PRECOMPUTE</div>
+          <span class="job-status-pill job-queued">Queued</span>
+          <span class="job-elapsed">Waiting</span>
+        </div>
+        <div class="job-item">
+          <div class="job-dot queued"></div>
+          <div class="job-name">TARIFF_FEED_REFRESH</div>
+          <span class="job-status-pill job-queued">Queued</span>
+          <span class="job-elapsed">Manually triggered</span>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /main -->
+</div><!-- /shell -->
+
+<!-- Toast -->
+<div id="toast">Weights saved to Unity Catalog</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════ */
+const navItems = document.querySelectorAll('.nav-item');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const tabId = item.dataset.tab;
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    tabPanels.forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+  });
+});
+
+/* ═══════════════════════════════════════════════════
+   TAB 1: DQ SCORE ENGINE TUNER
+   ═══════════════════════════════════════════════════ */
+
+// Per-nameplate dimension scores [freshness, lineage, override_acc, cross_surface, replay, signal]
+const nameplateBaseline = [
+  { name:'Silverado HD', base:75, dims:[80, 70, 68, 72, 85, 74] },
+  { name:'Tahoe LTZ',    base:91, dims:[95, 88, 92, 90, 94, 91] },
+  { name:'Equinox EV',   base:72, dims:[58, 75, 72, 68, 80, 76] },
+  { name:'Colorado Z71', base:93, dims:[96, 90, 94, 92, 98, 93] },
+];
+
+const sliderIds   = ['sl-0','sl-1','sl-2','sl-3','sl-4','sl-5'];
+const inputIds    = ['inp-0','inp-1','inp-2','inp-3','inp-4','inp-5'];
+const previewIds  = ['prev-0','prev-1','prev-2','prev-3'];
+const deltaIds    = ['delta-0','delta-1','delta-2','delta-3'];
+
+function getWeights() {
+  return sliderIds.map(id => parseInt(document.getElementById(id).value, 10));
+}
+
+function calcScore(dims, weights) {
+  const total = weights.reduce((a,b) => a+b, 0);
+  if (total === 0) return 0;
+  let score = 0;
+  for (let i = 0; i < 6; i++) {
+    score += (weights[i] / total) * dims[i];
+  }
+  return Math.round(score);
+}
+
+function updatePreview() {
+  const weights = getWeights();
+  const total = weights.reduce((a, b) => a + b, 0);
+  const totalEl = document.getElementById('weight-total');
+  totalEl.textContent = total + '%';
+  totalEl.className = 'weight-total-val';
+  if (total > 100) totalEl.classList.add('over');
+  else if (total < 100) totalEl.classList.add('under');
+
+  nameplateBaseline.forEach((np, i) => {
+    const newScore = calcScore(np.dims, weights);
+    const prevEl  = document.getElementById(previewIds[i]);
+    const deltaEl = document.getElementById(deltaIds[i]);
+    prevEl.textContent = newScore;
+    prevEl.className = 'preview-new';
+    const diff = newScore - np.base;
+    if (diff > 0) {
+      prevEl.classList.add('improved');
+      deltaEl.textContent = '+' + diff;
+      deltaEl.className = 'preview-delta up';
+    } else if (diff < 0) {
+      prevEl.classList.add('declined');
+      deltaEl.textContent = diff;
+      deltaEl.className = 'preview-delta down';
+    } else {
+      prevEl.classList.add('same');
+      deltaEl.textContent = '';
+      deltaEl.className = 'preview-delta';
+    }
+  });
+}
+
+// Wire sliders ↔ text inputs
+sliderIds.forEach((slId, i) => {
+  const slider = document.getElementById(slId);
+  const inp    = document.getElementById(inputIds[i]);
+
+  slider.addEventListener('input', () => {
+    inp.value = slider.value + '%';
+    updatePreview();
+  });
+
+  inp.addEventListener('change', () => {
+    const v = parseInt(inp.value.replace('%',''), 10);
+    if (!isNaN(v) && v >= 0 && v <= 60) {
+      slider.value = v;
+      inp.value = v + '%';
+    } else {
+      inp.value = slider.value + '%';
+    }
+    updatePreview();
+  });
+});
+
+updatePreview();
+
+// Apply button toast
+document.getElementById('btn-apply-weights').addEventListener('click', () => {
+  const weights = getWeights();
+  const total = weights.reduce((a,b) => a+b, 0);
+  if (total !== 100) {
+    showToast('⚠ Weights must total 100% before applying (' + total + '% current)');
+    return;
+  }
+  showToast('Weights saved to Unity Catalog — Cycle 5');
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || 'Weights saved to Unity Catalog';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ═══════════════════════════════════════════════════
+   TAB 2: HIBT LEDGER
+   ═══════════════════════════════════════════════════ */
+const ledgerData = [
+  { id:'HIBT-2026-C5-0891', ts:'2026-05-27 09:05', analyst:'Krisztina G.', surface:'Slack',      nameplate:'Silverado HD',      action:'OVERRIDE',         value:'284,200',    reason:'Incentive elasticity confirmed' },
+  { id:'HIBT-2026-C5-0890', ts:'2026-05-27 09:03', analyst:'System',       surface:'API',        nameplate:'Silverado HD',      action:'SO_TRIGGER',       value:'MDS:0.72',   reason:'Auto-triggered above threshold' },
+  { id:'HIBT-2026-C5-0882', ts:'2026-05-26 18:44', analyst:'System',       surface:'API',        nameplate:'Silverado HD 2500', action:'ACCURACY_CONFIRM', value:'MAPE:2.8%',  reason:'Actuals confirmed override better' },
+  { id:'HIBT-2026-C5-0871', ts:'2026-05-26 14:22', analyst:'Adriel V.',    surface:'Workbench',  nameplate:'Tahoe LTZ',         action:'CONFIRM',          value:'112,800',    reason:'DQ 91 — clean commit' },
+  { id:'HIBT-2026-C5-0865', ts:'2026-05-26 11:15', analyst:'Marcus R.',    surface:'Teams',      nameplate:'Colorado Z71',      action:'OVERRIDE',         value:'67,100',     reason:'Dealer network signal confirmed' },
+  { id:'HIBT-2026-C5-0854', ts:'2026-05-26 09:30', analyst:'System',       surface:'Cron',       nameplate:'All',               action:'DQ_RECALC',        value:'Cycle 5',    reason:'Scheduled 06:00 run' },
+  { id:'HIBT-2026-C5-0847', ts:'2026-05-25 17:45', analyst:'Yuna K.',      surface:'Outlook',    nameplate:'Blazer EV SS',      action:'CONFIRM',          value:'41,600',     reason:'Reply: CONFIRM received' },
+  { id:'HIBT-2026-C5-0839', ts:'2026-05-25 14:22', analyst:'Don S.',       surface:'Databricks', nameplate:'Traverse AWD',      action:'REPLAY',           value:'Match:98.4%',reason:'Replay determinism check passed' },
+  { id:'HIBT-2026-C5-0831', ts:'2026-05-25 10:11', analyst:'Mansoor A.',   surface:'API',        nameplate:'Equinox EV',        action:'DQ_ALERT',         value:'Score:72',   reason:'Tariff feed staleness flagged' },
+  { id:'HIBT-2026-C5-0822', ts:'2026-05-25 08:00', analyst:'System',       surface:'Cron',       nameplate:'All',               action:'PIPELINE_SYNC',    value:'6 sources',  reason:'Morning sync completed' },
+];
+
+function renderLedger(rows) {
+  const tbody = document.getElementById('ledger-tbody');
+  tbody.innerHTML = '';
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="hibt-id">${row.id}</span></td>
+      <td><span class="ts">${row.ts}</span></td>
+      <td><span class="analyst">${row.analyst}</span></td>
+      <td><span class="surface-tag">${row.surface}</span></td>
+      <td><span class="nameplate">${row.nameplate}</span></td>
+      <td><span class="action-badge action-${row.action}">${row.action.replace('_',' ')}</span></td>
+      <td><span class="value-col">${row.value}</span></td>
+      <td><span class="reason-col">${row.reason}</span></td>
+      <td>
+        <button class="replay-btn" data-id="${row.id}" data-match="${row.action === 'REPLAY' ? '98.4' : (85 + Math.floor(Math.random()*14)) + '.'+Math.floor(Math.random()*9)}">▶ Replay</button>
+        <div class="replay-output" id="ro-${row.id}"></div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Wire replay buttons
+  tbody.querySelectorAll('.replay-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id  = btn.dataset.id;
+      const match = btn.dataset.match;
+      const out = document.getElementById('ro-' + id);
+      if (out.classList.contains('visible')) {
+        out.classList.remove('visible');
+        return;
+      }
+      out.innerHTML = `<span class="replay-muted">$ ghost_lap replay --id ${id}</span>`;
+      out.classList.add('visible');
+      let step = 0;
+      const steps = [
+        `<br><span class="replay-muted">→ Loading HIBT snapshot…</span>`,
+        `<br><span class="replay-muted">→ Reconstructing surface payload…</span>`,
+        `<br><span class="replay-muted">→ Re-running DQ engine v4.0…</span>`,
+        `<br><span class="replay-ok">✓ Re-running ${id}…  Match: ${match}%</span>`,
+      ];
+      const interval = setInterval(() => {
+        if (step < steps.length) {
+          out.innerHTML += steps[step];
+          step++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 320);
+    });
+  });
+}
+
+renderLedger(ledgerData);
+
+// Filter logic
+function applyFilters() {
+  const analyst   = document.getElementById('filter-analyst').value.toLowerCase();
+  const action    = document.getElementById('filter-action').value.toLowerCase();
+  const nameplate = document.getElementById('filter-nameplate').value.toLowerCase();
+  const from      = document.getElementById('filter-from').value;
+  const to        = document.getElementById('filter-to').value;
+
+  const filtered = ledgerData.filter(row => {
+    if (analyst   && !row.analyst.toLowerCase().includes(analyst))      return false;
+    if (action    && row.action.toLowerCase() !== action)               return false;
+    if (nameplate && !row.nameplate.toLowerCase().includes(nameplate))  return false;
+    const rowDate = row.ts.slice(0, 10);
+    if (from && rowDate < from) return false;
+    if (to   && rowDate > to)   return false;
+    return true;
+  });
+  renderLedger(filtered);
+}
+
+document.getElementById('btn-search').addEventListener('click', applyFilters);
+document.getElementById('btn-clear-filter').addEventListener('click', () => {
+  document.getElementById('filter-analyst').value   = '';
+  document.getElementById('filter-action').value    = '';
+  document.getElementById('filter-nameplate').value = '';
+  document.getElementById('filter-from').value      = '2026-05-25';
+  document.getElementById('filter-to').value        = '2026-05-27';
+  renderLedger(ledgerData);
+});
+
+/* ═══════════════════════════════════════════════════
+   TAB 3: SURFACE ADAPTER
+   ═══════════════════════════════════════════════════ */
+const slackPayload = `{
+  "type": "block_actions",
+  "user": {
+    "id": "U04KGXXX",
+    "name": "krisztina.g"
+  },
+  "channel": { "name": "pit-wall-forecasts" },
+  "actions": [{
+    "action_id": "pit_wall_override",
+    "type": "plain_text_input",
+    "value": "284200"
+  }],
+  "metadata": {
+    "intent": "OVERRIDE",
+    "nameplate": "Silverado HD 1500",
+    "reason": "incentive elasticity confirmed with dealer network",
+    "confidence": "High",
+    "analyst_display": "Krisztina G.",
+    "hibt_ready": true
+  }
+}`;
+
+const surfacePayloads = {
+  Slack: slackPayload,
+  Outlook: `{
+  "from": "krisztina.g@gm.com",
+  "subject": "[PIT-WALL] OVERRIDE Silverado HD 1500",
+  "body": "OVERRIDE 284200\\nReason: incentive elasticity confirmed\\nConfidence: High",
+  "to": "pit-wall-bot@gm.com",
+  "metadata": {
+    "intent": "OVERRIDE",
+    "nameplate": "Silverado HD 1500",
+    "forecast": 284200,
+    "confidence": "High"
+  }
+}`,
+  Teams: `{
+  "type": "message",
+  "from": { "displayName": "Krisztina G." },
+  "channelIdentity": { "channelId": "pit-wall-forecasts" },
+  "body": {
+    "content": "OVERRIDE 284200 for Silverado HD 1500 — incentive elasticity confirmed"
+  },
+  "intent": "OVERRIDE",
+  "confidence": "High"
+}`,
+  Copilot: `{
+  "source": "copilot-365",
+  "user": "krisztina.g@gm.com",
+  "parsed_intent": "OVERRIDE",
+  "entities": {
+    "nameplate": "Silverado HD 1500",
+    "volume": 284200,
+    "reason": "incentive elasticity confirmed with dealer network",
+    "confidence": "High"
+  }
+}`,
+  Glean: `{
+  "query": "override silverado hd forecast 284200",
+  "user": "krisztina.g",
+  "result_type": "forecast_action",
+  "action": {
+    "type": "OVERRIDE",
+    "nameplate": "Silverado HD 1500",
+    "value": 284200,
+    "reason": "incentive elasticity confirmed",
+    "confidence": "High"
+  }
+}`
+};
+
+const surfaceParsed = {
+  Slack:   { surface:'Slack',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network', nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+  Outlook: { surface:'Outlook', intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+  Teams:   { surface:'Teams',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+  Copilot: { surface:'Copilot', intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network',   nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+  Glean:   { surface:'Glean',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+};
+
+let currentSurface = 'Slack';
+document.getElementById('payload-input').value = slackPayload;
+
+document.querySelectorAll('.surface-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.surface-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentSurface = chip.querySelector('input[type=radio]').value;
+    document.getElementById('payload-input').value = surfacePayloads[currentSurface];
+    renderParseOutput(currentSurface);
+  });
+});
+
+function renderParseOutput(surface) {
+  const p = surfaceParsed[surface];
+  document.getElementById('out-surface').textContent    = p.surface;
+  document.getElementById('out-intent').textContent     = p.intent;
+  document.getElementById('out-analyst').textContent    = p.analyst;
+  document.getElementById('out-forecast').textContent   = p.forecast;
+  document.getElementById('out-reason').textContent     = p.reason;
+  document.getElementById('out-nameplate').textContent  = p.nameplate;
+  document.getElementById('out-confidence').textContent = p.confidence;
+  document.getElementById('out-hibt').textContent       = p.hibt;
+}
+
+document.getElementById('btn-parse').addEventListener('click', () => {
+  renderParseOutput(currentSurface);
+  showToast('Payload parsed — HIBT-ready ✓');
+});
+
+/* ═══════════════════════════════════════════════════
+   TAB 4: MDS CALCULATOR
+   ═══════════════════════════════════════════════════ */
+function calcMDS() {
+  const mVol = parseFloat(document.getElementById('m-vol').value) || 0;
+  const mP10 = parseFloat(document.getElementById('m-p10').value) || 0;
+  const mP90 = parseFloat(document.getElementById('m-p90').value) || 0;
+  const mConf = document.getElementById('m-conf').value;
+
+  const aVol = parseFloat(document.getElementById('a-vol').value) || 0;
+  const aP10 = parseFloat(document.getElementById('a-p10').value) || 0;
+  const aP90 = parseFloat(document.getElementById('a-p90').value) || 0;
+  const aConf = document.getElementById('a-conf').value;
+
+  // Variance Magnitude: |mVol - aVol| / mRange (clamped to 0-1)
+  const mRange = mP90 - mP10 || 1;
+  const gap = Math.abs(mVol - aVol);
+  const vm = Math.min(1, gap / mRange);
+
+  // Direction Confidence: how much both are below/above each other
+  // 0 = fully aligned direction, 1 = max conflict
+  const confMap = { High:0.9, Med:0.6, Low:0.3 };
+  const mConfV = confMap[mConf] || 0.6;
+  const aConfV = confMap[aConf] || 0.6;
+  const dirConflict = Math.abs(mVol - aVol) / (Math.max(mVol, aVol) || 1);
+  const dc = Math.min(1, dirConflict * (2 - (mConfV + aConfV)));
+
+  // Signal Gap: static component + freshness penalty (tariff feed is stale)
+  const signalGap = 0.18;
+  const freshnessPenalty = 0.13; // tariff feed 3d stale
+  const sg = Math.min(1, signalGap + freshnessPenalty);
+
+  // Range Overlap: 1 - overlap_fraction
+  const overlapLow  = Math.max(mP10, aP10);
+  const overlapHigh = Math.min(mP90, aP90);
+  const overlapLen  = Math.max(0, overlapHigh - overlapLow);
+  const unionLen    = Math.max(mP90, aP90) - Math.min(mP10, aP10) || 1;
+  const overlapFrac = overlapLen / unionLen;
+  const ro = Math.min(1, 1 - overlapFrac) * 0.5; // scaled
+
+  // Final MDS: weighted sum
+  const mds = (vm * 0.4) + (dc * 0.2) + (sg * 0.25) + (ro * 0.15);
+  const mdsRounded = Math.round(mds * 100) / 100;
+
+  // Update display
+  document.getElementById('mds-score-display').textContent = mdsRounded.toFixed(2);
+  const scoreEl = document.getElementById('mds-score-display');
+  if (mdsRounded >= 0.65) {
+    scoreEl.style.color = 'var(--warn)';
+    document.getElementById('mds-threshold-msg').style.display = 'inline-block';
+  } else {
+    scoreEl.style.color = 'var(--good)';
+    document.getElementById('mds-threshold-msg').style.display = 'none';
+  }
+
+  // Sub-scores
+  const setSubScore = (barId, valId, descId, val, desc) => {
+    const pct = Math.round(val * 100);
+    document.getElementById(barId).style.width = pct + '%';
+    document.getElementById(valId).textContent = val.toFixed(2);
+    if (descId && desc) document.getElementById(descId).textContent = desc;
+  };
+
+  const overlapPct = Math.round(overlapFrac * 100);
+  const gapUnits   = Math.round(gap).toLocaleString();
+
+  setSubScore('bar-vm','val-vm','desc-vm', Math.round(vm * 100)/100, `${gapUnits} unit gap / model range`);
+  setSubScore('bar-dc','val-dc','desc-dc', Math.round(dc * 100)/100, `directional alignment index`);
+  setSubScore('bar-sg','val-sg','desc-sg', Math.round(sg * 100)/100, `tariff feed stale · fleet demand divergence`);
+  setSubScore('bar-ro','val-ro','desc-ro', Math.round(ro * 100)/100, `P10–P90 bands overlap ${overlapPct}%`);
+}
+
+document.getElementById('btn-calc-mds').addEventListener('click', calcMDS);
+
+// Also recalculate on any input change
+['m-vol','m-p10','m-p90','m-conf','a-vol','a-p10','a-p90','a-conf'].forEach(id => {
+  document.getElementById(id).addEventListener('change', calcMDS);
+  document.getElementById(id).addEventListener('input', calcMDS);
+});
+
+// Initial calculation
+calcMDS();
+
+/* ═══════════════════════════════════════════════════
+   TAB 5: PIPELINE HEALTH — running job timer
+   ═══════════════════════════════════════════════════ */
+let jobSeconds = 23;
+setInterval(() => {
+  jobSeconds++;
+  const m = String(Math.floor(jobSeconds / 60)).padStart(2,'0');
+  const s = String(jobSeconds % 60).padStart(2,'0');
+  const el = document.getElementById('job-elapsed');
+  if (el) el.textContent = `${m}:${s} elapsed`;
+}, 1000);
+
+</script>
+</body>
+</html>
