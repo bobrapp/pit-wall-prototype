@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forecast Platform — Leadership View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design tokens ── */
+    :root {
+      --void: #0a0c10;
+      --carbon: #13161e;
+      --pit: #1c2030;
+      --pit-2: #252a3b;
+      --line: rgba(255,255,255,.07);
+      --line-strong: rgba(255,255,255,.14);
+      --ink: #f5f6f8;
+      --ink-2: #cdd1d9;
+      --muted: #8a8f9e;
+      --muted-2: #5e6373;
+      --cad-champagne: #c8b273;
+      --buick-platinum: #d8dce0;
+      --f1-amber: #ff6b00;
+      --f1-cyan: #00e5ff;
+      --start-green: #00d26a;
+      --warn: #ff9500;
+      --risk: #ff453a;
+      --good: #23d18b;
+      --serif: 'Fraunces', Georgia, serif;
+      --sans: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --accent: var(--cad-champagne);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: var(--void);
+      color: var(--ink);
+      font-family: var(--sans);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Present mode ── */
+    body.present .topbar { display: none; }
+    body.present { padding: 48px; }
+    body.present .page-content { font-size: 120%; }
+    body.present .hero-number { font-size: 140px !important; }
+    body.present .tab-panel { padding: 48px !important; }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--carbon);
+      border-bottom: 1px solid var(--line-strong);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-wordmark {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--cad-champagne);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--line-strong);
+    }
+
+    .topbar-persona {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Tab navigation ── */
+    .tab-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.03em;
+      transition: color .18s, background .18s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--ink-2); background: var(--line); }
+    .tab-btn.active {
+      color: var(--cad-champagne);
+      background: rgba(200,178,115,.1);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ── Present mode button ── */
+    .btn-present {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--pit);
+      border: 1px solid var(--line-strong);
+      color: var(--ink-2);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+    .btn-present:hover {
+      border-color: var(--cad-champagne);
+      color: var(--cad-champagne);
+      background: rgba(200,178,115,.06);
+    }
+    .btn-present svg { flex-shrink: 0; }
+
+    .cycle-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-2);
+      background: var(--pit);
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Page scaffold ── */
+    .page-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 40px 32px 80px;
+    }
+    .tab-panel.active { display: block; }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 20px;
+    }
+
+    /* ── Hero ring block ── */
+    .hero-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 40px;
+      position: relative;
+    }
+
+    .hero-ring-wrap {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .hero-ring-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-number-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .hero-number {
+      font-family: var(--serif);
+      font-size: 96px;
+      font-weight: 600;
+      color: var(--cad-champagne);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sublabel {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      text-align: center;
+      max-width: 200px;
+    }
+
+    /* ── Gate status dots ── */
+    .gate-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 4px;
+    }
+
+    .gate-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+
+    .gate-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .gate-dot.good { background: var(--good); box-shadow: 0 0 6px rgba(35,209,139,.5); }
+    .gate-dot.warn { background: var(--warn); box-shadow: 0 0 6px rgba(255,149,0,.5); }
+    .gate-dot.risk { background: var(--risk); box-shadow: 0 0 6px rgba(255,69,58,.5); }
+
+    /* ── Headline divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: 0;
+    }
+
+    /* ── Nameplate grid ── */
+    .nameplate-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .nameplate-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .nameplate-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Nameplate card ── */
+    .np-card {
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .np-card:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+
+    .np-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .np-name-block { display: flex; flex-direction: column; gap: 3px; }
+
+    .np-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .np-segment {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--muted-2);
+      text-transform: uppercase;
+    }
+
+    /* ── DQ ring (mini) ── */
+    .dq-ring-wrap {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dq-ring-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .dq-value {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    .np-forecast-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .np-forecast {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+
+    .np-forecast-unit {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .np-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Gate status pill ── */
+    .gate-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+    }
+    .gate-pill.committed {
+      color: var(--good);
+      background: rgba(35,209,139,.08);
+      border-color: rgba(35,209,139,.2);
+    }
+    .gate-pill.draft {
+      color: var(--warn);
+      background: rgba(255,149,0,.08);
+      border-color: rgba(255,149,0,.2);
+    }
+    .gate-pill.challenged {
+      color: var(--risk);
+      background: rgba(255,69,58,.08);
+      border-color: rgba(255,69,58,.2);
+    }
+    .gate-pill.final {
+      color: var(--cad-champagne);
+      background: rgba(200,178,115,.08);
+      border-color: rgba(200,178,115,.2);
+    }
+
+    .np-delta {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .np-delta.pos { color: var(--good); }
+    .np-delta.neg { color: var(--risk); }
+
+    /* ── Pending decisions strip ── */
+    .pending-strip {
+      background: var(--pit);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pending-strip-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .pending-strip-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .pending-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--risk);
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pending-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+    }
+
+    .pending-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+    .pending-icon.alert {
+      background: rgba(255,69,58,.12);
+      border: 1px solid rgba(255,69,58,.2);
+      color: var(--risk);
+    }
+    .pending-icon.warn {
+      background: rgba(255,149,0,.12);
+      border: 1px solid rgba(255,149,0,.2);
+      color: var(--warn);
+    }
+
+    .pending-text { display: flex; flex-direction: column; gap: 3px; }
+
+    .pending-headline {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .pending-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .pending-tag {
+      margin-left: auto;
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+    .pending-tag.risk {
+      background: rgba(255,69,58,.1);
+      color: var(--risk);
+      border: 1px solid rgba(255,69,58,.2);
+    }
+    .pending-tag.warn {
+      background: rgba(255,149,0,.1);
+      color: var(--warn);
+      border: 1px solid rgba(255,149,0,.2);
+    }
+
+    /* ── Team performance table ── */
+    .perf-table-wrap {
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .perf-table thead tr {
+      background: var(--pit);
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .perf-table thead th {
+      padding: 13px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .perf-table thead th:not(:first-child) {
+      text-align: right;
+    }
+
+    .perf-table tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background .15s;
+    }
+    .perf-table tbody tr:last-child { border-bottom: none; }
+    .perf-table tbody tr:hover { background: var(--pit); }
+    .perf-table tbody tr.highlight-row {
+      background: rgba(255,149,0,.04);
+      border-left: 2px solid var(--warn);
+    }
+
+    .perf-table tbody td {
+      padding: 14px 20px;
+      font-size: 13px;
+      color: var(--ink-2);
+      vertical-align: middle;
+    }
+    .perf-table tbody td:not(:first-child) { text-align: right; }
+
+    .analyst-name {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .mape-value {
+      font-family: var(--mono);
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .vs-primary {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--good);
+    }
+
+    .override-stat {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-2);
+    }
+
+    .resolution-pct {
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .pending-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .pending-num.has-pending {
+      color: var(--warn);
+      background: rgba(255,149,0,.1);
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+    .pending-num.zero { color: var(--muted-2); }
+
+    /* ── Insight cards ── */
+    .insight-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 700px) {
+      .insight-cards { grid-template-columns: 1fr; }
+    }
+
+    .insight-card {
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .insight-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+    .insight-icon.gold {
+      background: rgba(200,178,115,.12);
+      border: 1px solid rgba(200,178,115,.2);
+    }
+    .insight-icon.orange {
+      background: rgba(255,149,0,.12);
+      border: 1px solid rgba(255,149,0,.2);
+    }
+
+    .insight-body { display: flex; flex-direction: column; gap: 5px; }
+
+    .insight-headline {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .insight-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Championship podium ── */
+    .podium-block {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      margin: 16px 0 36px;
+      padding: 0 16px;
+    }
+
+    .podium-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .podium-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+    }
+    .podium-avatar.gold-av {
+      background: rgba(200,178,115,.15);
+      border-color: var(--cad-champagne);
+      color: var(--cad-champagne);
+    }
+    .podium-avatar.silver-av {
+      background: rgba(216,220,224,.1);
+      border-color: var(--buick-platinum);
+      color: var(--buick-platinum);
+    }
+    .podium-avatar.bronze-av {
+      background: rgba(255,107,0,.1);
+      border-color: var(--f1-amber);
+      color: var(--f1-amber);
+    }
+
+    .podium-analyst-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 3px;
+      text-align: center;
+    }
+
+    .podium-pts {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .podium-pts.gold-pts { color: var(--cad-champagne); }
+    .podium-pts.silver-pts { color: var(--buick-platinum); }
+    .podium-pts.bronze-pts { color: var(--f1-amber); }
+
+    .podium-bar {
+      width: 120px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 14px;
+    }
+    .podium-bar.first {
+      height: 120px;
+      background: linear-gradient(180deg, rgba(200,178,115,.25) 0%, rgba(200,178,115,.08) 100%);
+      border: 1px solid rgba(200,178,115,.3);
+    }
+    .podium-bar.second {
+      height: 88px;
+      background: linear-gradient(180deg, rgba(216,220,224,.15) 0%, rgba(216,220,224,.04) 100%);
+      border: 1px solid rgba(216,220,224,.2);
+    }
+    .podium-bar.third {
+      height: 68px;
+      background: linear-gradient(180deg, rgba(255,107,0,.15) 0%, rgba(255,107,0,.04) 100%);
+      border: 1px solid rgba(255,107,0,.2);
+    }
+
+    .podium-rank {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .podium-rank.gold-rank { color: var(--cad-champagne); }
+    .podium-rank.silver-rank { color: var(--buick-platinum); }
+    .podium-rank.bronze-rank { color: var(--f1-amber); }
+
+    /* ── Standings table ── */
+    .standings-table-wrap {
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .standings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .standings-table thead tr {
+      background: var(--pit);
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .standings-table thead th {
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
+    .standings-table thead th:not(:first-child):not(:nth-child(2)) { text-align: right; }
+
+    .standings-table tbody tr {
+      border-bottom: 1px solid var(--line);
+      transition: background .15s;
+    }
+    .standings-table tbody tr:last-child { border-bottom: none; }
+    .standings-table tbody tr:hover { background: var(--pit); }
+
+    .standings-table tbody td {
+      padding: 13px 20px;
+      font-size: 13px;
+      color: var(--ink-2);
+      vertical-align: middle;
+    }
+    .standings-table tbody td:not(:first-child):not(:nth-child(2)) { text-align: right; }
+
+    .rank-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      width: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .rank-num.r1 { color: var(--cad-champagne); }
+    .rank-num.r2 { color: var(--buick-platinum); }
+    .rank-num.r3 { color: var(--f1-amber); }
+    .rank-num.other { color: var(--muted-2); }
+
+    .pts-value {
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .pts-bar-cell { width: 140px; }
+
+    .pts-bar-track {
+      width: 100%;
+      height: 4px;
+      background: var(--pit-2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .pts-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .pts-bar-fill.r1 { background: var(--cad-champagne); }
+    .pts-bar-fill.r2 { background: var(--buick-platinum); }
+    .pts-bar-fill.r3 { background: var(--f1-amber); }
+    .pts-bar-fill.other { background: var(--muted-2); }
+
+    .trend-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 5px;
+    }
+    .trend-chip.up { color: var(--good); background: rgba(35,209,139,.1); }
+    .trend-chip.down { color: var(--risk); background: rgba(255,69,58,.1); }
+    .trend-chip.stable { color: var(--muted); background: var(--pit); }
+
+    /* ── Season summary card ── */
+    .season-summary-card {
+      background: var(--carbon);
+      border: 1px solid var(--line-strong);
+      border-left: 3px solid var(--cad-champagne);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .season-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(200,178,115,.1);
+      border: 1px solid rgba(200,178,115,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 22px;
+    }
+
+    .season-text { display: flex; flex-direction: column; gap: 5px; }
+
+    .season-headline {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--cad-champagne);
+    }
+
+    .season-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Export tab ── */
+    .export-header {
+      margin-bottom: 32px;
+    }
+
+    .export-heading {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .export-sub {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    .slide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .slide-preview {
+      background: var(--carbon);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: border-color .2s, box-shadow .2s;
+      cursor: default;
+    }
+    .slide-preview:hover {
+      border-color: rgba(200,178,115,.35);
+      box-shadow: 0 4px 20px rgba(200,178,115,.1);
+    }
+
+    .slide-thumb {
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        135deg,
+        transparent,
+        transparent 8px,
+        rgba(255,255,255,.015) 8px,
+        rgba(255,255,255,.015) 9px
+      );
+    }
+
+    .slide-thumb-1 { background: linear-gradient(135deg, #1a1420 0%, #0f1018 100%); }
+    .slide-thumb-2 { background: linear-gradient(135deg, #0d1a14 0%, #0a0c10 100%); }
+    .slide-thumb-3 { background: linear-gradient(135deg, #141018 0%, #0a0c10 100%); }
+    .slide-thumb-4 { background: linear-gradient(135deg, #1a1210 0%, #0a0c10 100%); }
+    .slide-thumb-5 { background: linear-gradient(135deg, #12141a 0%, #0a0c10 100%); }
+
+    .slide-thumb-icon {
+      font-size: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-thumb-label {
+      font-family: var(--serif);
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(200,178,115,.8);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-thumb-sub {
+      font-size: 10px;
+      color: var(--muted-2);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-number-badge {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted-2);
+      z-index: 2;
+    }
+
+    .slide-meta {
+      padding: 10px 14px 12px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slide-title-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-2);
+      line-height: 1.3;
+    }
+
+    .slide-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(35,209,139,.1);
+      border: 1px solid rgba(35,209,139,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--good);
+      font-size: 10px;
+    }
+
+    /* ── Export CTA block ── */
+    .export-cta-block {
+      background: var(--carbon);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .export-cta-heading {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .export-cta-meta {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .export-meta-chips {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .meta-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--pit);
+      border: 1px solid var(--line);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+    .meta-chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cad-champagne);
+    }
+
+    /* ── Export PPT button ── */
+    .btn-export-ppt {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #c8b273 0%, #a8924e 60%, #c8b273 100%);
+      background-size: 200% 100%;
+      color: #0a0c10;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background-position .4s ease, opacity .2s, transform .1s;
+      position: relative;
+      overflow: hidden;
+      min-width: 220px;
+      justify-content: center;
+    }
+    .btn-export-ppt:hover {
+      background-position: 100% 0;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(200,178,115,.35);
+    }
+    .btn-export-ppt:active { transform: translateY(0); }
+    .btn-export-ppt:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-export-ppt.loading {
+      background: linear-gradient(135deg, #8a7a4a 0%, #6a5e36 100%);
+      color: rgba(10,12,16,.7);
+    }
+    .btn-export-ppt.ready {
+      background: linear-gradient(135deg, #23d18b 0%, #1aad72 100%);
+      color: #0a0c10;
+    }
+
+    .btn-export-spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(10,12,16,.3);
+      border-top-color: #0a0c10;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    .btn-export-ppt.loading .btn-export-spinner { display: block; }
+    .btn-export-ppt.loading .btn-export-icon { display: none; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .export-api-note {
+      font-size: 11px;
+      color: var(--muted-2);
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .api-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--muted-2);
+    }
+
+    /* ── Util ── */
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mt-32 { margin-top: 32px; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-16 { margin-bottom: 16px; }
+    .mb-24 { margin-bottom: 24px; }
+    .mb-32 { margin-bottom: 32px; }
+
+    /* ── Scroll ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--void); }
+    ::-webkit-scrollbar-thumb { background: var(--pit-2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+
+    /* ── Separator between hero and grid ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 24px;
+    }
+    .section-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ── Color-coded resolution percent ── */
+    .pct-high { color: var(--good); }
+    .pct-mid  { color: var(--warn); }
+    .pct-low  { color: var(--risk); }
+
+    /* ── Page-level spacing helpers ── */
+    .tab-section { margin-bottom: 32px; }
+
+    /* ── Topbar date/cycle indicator ── */
+    .gate-status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .gate-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--muted-2);
+    }
+    .gate-indicator-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+    .gate-indicator-dot.active { background: var(--good); box-shadow: 0 0 5px rgba(35,209,139,.5); }
+    .gate-indicator-dot.warn { background: var(--warn); }
+    .gate-indicator-dot.risk { background: var(--risk); }
+
+    /* ── Present exit btn ── */
+    .present-exit-btn {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      background: var(--carbon);
+      border: 1px solid var(--line-strong);
+      color: var(--cad-champagne);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    body.present .present-exit-btn { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Championship trend arrow ── */
+    .trend-arrow {
+      font-size: 12px;
+    }
+    .trend-arrow.up { color: var(--good); }
+    .trend-arrow.down { color: var(--risk); }
+
+    /* ── MAPE color-coded ── */
+    .mape-good { color: var(--good); }
+    .mape-mid  { color: var(--warn); }
+    .mape-bad  { color: var(--risk); }
+
+    /* ── Placeholder shimmer for slide thumbs ── */
+    .slide-mock-chart {
+      width: 80%;
+      height: 4px;
+      background: rgba(200,178,115,.2);
+      border-radius: 2px;
+      position: relative;
+      z-index: 1;
+    }
+    .slide-mock-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .slide-mock-bar {
+      width: 12px;
+      border-radius: 2px 2px 0 0;
+      opacity: 0.5;
+    }
+    .slide-mock-table {
+      width: 80%;
+      position: relative;
+      z-index: 1;
+    }
+    .slide-mock-row {
+      height: 5px;
+      border-radius: 2px;
+      margin-bottom: 4px;
+      opacity: 0.3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       TOP NAV BAR
+  ══════════════════════════════════════════════ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-wordmark">Pit Wall</span>
+      <div class="topbar-sep"></div>
+      <span class="topbar-persona">Leadership View</span>
+      <div class="topbar-sep"></div>
+      <div class="gate-status-row">
+        <div class="gate-indicator">
+          <div class="gate-indicator-dot active"></div>
+          G1
+        </div>
+        <div class="gate-indicator">
+          <div class="gate-indicator-dot active"></div>
+          G2
+        </div>
+        <div class="gate-indicator">
+          <div class="gate-indicator-dot warn"></div>
+          G3
+        </div>
+      </div>
+    </div>
+
+    <nav class="tab-nav" role="tablist" aria-label="Leadership navigation">
+      <button class="tab-btn active" role="tab" aria-selected="true"  data-tab="cycle-health">Cycle Health</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" data-tab="team-perf">Team Performance</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" data-tab="championship">Championship</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" data-tab="export">Export</button>
+    </nav>
+
+    <div class="topbar-right">
+      <span class="cycle-badge">CYC-5 · 2026</span>
+      <button class="btn-present" id="presentToggle" aria-label="Toggle present mode">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="2" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M5 10v2M9 10v2M4 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        Present
+      </button>
+    </div>
+  </header>
+
+  <!-- Present mode exit -->
+  <button class="present-exit-btn" id="presentExit" aria-label="Exit present mode">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Exit Present
+  </button>
+
+  <!-- ══════════════════════════════════════════════
+       PAGE CONTENT
+  ══════════════════════════════════════════════ -->
+  <main class="page-content">
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         TAB 1: CYCLE HEALTH
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <section id="tab-cycle-health" class="tab-panel active" role="tabpanel">
+
+      <!-- Hero ring -->
+      <div class="hero-block">
+        <div class="hero-ring-wrap">
+          <!-- SVG arc ring — 92% fill, gold -->
+          <svg class="hero-ring-svg" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Track -->
+            <circle
+              cx="140" cy="140" r="126"
+              stroke="rgba(255,255,255,.07)"
+              stroke-width="10"
+              fill="none"
+            />
+            <!-- Fill: 92% of circumference = 2πr * 0.92 -->
+            <!-- r=126, circumference=791.7, 92%=728.4 -->
+            <circle
+              cx="140" cy="140" r="126"
+              stroke="url(#heroGold)"
+              stroke-width="10"
+              fill="none"
+              stroke-linecap="round"
+              stroke-dasharray="728.4 791.7"
+              stroke-dashoffset="197.9"
+              transform="rotate(-90 140 140)"
+            />
+            <!-- Glow layer -->
+            <circle
+              cx="140" cy="140" r="126"
+              stroke="url(#heroGoldGlow)"
+              stroke-width="3"
+              fill="none"
+              stroke-linecap="round"
+              stroke-dasharray="728.4 791.7"
+              stroke-dashoffset="197.9"
+              transform="rotate(-90 140 140)"
+              opacity="0.4"
+            />
+            <!-- Tick markers -->
+            <g opacity="0.3">
+              <line x1="140" y1="8" x2="140" y2="20" stroke="#c8b273" stroke-width="1.5"/>
+              <line x1="264.5" y1="63.5" x2="256.3" y2="71.7" stroke="#c8b273" stroke-width="1.5"/>
+              <line x1="264.5" y1="216.5" x2="256.3" y2="208.3" stroke="#c8b273" stroke-width="1.5"/>
+              <line x1="15.5" y1="216.5" x2="23.7" y2="208.3" stroke="#c8b273" stroke-width="1.5"/>
+              <line x1="15.5" y1="63.5" x2="23.7" y2="71.7" stroke="#c8b273" stroke-width="1.5"/>
+            </g>
+            <defs>
+              <linearGradient id="heroGold" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#c8b273"/>
+                <stop offset="50%" stop-color="#e8d494"/>
+                <stop offset="100%" stop-color="#c8b273"/>
+              </linearGradient>
+              <linearGradient id="heroGoldGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#c8b273"/>
+                <stop offset="100%" stop-color="#e8d494"/>
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <div class="hero-number-wrap">
+            <span class="hero-number">92%</span>
+            <span class="hero-sublabel">of nameplates at Green DQ</span>
+          </div>
+        </div>
+
+        <!-- Gate traffic lights -->
+        <div class="gate-row">
+          <div class="gate-item">
+            <div class="gate-dot good"></div>
+            Gate 1 ✓
+          </div>
+          <div class="gate-item">
+            <div class="gate-dot good"></div>
+            Gate 2 ✓
+          </div>
+          <div class="gate-item">
+            <div class="gate-dot warn"></div>
+            Gate 3 ⚠
+          </div>
+        </div>
+      </div>
+
+      <!-- Nameplate grid section -->
+      <div class="tab-section">
+        <div class="section-divider">
+          <div class="section-divider-line"></div>
+          <span class="section-label">Nameplate Forecast</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="nameplate-grid">
+
+          <!-- Titan XL Sport -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Titan XL Sport</span>
+                <span class="np-segment">Truck</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 75: circumference = 138.2, fill = 75% = 103.6 -->
+                  <circle cx="26" cy="26" r="22" stroke="#ff9500" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="103.6 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">75</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">284,200</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill challenged">Challenged</span>
+              <span class="np-delta pos">+2.3%</span>
+            </div>
+          </div>
+
+          <!-- Summit LTZ -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Summit LTZ</span>
+                <span class="np-segment">SUV</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 91: fill = 91% = 125.8 -->
+                  <circle cx="26" cy="26" r="22" stroke="#23d18b" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="125.8 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">91</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">112,800</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill draft">Draft</span>
+              <span class="np-delta neg">–1.1%</span>
+            </div>
+          </div>
+
+          <!-- Meridian EV -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Meridian EV</span>
+                <span class="np-segment">EV</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 72: fill = 72% = 99.5 -->
+                  <circle cx="26" cy="26" r="22" stroke="#ff9500" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="99.5 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">72</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">89,400</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill challenged">Challenged</span>
+              <span class="np-delta pos">+8.7%</span>
+            </div>
+          </div>
+
+          <!-- Colorado Z71 -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Colorado Z71</span>
+                <span class="np-segment">Truck</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 93: fill = 93% = 128.5 -->
+                  <circle cx="26" cy="26" r="22" stroke="#23d18b" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="128.5 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">93</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">67,100</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill committed">Committed</span>
+              <span class="np-delta neg">–0.5%</span>
+            </div>
+          </div>
+
+          <!-- Vortex EV SS -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Vortex EV SS</span>
+                <span class="np-segment">EV</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 85: fill = 85% = 117.5 -->
+                  <circle cx="26" cy="26" r="22" stroke="#23d18b" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="117.5 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">85</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">41,600</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill draft">Draft</span>
+              <span class="np-delta pos">+14.2%</span>
+            </div>
+          </div>
+
+          <!-- Vantage AWD -->
+          <div class="np-card">
+            <div class="np-card-header">
+              <div class="np-name-block">
+                <span class="np-name">Vantage AWD</span>
+                <span class="np-segment">SUV</span>
+              </div>
+              <div class="dq-ring-wrap">
+                <svg class="dq-ring-svg" viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="22" stroke="rgba(255,255,255,.07)" stroke-width="4" fill="none"/>
+                  <!-- DQ 92: fill = 92% = 127.1 -->
+                  <circle cx="26" cy="26" r="22" stroke="#23d18b" stroke-width="4" fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="127.1 138.2"
+                    stroke-dashoffset="34.6"
+                    transform="rotate(-90 26 26)"/>
+                </svg>
+                <span class="dq-value">92</span>
+              </div>
+            </div>
+            <div class="np-forecast-row">
+              <span class="np-forecast">98,700</span>
+              <span class="np-forecast-unit">P50</span>
+            </div>
+            <div class="np-card-footer">
+              <span class="gate-pill final">Final</span>
+              <span class="np-delta neg">–2.8%</span>
+            </div>
+          </div>
+
+        </div><!-- / nameplate-grid -->
+      </div><!-- / tab-section -->
+
+      <!-- Pending decisions strip -->
+      <div class="tab-section">
+        <div class="pending-strip">
+          <div class="pending-strip-header">
+            <span class="pending-strip-title">Leadership Awareness Required</span>
+            <span class="pending-count-badge">2</span>
+          </div>
+
+          <div class="pending-item">
+            <div class="pending-icon alert">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2L14 13H2L8 2Z" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+                <path d="M8 7v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <circle cx="8" cy="11.5" r=".75" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="pending-text">
+              <span class="pending-headline">Second Opinion unresolved — Titan XL · Gate 3 at risk</span>
+              <span class="pending-sub">Marcus R. filed a Second Opinion on Jun 5. Gate 3 deadline is Jun 12. If unresolved, forecast cannot be committed. Action: assign resolution by EOD Jun 9.</span>
+            </div>
+            <span class="pending-tag risk">Gate 3 Risk</span>
+          </div>
+
+          <div class="pending-item">
+            <div class="pending-icon warn">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" fill="none"/>
+                <path d="M8 5v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                <circle cx="8" cy="11" r=".75" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="pending-text">
+              <span class="pending-headline">Tariff feed stale — 72 hours without update</span>
+              <span class="pending-sub">External tariff data from customs broker last refreshed Jun 4 at 14:22 UTC. Affected nameplates: Meridian EV, Vortex EV SS. Escalate to data ops if not resolved by Jun 9.</span>
+            </div>
+            <span class="pending-tag warn">Data Freshness</span>
+          </div>
+        </div>
+      </div><!-- / pending strip -->
+
+    </section><!-- / tab-cycle-health -->
+
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         TAB 2: TEAM PERFORMANCE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <section id="tab-team-perf" class="tab-panel" role="tabpanel">
+
+      <div class="tab-section">
+        <div class="section-label mb-16">Analyst Accuracy — Cycle 5 of 8</div>
+
+        <div class="perf-table-wrap">
+          <table class="perf-table" aria-label="Analyst performance metrics">
+            <thead>
+              <tr>
+                <th>Analyst</th>
+                <th>MAPE (6-Cycle)</th>
+                <th>vs Primary Model</th>
+                <th>Overrides</th>
+                <th>SO Resolution</th>
+                <th>Pending</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="analyst-name">Marcus R.</span></td>
+                <td><span class="mape-value mape-good">2.7%</span></td>
+                <td><span class="vs-primary">–2.1pp better</span></td>
+                <td><span class="override-stat">14 / 16</span></td>
+                <td><span class="resolution-pct pct-high">100%</span></td>
+                <td><span class="pending-num zero">0</span></td>
+              </tr>
+              <tr>
+                <td><span class="analyst-name">Adriel V.</span></td>
+                <td><span class="mape-value mape-good">3.0%</span></td>
+                <td><span class="vs-primary">–1.8pp better</span></td>
+                <td><span class="override-stat">11 / 14</span></td>
+                <td><span class="resolution-pct pct-high">91%</span></td>
+                <td><span class="pending-num zero">1</span></td>
+              </tr>
+              <tr class="highlight-row">
+                <td>
+                  <span class="analyst-name">Diana W.</span>
+                </td>
+                <td><span class="mape-value mape-mid">3.1%</span></td>
+                <td><span class="vs-primary">–1.7pp better</span></td>
+                <td><span class="override-stat">9 / 12</span></td>
+                <td><span class="resolution-pct pct-mid">88%</span></td>
+                <td><span class="pending-num has-pending">2 ⚠</span></td>
+              </tr>
+              <tr>
+                <td><span class="analyst-name">Yuna K.</span></td>
+                <td><span class="mape-value mape-mid">3.4%</span></td>
+                <td><span class="vs-primary">–1.4pp better</span></td>
+                <td><span class="override-stat">8 / 12</span></td>
+                <td><span class="resolution-pct pct-mid">83%</span></td>
+                <td><span class="pending-num zero">0</span></td>
+              </tr>
+              <tr>
+                <td><span class="analyst-name">Dmitri S.</span></td>
+                <td><span class="mape-value mape-mid">3.6%</span></td>
+                <td><span class="vs-primary">–1.2pp better</span></td>
+                <td><span class="override-stat">10 / 14</span></td>
+                <td><span class="resolution-pct pct-low">79%</span></td>
+                <td><span class="pending-num zero">1</span></td>
+              </tr>
+              <tr>
+                <td><span class="analyst-name">Priya M.</span></td>
+                <td><span class="mape-value mape-bad">3.9%</span></td>
+                <td><span class="vs-primary">–0.9pp better</span></td>
+                <td><span class="override-stat">7 / 10</span></td>
+                <td><span class="resolution-pct pct-low">75%</span></td>
+                <td><span class="pending-num zero">0</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Insight cards -->
+      <div class="tab-section">
+        <div class="section-label mb-16">Cycle Insights</div>
+        <div class="insight-cards">
+
+          <div class="insight-card">
+            <div class="insight-icon gold">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 2l2 5h5l-4 3 2 5-5-3-5 3 2-5-4-3h5L10 2Z" stroke="#c8b273" stroke-width="1.3" fill="none" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="insight-body">
+              <span class="insight-headline">Team is beating primary model by 1.5pp avg MAPE — strong cycle</span>
+              <span class="insight-sub">All 6 analysts outperform primary baseline. Highest gain: Marcus R. at –2.1pp. S&OP narrative: analysts adding consistent value above algorithmic baseline.</span>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon orange">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="7.5" stroke="#ff9500" stroke-width="1.3" fill="none"/>
+                <path d="M10 7v4" stroke="#ff9500" stroke-width="1.3" stroke-linecap="round"/>
+                <circle cx="10" cy="13" r=".8" fill="#ff9500"/>
+              </svg>
+            </div>
+            <div class="insight-body">
+              <span class="insight-headline">2 pending Second Opinion reviews — Diana W. needs resolution before Gate 3</span>
+              <span class="insight-sub">Gate 3 deadline is Jun 12. Both unresolved SOs are tied to Titan XL. Reassign or escalate by Jun 9 to avoid gate block.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- / tab-team-perf -->
+
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         TAB 3: CHAMPIONSHIP
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <section id="tab-championship" class="tab-panel" role="tabpanel">
+
+      <div class="tab-section">
+        <div class="section-label mb-16">Season 4 — Analyst Standings</div>
+
+        <!-- Podium -->
+        <div class="podium-block" aria-label="Top three analysts">
+          <!-- 2nd place -->
+          <div class="podium-col">
+            <div class="podium-avatar silver-av">A</div>
+            <div class="podium-analyst-name">Adriel V.</div>
+            <div class="podium-pts silver-pts">261 pts</div>
+            <div class="podium-bar second">
+              <span class="podium-rank silver-rank">2</span>
+            </div>
+          </div>
+
+          <!-- 1st place (tallest, center) -->
+          <div class="podium-col">
+            <div class="podium-avatar gold-av">M</div>
+            <div class="podium-analyst-name">Marcus R.</div>
+            <div class="podium-pts gold-pts">318 pts</div>
+            <div class="podium-bar first">
+              <span class="podium-rank gold-rank">1</span>
+            </div>
+          </div>
+
+          <!-- 3rd place -->
+          <div class="podium-col">
+            <div class="podium-avatar bronze-av">K</div>
+            <div class="podium-analyst-name">Diana W.</div>
+            <div class="podium-pts bronze-pts">247 pts</div>
+            <div class="podium-bar third">
+              <span class="podium-rank bronze-rank">3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full standings table -->
+      <div class="tab-section">
+        <div class="section-label mb-16">Full Standings</div>
+        <div class="standings-table-wrap">
+          <table class="standings-table" aria-label="Full championship standings">
+            <thead>
+              <tr>
+                <th style="width:48px">Rank</th>
+                <th>Analyst</th>
+                <th>Points</th>
+                <th style="width:160px">Progress</th>
+                <th>Best Cycle</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="rank-num r1">1</span></td>
+                <td><span class="analyst-name">Marcus R.</span></td>
+                <td><span class="pts-value">318</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill r1" style="width:100%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 3 · 2.1%</span></td>
+                <td><span class="trend-chip up">↑ +12</span></td>
+              </tr>
+              <tr>
+                <td><span class="rank-num r2">2</span></td>
+                <td><span class="analyst-name">Adriel V.</span></td>
+                <td><span class="pts-value">261</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill r2" style="width:82%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 4 · 2.4%</span></td>
+                <td><span class="trend-chip up">↑ +8</span></td>
+              </tr>
+              <tr>
+                <td><span class="rank-num r3">3</span></td>
+                <td><span class="analyst-name">Diana W.</span></td>
+                <td><span class="pts-value">247</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill r3" style="width:77%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 2 · 2.6%</span></td>
+                <td><span class="trend-chip stable">— 0</span></td>
+              </tr>
+              <tr>
+                <td><span class="rank-num other">4</span></td>
+                <td><span class="analyst-name">Yuna K.</span></td>
+                <td><span class="pts-value">214</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill other" style="width:67%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 5 · 2.8%</span></td>
+                <td><span class="trend-chip up">↑ +5</span></td>
+              </tr>
+              <tr>
+                <td><span class="rank-num other">5</span></td>
+                <td><span class="analyst-name">Dmitri S.</span></td>
+                <td><span class="pts-value">189</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill other" style="width:59%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 1 · 3.0%</span></td>
+                <td><span class="trend-chip down">↓ –3</span></td>
+              </tr>
+              <tr>
+                <td><span class="rank-num other">6</span></td>
+                <td><span class="analyst-name">Priya M.</span></td>
+                <td><span class="pts-value">162</span></td>
+                <td class="pts-bar-cell">
+                  <div class="pts-bar-track">
+                    <div class="pts-bar-fill other" style="width:51%"></div>
+                  </div>
+                </td>
+                <td><span class="override-stat">Cycle 3 · 3.3%</span></td>
+                <td><span class="trend-chip up">↑ +4</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Season summary card -->
+      <div class="tab-section">
+        <div class="season-summary-card">
+          <div class="season-icon-wrap">🏆</div>
+          <div class="season-text">
+            <span class="season-headline">Season 4 — Cycle 5 of 8</span>
+            <span class="season-sub">Team accuracy 2.6pp above primary model baseline. 3 analysts on track for year-end accuracy bonus: Marcus R., Adriel V., Diana W. Projected season champion: Marcus R. with 420+ pts if current trajectory holds.</span>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- / tab-championship -->
+
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         TAB 4: EXPORT
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <section id="tab-export" class="tab-panel" role="tabpanel">
+
+      <div class="export-header">
+        <div class="export-heading">S&amp;OP Deck Builder</div>
+        <div class="export-sub">Generate a polished PowerPoint brief for leadership review — pre-populated with Cycle 5 data, DQ scores, analyst accuracy, and championship standings.</div>
+      </div>
+
+      <!-- Slide preview grid -->
+      <div class="section-label mb-16">Slide Contents Preview</div>
+      <div class="slide-grid">
+
+        <!-- Slide 1: Title -->
+        <div class="slide-preview">
+          <div class="slide-thumb slide-thumb-1">
+            <span class="slide-number-badge">01</span>
+            <span class="slide-thumb-icon">🏎</span>
+            <span class="slide-thumb-label">Title Slide</span>
+            <span class="slide-thumb-sub">NARA Cycle 5 · Gate 3 Brief</span>
+            <div class="slide-mock-chart" style="margin-top:4px;"></div>
+          </div>
+          <div class="slide-meta">
+            <span class="slide-title-text">NARA Cycle 5 · Gate 3 Brief · May 2026</span>
+            <span class="slide-check">✓</span>
+          </div>
+        </div>
+
+        <!-- Slide 2: Cycle Health -->
+        <div class="slide-preview">
+          <div class="slide-thumb slide-thumb-2">
+            <span class="slide-number-badge">02</span>
+            <span class="slide-thumb-icon">📊</span>
+            <div class="slide-mock-bars">
+              <div class="slide-mock-bar" style="height:18px; background:#23d18b;"></div>
+              <div class="slide-mock-bar" style="height:28px; background:#c8b273;"></div>
+              <div class="slide-mock-bar" style="height:22px; background:#23d18b;"></div>
+              <div class="slide-mock-bar" style="height:32px; background:#c8b273;"></div>
+              <div class="slide-mock-bar" style="height:14px; background:#ff9500;"></div>
+              <div class="slide-mock-bar" style="height:26px; background:#23d18b;"></div>
+            </div>
+            <span class="slide-thumb-label">Cycle Health</span>
+          </div>
+          <div class="slide-meta">
+            <span class="slide-title-text">DQ scores, gate status · 6 nameplates</span>
+            <span class="slide-check">✓</span>
+          </div>
+        </div>
+
+        <!-- Slide 3: Team Performance -->
+        <div class="slide-preview">
+          <div class="slide-thumb slide-thumb-3">
+            <span class="slide-number-badge">03</span>
+            <span class="slide-thumb-icon">👥</span>
+            <div class="slide-mock-table">
+              <div class="slide-mock-row" style="background:#c8b273; width:90%;"></div>
+              <div class="slide-mock-row" style="background:#8a8f9e; width:75%;"></div>
+              <div class="slide-mock-row" style="background:#8a8f9e; width:70%;"></div>
+              <div class="slide-mock-row" style="background:#5e6373; width:60%;"></div>
+              <div class="slide-mock-row" style="background:#5e6373; width:55%;"></div>
+            </div>
+            <span class="slide-thumb-label">Team Performance</span>
+          </div>
+          <div class="slide-meta">
+            <span class="slide-title-text">Analyst accuracy · MAPE comparison</span>
+            <span class="slide-check">✓</span>
+          </div>
+        </div>
+
+        <!-- Slide 4: Override Moments -->
+        <div class="slide-preview">
+          <div class="slide-thumb slide-thumb-4">
+            <span class="slide-number-badge">04</span>
+            <span class="slide-thumb-icon">🎯</span>
+            <div class="slide-mock-bars" style="gap:6px;">
+              <div class="slide-mock-bar" style="height:24px; background:#23d18b; width:16px;"></div>
+              <div class="slide-mock-bar" style="height:20px; background:#c8b273; width:16px;"></div>
+              <div class="slide-mock-bar" style="height:30px; background:#23d18b; width:16px;"></div>
+              <div class="slide-mock-bar" style="height:16px; background:#c8b273; width:16px;"></div>
+            </div>
+            <span class="slide-thumb-label">Override Moments</span>
+          </div>
+          <div class="slide-meta">
+            <span class="slide-title-text">Top "You Were Right" highlights · Cycle 5</span>
+            <span class="slide-check">✓</span>
+          </div>
+        </div>
+
+        <!-- Slide 5: Championship Table -->
+        <div class="slide-preview">
+          <div class="slide-thumb slide-thumb-5">
+            <span class="slide-number-badge">05</span>
+            <span class="slide-thumb-icon">🏆</span>
+            <div class="slide-mock-table">
+              <div class="slide-mock-row" style="background:#c8b273; width:100%;"></div>
+              <div class="slide-mock-row" style="background:#d8dce0; width:82%;"></div>
+              <div class="slide-mock-row" style="background:#ff6b00; width:77%;"></div>
+              <div class="slide-mock-row" style="background:#5e6373; width:67%;"></div>
+              <div class="slide-mock-row" style="background:#5e6373; width:59%;"></div>
+            </div>
+            <span class="slide-thumb-label">Championship Table</span>
+          </div>
+          <div class="slide-meta">
+            <span class="slide-title-text">Season 4 standings · Cycle 5 of 8</span>
+            <span class="slide-check">✓</span>
+          </div>
+        </div>
+
+      </div><!-- / slide-grid -->
+
+      <!-- Export CTA block -->
+      <div class="export-cta-block">
+        <div class="export-cta-heading">Ready to generate your briefing deck</div>
+        <div class="export-cta-meta">
+          The deck pulls live data from Pit Wall v4.0 — DQ scores, gate status, analyst MAPE, override moments, and championship standings. Formatted for 16:9 widescreen. PowerPoint compatible.
+        </div>
+
+        <div class="export-meta-chips">
+          <div class="meta-chip">
+            <div class="meta-chip-dot"></div>
+            ~8 slides
+          </div>
+          <div class="meta-chip">
+            <div class="meta-chip-dot"></div>
+            Microsoft Graph API
+          </div>
+          <div class="meta-chip">
+            <div class="meta-chip-dot"></div>
+            ~45 sec generation
+          </div>
+          <div class="meta-chip">
+            <div class="meta-chip-dot"></div>
+            PPTX · 16:9
+          </div>
+        </div>
+
+        <button class="btn-export-ppt" id="exportBtn" aria-label="Export PowerPoint presentation">
+          <div class="btn-export-spinner"></div>
+          <span class="btn-export-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M9 2v10M5 8l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span id="exportBtnLabel">Export PowerPoint</span>
+        </button>
+
+        <div class="export-api-note">
+          <div class="api-dot"></div>
+          Generated via Microsoft Graph API
+          <div class="api-dot"></div>
+          NARA Cycle 5 · Gate 3 Brief · May 2026
+        </div>
+      </div>
+
+    </section><!-- / tab-export -->
+
+  </main><!-- / page-content -->
+
+
+  <!-- ══════════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════════ -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ── Tab switching ──────────────────────────────────
+      var tabBtns  = document.querySelectorAll('.tab-btn');
+      var tabPanes = document.querySelectorAll('.tab-panel');
+
+      function activateTab(targetId) {
+        tabBtns.forEach(function (btn) {
+          var isActive = btn.dataset.tab === targetId;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', String(isActive));
+        });
+
+        tabPanes.forEach(function (pane) {
+          var isActive = pane.id === 'tab-' + targetId;
+          pane.classList.toggle('active', isActive);
+        });
+      }
+
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          activateTab(btn.dataset.tab);
+        });
+      });
+
+      // ── Present mode toggle ───────────────────────────
+      var presentToggle = document.getElementById('presentToggle');
+      var presentExit   = document.getElementById('presentExit');
+      var body          = document.body;
+
+      function enterPresent() {
+        body.classList.add('present');
+        presentToggle.textContent = 'Exit Present';
+      }
+
+      function exitPresent() {
+        body.classList.remove('present');
+        presentToggle.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M5 10v2M9 10v2M4 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Present';
+      }
+
+      presentToggle.addEventListener('click', function () {
+        if (body.classList.contains('present')) {
+          exitPresent();
+        } else {
+          enterPresent();
+        }
+      });
+
+      presentExit.addEventListener('click', function () {
+        exitPresent();
+      });
+
+      // Keyboard shortcut: Escape exits present mode
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && body.classList.contains('present')) {
+          exitPresent();
+        }
+      });
+
+      // ── Export PPT button ─────────────────────────────
+      var exportBtn   = document.getElementById('exportBtn');
+      var exportLabel = document.getElementById('exportBtnLabel');
+
+      exportBtn.addEventListener('click', function () {
+        if (exportBtn.classList.contains('loading') || exportBtn.classList.contains('ready')) {
+          // If already ready, trigger download simulation
+          if (exportBtn.classList.contains('ready')) {
+            simulateDownload();
+          }
+          return;
+        }
+
+        // Transition to loading state
+        exportBtn.classList.add('loading');
+        exportBtn.disabled = true;
+        exportLabel.textContent = 'Generating…';
+
+        // After 2.5s, transition to ready state
+        setTimeout(function () {
+          exportBtn.classList.remove('loading');
+          exportBtn.classList.add('ready');
+          exportBtn.disabled = false;
+          exportLabel.textContent = '✓ Ready — Download';
+          // Update icon to checkmark
+          var iconEl = exportBtn.querySelector('.btn-export-icon');
+          if (iconEl) {
+            iconEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9.5l4.5 4.5 7.5-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          }
+        }, 2500);
+      });
+
+      function simulateDownload() {
+        // In a real implementation, this would trigger file download
+        // For prototype, we flash a confirmation
+        var orig = exportLabel.textContent;
+        exportLabel.textContent = 'Opening…';
+        setTimeout(function () {
+          exportLabel.textContent = orig;
+        }, 1000);
+      }
+
+    }());
+  </script>
+
+</body>
+</html>

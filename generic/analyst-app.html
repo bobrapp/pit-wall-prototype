@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forecast Platform — Analyst Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── tokens ── */
+:root {
+  --void:#0a0c10;
+  --carbon:#13161e;
+  --pit:#1c2030;
+  --pit-2:#252a3b;
+  --line:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.14);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --chevy-yellow:#ffc72c;
+  --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --risk:#ff453a;
+  --good:#23d18b;
+  --accent:var(--f1-cyan);
+  --radius:16px;
+  --radius-sm:10px;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sidebar-w:220px;
+  --topbar-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── topbar ── */
+.topbar{
+  height:var(--topbar-h);
+  min-height:var(--topbar-h);
+  background:rgba(13,15,20,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  gap:16px;
+  position:relative;
+  z-index:200;
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.mark{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,#222837,#0c0e14);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.15em;color:var(--accent);
+  box-shadow:0 0 16px rgba(0,229,255,.15);
+  flex-shrink:0;
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.brand-ver{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.topbar-sep{flex:1}
+.greeting-bar{
+  font-size:13px;color:var(--ink-2);
+  display:flex;align-items:center;gap:8px;
+}
+.greeting-bar strong{color:var(--ink);font-weight:600}
+.greeting-bar .gate-chip{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;
+  background:rgba(255,149,0,.12);color:var(--warn);
+  border:1px solid rgba(255,149,0,.28);
+}
+.rank-badge{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 12px;border-radius:999px;
+  background:rgba(0,229,255,.07);
+  border:1px solid rgba(0,229,255,.2);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--f1-cyan);
+  cursor:default;
+}
+.rank-badge .delta-up{
+  font-size:9px;
+  color:var(--good);
+  background:rgba(35,209,139,.12);
+  border:1px solid rgba(35,209,139,.24);
+  padding:1px 5px;border-radius:4px;
+}
+.avatar-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#0a4a55,#003540);
+  border:2px solid rgba(0,229,255,.3);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--f1-cyan);display:grid;place-items:center;
+  cursor:pointer;flex-shrink:0;
+}
+
+/* ── shell ── */
+.shell{
+  flex:1;
+  display:flex;
+  overflow:hidden;
+}
+
+/* ── sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);
+  min-width:var(--sidebar-w);
+  background:var(--carbon);
+  border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.nav-section{padding:12px 10px 4px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);padding-left:14px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;
+  border-radius:8px;
+  margin:1px 6px;
+  cursor:pointer;
+  color:var(--ink-2);
+  font-size:13px;font-weight:500;
+  transition:all .15s ease;
+  position:relative;
+  text-decoration:none;
+}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--ink)}
+.nav-item.active{
+  background:rgba(0,229,255,.08);
+  color:var(--f1-cyan);
+}
+.nav-item.active::before{
+  content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;border-radius:0 2px 2px 0;
+  background:var(--f1-cyan);
+}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{
+  margin-left:auto;
+  min-width:18px;height:18px;
+  border-radius:9px;
+  padding:0 5px;
+  background:var(--warn);
+  color:#1a0800;
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  display:grid;place-items:center;
+  animation:badge-pulse 2.5s ease-in-out infinite;
+}
+@keyframes badge-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,149,0,.4)}50%{box-shadow:0 0 0 5px rgba(255,149,0,0)}}
+.sidebar-footer{
+  margin-top:auto;
+  padding:14px 10px;
+  border-top:1px solid var(--line);
+}
+.dq-mini{
+  padding:10px 12px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  display:flex;align-items:center;gap:10px;
+}
+.dq-ring-sm{flex-shrink:0}
+.dq-mini-info{flex:1;min-width:0}
+.dq-mini-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.dq-mini-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--good);line-height:1.2}
+.dq-mini-sub{font-size:10px;color:var(--muted)}
+
+/* ── main ── */
+.main{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:
+    radial-gradient(900px 500px at 80% -5%, rgba(0,229,255,.04), transparent 55%),
+    radial-gradient(700px 400px at -5% 60%, rgba(255,107,0,.03), transparent 65%),
+    var(--void);
+}
+.main::-webkit-scrollbar{width:6px}
+.main::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:3px}
+
+/* ── tabs / panels ── */
+.tab-panel{display:none;padding:24px 28px}
+.tab-panel.active{display:block}
+
+/* ── section headers ── */
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);font-weight:700;margin-bottom:4px;
+}
+.section-eyebrow::before{content:"";width:18px;height:1px;background:currentColor;display:inline-block}
+.section-title{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.015em;margin-bottom:20px;color:var(--ink)}
+
+/* ── card / panel ── */
+.card{
+  background:linear-gradient(160deg,rgba(255,255,255,.03) 0%,rgba(255,255,255,.01) 100%);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:20px;
+}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.card-head h3{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-.01em}
+.card-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* ── dashboard grid ── */
+.dash-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto;
+  gap:16px;
+}
+.dash-grid .span2{grid-column:span 2}
+.dash-grid .span3{grid-column:span 3}
+
+/* ── stat hero (personal accuracy) ── */
+.stat-hero{
+  display:flex;flex-direction:column;gap:12px;
+}
+.stat-hero-top{
+  display:flex;align-items:flex-start;gap:16px;
+}
+.stat-hero-num{
+  font-family:var(--serif);font-weight:700;font-size:52px;line-height:1;
+  letter-spacing:-.025em;color:var(--ink);
+}
+.stat-hero-num span{font-size:22px;color:var(--muted);letter-spacing:-.01em}
+.stat-hero-labels{padding-top:4px}
+.stat-hero-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.stat-hero-vs{
+  margin-top:6px;display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:11px;
+}
+.vs-pill{
+  padding:3px 8px;border-radius:6px;font-weight:700;font-size:10px;
+}
+.vs-pill.good{background:rgba(35,209,139,.12);color:var(--good);border:1px solid rgba(35,209,139,.24)}
+.vs-pill.warn{background:rgba(255,149,0,.12);color:var(--warn);border:1px solid rgba(255,149,0,.24)}
+.vs-pill.muted{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line)}
+
+/* ── sparkline ── */
+.sparkline-wrap{
+  position:relative;height:52px;
+}
+.sparkline-wrap svg{display:block;width:100%;height:100%}
+.spark-label{
+  position:absolute;bottom:0;right:0;
+  font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* ── rank card ── */
+.rank-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;padding:8px 0;
+}
+.rank-number{
+  font-family:var(--serif);font-weight:900;
+  font-size:64px;line-height:1;letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--f1-cyan),rgba(0,229,255,.5));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.rank-of{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.rank-pts{
+  font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cad-champagne);
+  display:flex;align-items:center;gap:6px;margin-top:4px;
+}
+.rank-pts-delta{
+  font-size:10px;color:var(--good);
+  background:rgba(35,209,139,.1);border:1px solid rgba(35,209,139,.2);
+  padding:1px 6px;border-radius:4px;
+}
+.rank-trend{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── pending actions ── */
+.action-list{display:flex;flex-direction:column;gap:8px}
+.action-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 14px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.015);
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.action-item:hover{border-color:var(--line-strong);background:rgba(255,255,255,.03);transform:translateX(2px)}
+.action-item.urgent{border-color:rgba(255,149,0,.3);background:rgba(255,149,0,.04)}
+.action-item.urgent:hover{border-color:rgba(255,149,0,.5)}
+.action-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;
+}
+.action-dot.urgent{background:var(--warn);box-shadow:0 0 8px rgba(255,149,0,.5)}
+.action-dot.info{background:var(--f1-cyan);box-shadow:0 0 8px rgba(0,229,255,.3)}
+.action-dot.good{background:var(--good);box-shadow:0 0 8px rgba(35,209,139,.3)}
+.action-body{flex:1;min-width:0}
+.action-title{font-size:13px;font-weight:600;color:var(--ink);line-height:1.3}
+.action-meta{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.05em}
+.action-time{font-family:var(--mono);font-size:10px;color:var(--muted-2);flex-shrink:0;margin-top:3px}
+
+/* ── DQ score ring ── */
+.dq-ring-wrap{
+  display:flex;align-items:center;gap:14px;
+}
+.dq-ring-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.dq-ring-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--good);line-height:1}
+.dq-dim-list{display:flex;flex-direction:column;gap:6px;flex:1}
+.dq-dim{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px}
+.dq-dim-name{color:var(--muted);min-width:120px}
+.dq-dim-bar{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.dq-dim-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.dq-dim-fill.good{background:var(--good)}
+.dq-dim-fill.warn{background:var(--warn)}
+.dq-dim-score{color:var(--ink-2);min-width:28px;text-align:right}
+
+/* ── signal strip ── */
+.signal-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+.signal-cell{
+  padding:10px 12px;border-radius:var(--radius-sm);
+  border:1px solid var(--line);background:rgba(255,255,255,.02);
+}
+.signal-cell.warn-bg{border-color:rgba(255,149,0,.25);background:rgba(255,149,0,.04)}
+.signal-cell.risk-bg{border-color:rgba(255,69,58,.25);background:rgba(255,69,58,.04)}
+.signal-name{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.3}
+.signal-age{font-family:var(--mono);font-size:12px;font-weight:700;margin-top:3px}
+.signal-age.good{color:var(--good)}
+.signal-age.warn{color:var(--warn)}
+.signal-age.risk{color:var(--risk)}
+
+/* ── forecast table ── */
+.forecast-table{width:100%;border-collapse:collapse}
+.forecast-table th{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;
+  padding:8px 12px;border-bottom:1px solid var(--line);text-align:left;
+}
+.forecast-table td{
+  padding:13px 12px;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:13px;vertical-align:middle;
+}
+.forecast-table tr:hover td{background:rgba(255,255,255,.02)}
+.forecast-table tr:last-child td{border-bottom:none}
+.nameplate{font-weight:600;font-size:14px;color:var(--ink)}
+.nameplate-seg{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em}
+.fc-num{font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:.02em}
+.fc-delta{
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  padding:2px 6px;border-radius:4px;
+  display:inline-block;margin-top:2px;
+}
+.fc-delta.up{background:rgba(35,209,139,.1);color:var(--good)}
+.fc-delta.down{background:rgba(255,69,58,.1);color:var(--risk)}
+.dq-badge-ring{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+}
+.state-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:999px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+}
+.state-pill .pip{width:5px;height:5px;border-radius:50%}
+.state-pill.committed{background:rgba(35,209,139,.12);color:var(--good);border:1px solid rgba(35,209,139,.28)}
+.state-pill.committed .pip{background:var(--good)}
+.state-pill.challenged{background:rgba(255,149,0,.12);color:var(--warn);border:1px solid rgba(255,149,0,.28)}
+.state-pill.challenged .pip{background:var(--warn);animation:blink 1.6s ease-in-out infinite}
+.state-pill.draft{background:rgba(0,229,255,.08);color:var(--f1-cyan);border:1px solid rgba(0,229,255,.25)}
+.state-pill.draft .pip{background:var(--f1-cyan)}
+.state-pill.final{background:rgba(200,178,115,.1);color:var(--cad-champagne);border:1px solid rgba(200,178,115,.28)}
+.state-pill.final .pip{background:var(--cad-champagne)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.action-btn{
+  padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;
+  border:1px solid var(--line-strong);background:rgba(255,255,255,.03);
+  color:var(--ink-2);cursor:pointer;font-family:var(--sans);
+  transition:all .15s ease;
+  white-space:nowrap;
+}
+.action-btn:hover{background:rgba(255,255,255,.07);color:var(--ink)}
+.action-btn.cyan{background:rgba(0,229,255,.08);color:var(--f1-cyan);border-color:rgba(0,229,255,.3)}
+.action-btn.cyan:hover{background:rgba(0,229,255,.14)}
+
+/* ── ghost lap ── */
+.ghost-controls{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;
+}
+.ghost-selector{
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.ghost-chip{
+  padding:6px 14px;border-radius:999px;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  border:1px solid var(--line);
+  color:var(--muted);cursor:pointer;
+  transition:all .2s ease;
+}
+.ghost-chip.active-amber{background:rgba(255,107,0,.1);color:var(--f1-amber);border-color:rgba(255,107,0,.35)}
+.ghost-chip.active-cyan{background:rgba(0,229,255,.08);color:var(--f1-cyan);border-color:rgba(0,229,255,.3)}
+.ghost-chip:not(.active-amber):not(.active-cyan):hover{border-color:var(--line-strong);color:var(--ink-2)}
+.ghost-chart-wrap{position:relative;height:280px;width:100%}
+.ghost-chart-wrap svg{width:100%;height:100%}
+.fan-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);align-items:center}
+.fan-legend span{display:inline-flex;align-items:center;gap:6px}
+.fan-legend .sw{width:12px;height:6px;border-radius:2px;flex-shrink:0}
+
+/* ── ghost personal card ── */
+.ghost-personal{
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:16px;
+}
+.gp-cell{
+  padding:12px;border-radius:var(--radius-sm);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  text-align:center;
+}
+.gp-cell .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.gp-cell .val{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:4px;line-height:1}
+.gp-cell .sub{font-size:10px;color:var(--muted);margin-top:3px}
+.gp-cell .val.good{color:var(--good)}
+.gp-cell .val.warn{color:var(--warn)}
+.gp-cell .val.cyan{color:var(--f1-cyan)}
+.gp-cell .val.amber{color:var(--f1-amber)}
+
+/* ── second opinion ── */
+.so-card{
+  border:1px solid rgba(255,149,0,.3);
+  border-radius:var(--radius);
+  background:rgba(255,149,0,.04);
+  padding:20px;
+  margin-bottom:16px;
+}
+.so-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.so-title{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:-.01em}
+.mds-badge{
+  padding:5px 12px;border-radius:999px;
+  background:rgba(255,149,0,.12);color:var(--warn);
+  border:1px solid rgba(255,149,0,.3);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  display:flex;align-items:center;gap:6px;
+}
+.so-numbers{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;
+}
+.so-num{
+  padding:12px 14px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.025);border:1px solid var(--line);
+  text-align:center;
+}
+.so-num .n-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.so-num .n-val{font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:-.015em;line-height:1.1;margin-top:2px}
+.so-num .n-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px}
+.so-num.highlight{border-color:rgba(255,149,0,.3);background:rgba(255,149,0,.06)}
+.factor-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.factor{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.02);border:1px solid var(--line);
+  font-size:12px;
+}
+.factor-icon{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;font-size:14px}
+.factor-icon.warn{background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.25)}
+.factor-icon.risk{background:rgba(255,69,58,.1);border:1px solid rgba(255,69,58,.25)}
+.factor-icon.info{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2)}
+.factor-body{flex:1}
+.factor-name{font-weight:600;color:var(--ink)}
+.factor-desc{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+.factor-weight{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  padding:2px 7px;border-radius:5px;
+  background:rgba(255,149,0,.1);color:var(--warn);
+}
+.so-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn-primary{
+  padding:10px 20px;border-radius:999px;
+  background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);
+  color:#001a1f;font-weight:700;font-size:13px;
+  border:none;cursor:pointer;font-family:var(--sans);letter-spacing:.01em;
+  transition:all .2s ease;
+  box-shadow:0 6px 24px rgba(0,229,255,.2);
+}
+.btn-primary:hover{box-shadow:0 10px 32px rgba(0,229,255,.35);transform:translateY(-1px)}
+.btn-secondary{
+  padding:10px 20px;border-radius:999px;
+  background:rgba(255,149,0,.1);color:var(--warn);
+  border:1px solid rgba(255,149,0,.3);
+  font-weight:600;font-size:13px;cursor:pointer;font-family:var(--sans);
+  transition:all .2s ease;
+}
+.btn-secondary:hover{background:rgba(255,149,0,.18)}
+.btn-ghost{
+  padding:10px 20px;border-radius:999px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--line);
+  font-weight:500;font-size:13px;cursor:pointer;font-family:var(--sans);
+  transition:all .15s ease;
+}
+.btn-ghost:hover{color:var(--ink);border-color:var(--line-strong)}
+
+/* ── override form ── */
+.override-form{
+  margin-top:12px;padding:16px;
+  background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.18);
+  border-radius:var(--radius-sm);
+  display:none;
+}
+.override-form.open{display:block}
+.field-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 12px;border-radius:8px;
+  background:rgba(0,0,0,.35);border:1px solid var(--line);
+  color:var(--ink);font-family:var(--mono);font-size:13px;
+  outline:none;transition:border-color .2s ease;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--f1-cyan)}
+.field textarea{font-family:var(--sans);font-size:13px;min-height:60px;resize:vertical;line-height:1.4}
+
+/* ── championship ── */
+.champ-header{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap;
+}
+.season-chip{
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;
+  background:rgba(200,178,115,.08);color:var(--cad-champagne);
+  border:1px solid rgba(200,178,115,.25);
+}
+.podium{
+  display:flex;align-items:flex-end;gap:10px;justify-content:center;
+  padding:16px 0 8px;
+  margin-bottom:16px;
+}
+.podium-slot{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  flex:1;max-width:120px;
+}
+.podium-avatar{
+  width:44px;height:44px;border-radius:50%;
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  display:grid;place-items:center;
+  border:2px solid transparent;
+  position:relative;
+}
+.podium-avatar.gold{background:linear-gradient(135deg,#3d3725,#1f1c12);border-color:var(--cad-champagne);box-shadow:0 0 20px rgba(200,178,115,.3)}
+.podium-avatar.silver{background:linear-gradient(135deg,#2a2d36,#171a22);border-color:var(--buick-platinum)}
+.podium-avatar.bronze{background:linear-gradient(135deg,#2d2317,#1a150e);border-color:#cd7f32}
+.podium-platform{
+  width:100%;border-radius:6px 6px 3px 3px;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  padding:10px 0;
+}
+.podium-platform.p1{background:linear-gradient(180deg,rgba(200,178,115,.15),rgba(200,178,115,.06));border:1px solid rgba(200,178,115,.3);color:var(--cad-champagne);height:72px}
+.podium-platform.p2{background:linear-gradient(180deg,rgba(216,220,224,.1),rgba(216,220,224,.04));border:1px solid rgba(216,220,224,.2);color:var(--buick-platinum);height:56px}
+.podium-platform.p3{background:linear-gradient(180deg,rgba(205,127,50,.1),rgba(205,127,50,.04));border:1px solid rgba(205,127,50,.2);color:#cd7f32;height:44px}
+.podium-name{font-size:12px;font-weight:600;color:var(--ink);text-align:center}
+.podium-pts{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.podium-slot.you .podium-avatar{box-shadow:0 0 0 3px rgba(0,229,255,.35), 0 0 20px rgba(0,229,255,.2)}
+.podium-slot.you .podium-name::after{content:" (you)";color:var(--f1-cyan);font-size:10px}
+
+.standings{width:100%;border-collapse:collapse;margin-top:4px}
+.standings th{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--line);text-align:left}
+.standings td{padding:11px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;vertical-align:middle}
+.standings tr:last-child td{border-bottom:none}
+.standings tr.you-row td{background:rgba(0,229,255,.04);color:var(--f1-cyan)}
+.standings tr.you-row td:first-child{border-left:2px solid var(--f1-cyan)}
+.standings .pos{font-family:var(--mono);font-weight:700;font-size:14px;width:32px}
+.standings .analyst-name{font-weight:600}
+.standings .pts{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--cad-champagne)}
+.standings .mape{font-family:var(--mono);font-size:12px}
+.standings .mape.good{color:var(--good)}
+.standings .delta-col{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+.standings .delta-col.up{background:rgba(35,209,139,.1);color:var(--good)}
+.standings .delta-col.down{background:rgba(255,69,58,.1);color:var(--risk)}
+.standings .delta-col.none{color:var(--muted-2)}
+
+/* ── AI chat ── */
+.chat-layout{display:flex;flex-direction:column;height:calc(100vh - var(--topbar-h) - 48px - 80px);min-height:300px}
+.chat-messages{flex:1;overflow-y:auto;padding-bottom:12px;display:flex;flex-direction:column;gap:12px}
+.chat-messages::-webkit-scrollbar{width:5px}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:3px}
+.msg{
+  display:flex;align-items:flex-start;gap:10px;max-width:720px;
+}
+.msg.user{flex-direction:row-reverse;align-self:flex-end}
+.msg-avatar{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;font-family:var(--mono);font-size:10px;font-weight:700;
+}
+.msg-avatar.ai{background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(0,229,255,.05));border:1px solid rgba(0,229,255,.25);color:var(--f1-cyan)}
+.msg-avatar.user{background:linear-gradient(135deg,#0a4a55,#003540);border:1px solid rgba(0,229,255,.25);color:var(--f1-cyan)}
+.msg-bubble{
+  padding:11px 14px;border-radius:12px;max-width:600px;font-size:13px;line-height:1.55;
+}
+.msg.ai .msg-bubble{
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:4px 12px 12px 12px;color:var(--ink-2);
+}
+.msg.user .msg-bubble{
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);
+  border-radius:12px 4px 12px 12px;color:var(--ink);
+}
+.msg-bubble strong{color:var(--ink);font-weight:600}
+.msg-bubble .mono{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.3);padding:1px 5px;border-radius:4px}
+.msg-time{font-family:var(--mono);font-size:9px;color:var(--muted-2);margin-top:4px;
+  display:block;}
+.msg.user .msg-time{text-align:right}
+.chat-input-wrap{
+  margin-top:12px;
+  display:flex;gap:10px;align-items:flex-end;
+  padding:14px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+}
+.chat-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;
+  resize:none;min-height:36px;max-height:120px;
+}
+.chat-input::placeholder{color:var(--muted-2)}
+.chat-send{
+  padding:8px 16px;border-radius:999px;
+  background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);
+  color:#001a1f;font-weight:700;font-size:12px;
+  border:none;cursor:pointer;flex-shrink:0;font-family:var(--sans);
+  transition:all .2s ease;
+  box-shadow:0 4px 16px rgba(0,229,255,.2);
+}
+.chat-send:hover{box-shadow:0 6px 24px rgba(0,229,255,.35);transform:translateY(-1px)}
+.chat-suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chat-sug{
+  padding:5px 12px;border-radius:999px;
+  font-family:var(--mono);font-size:10px;
+  border:1px solid var(--line);color:var(--muted);
+  cursor:pointer;transition:all .15s ease;
+}
+.chat-sug:hover{border-color:rgba(0,229,255,.3);color:var(--f1-cyan);background:rgba(0,229,255,.04)}
+
+/* ── toast ── */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:9999;
+  max-width:360px;
+  background:var(--carbon);
+  border:1px solid rgba(35,209,139,.35);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(35,209,139,.12), 0 0 40px rgba(35,209,139,.08);
+  transform:translateY(120%);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.toast.show{transform:translateY(0);pointer-events:all}
+.toast-top{display:flex;align-items:flex-start;gap:12px}
+.toast-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.3);
+  display:grid;place-items:center;font-size:18px;
+}
+.toast-body{flex:1}
+.toast-title{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:3px}
+.toast-msg{font-size:12px;color:var(--ink-2);line-height:1.45}
+.toast-msg strong{color:var(--good)}
+.toast-pts{
+  display:inline-flex;align-items:center;gap:5px;margin-top:8px;
+  padding:4px 10px;border-radius:6px;
+  background:rgba(200,178,115,.1);border:1px solid rgba(200,178,115,.25);
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--cad-champagne);
+}
+.toast-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 5px;border-radius:4px}
+.toast-close:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+.toast-bar{
+  height:2px;background:rgba(255,255,255,.06);border-radius:1px;margin-top:12px;overflow:hidden;
+}
+.toast-bar-fill{height:100%;background:var(--good);border-radius:1px;animation:bar-drain 4.5s linear forwards}
+@keyframes bar-drain{from{width:100%}to{width:0%}}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <a class="brand" href="#">
+    <div class="mark">PW</div>
+    <div>
+      <div class="brand-name">Pit Wall</div>
+      <div class="brand-ver">v4.0 · Workbench</div>
+    </div>
+  </a>
+  <div class="topbar-sep"></div>
+  <div class="greeting-bar">
+    Good morning, <strong>Diana</strong>
+    <span class="gate-chip">Gate 3 in 36h</span>
+  </div>
+  <div style="width:1px;height:20px;background:var(--line);margin:0 4px"></div>
+  <div class="rank-badge">
+    🏆 #3 of 12
+    <span class="delta-up">↑2</span>
+  </div>
+  <div class="avatar-btn">KG</div>
+</header>
+
+<!-- ── SHELL ── -->
+<div class="shell">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="sidebar">
+    <div style="height:12px"></div>
+
+    <a class="nav-item active" onclick="showTab('dashboard')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/>
+      </svg>
+      Dashboard
+    </a>
+
+    <a class="nav-item" onclick="showTab('forecasts')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 12 L5 8 L8 9.5 L11 5 L14 7"/><circle cx="5" cy="8" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="8" cy="9.5" r="1" fill="currentColor" stroke="none"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+      Forecasts
+    </a>
+
+    <a class="nav-item" onclick="showTab('ghostlap')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="8" cy="8" r="6"/><path d="M8 2v6l3 3" stroke-linecap="round"/>
+      </svg>
+      Ghost Lap
+    </a>
+
+    <a class="nav-item" onclick="showTab('secondopinion')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="8" cy="6" r="3"/><path d="M8 9v4M6 13h4" stroke-linecap="round"/>
+        <path d="M3 3.5 A6 6 0 0 1 13 3.5" stroke-linecap="round"/>
+      </svg>
+      Second Opinion
+      <span class="nav-badge">2</span>
+    </a>
+
+    <a class="nav-item" onclick="showTab('championship')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M5 2h6l-1 5H6L5 2z"/><path d="M3 2h2M14 2h-3"/><path d="M6 7c0 2 2 3 2 3s2-1 2-3"/>
+        <path d="M8 10v3M6 13h4" stroke-linecap="round"/>
+      </svg>
+      Championship
+    </a>
+
+    <a class="nav-item" onclick="showTab('aichat')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 3h12v8H9l-3 2v-2H2V3z" stroke-linejoin="round"/>
+        <path d="M5 7h6M5 5h4" stroke-linecap="round"/>
+      </svg>
+      AI Chat
+    </a>
+
+    <a class="nav-item" onclick="showTab('inbox')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 3h12l-5 6H7L2 3z"/><path d="M2 3v8h12V3" stroke-linejoin="round"/>
+      </svg>
+      Inbox
+      <span class="nav-badge">3</span>
+    </a>
+
+    <!-- sidebar footer: DQ ring -->
+    <div class="sidebar-footer">
+      <div class="dq-mini">
+        <svg class="dq-ring-sm" width="38" height="38" viewBox="0 0 38 38">
+          <circle cx="19" cy="19" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
+          <circle cx="19" cy="19" r="14" fill="none" stroke="var(--good)" stroke-width="4"
+            stroke-dasharray="87.96" stroke-dashoffset="10.56"
+            stroke-linecap="round" transform="rotate(-90 19 19)"
+            style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="dq-mini-info">
+          <div class="dq-mini-label">Cycle DQ</div>
+          <div class="dq-mini-val">88</div>
+          <div class="dq-mini-sub">14 of 16 green</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <main class="main" id="main-content">
+
+    <!-- ══════════════ DASHBOARD ══════════════ -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div style="margin-bottom:6px">
+        <div class="section-eyebrow">My Workbench</div>
+        <div class="section-title">Good morning, Diana. 2 forecasts need attention before Gate 3.</div>
+      </div>
+
+      <div class="dash-grid">
+
+        <!-- personal accuracy -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>My Accuracy</h3>
+              <div class="card-sub">6-cycle rolling MAPE</div>
+            </div>
+          </div>
+          <div class="stat-hero">
+            <div class="stat-hero-top">
+              <div>
+                <div class="stat-hero-num">3.1<span>%</span></div>
+                <div class="stat-hero-label">Your MAPE</div>
+                <div class="stat-hero-vs">
+                  <span class="vs-pill good">↓ vs 4.8% primary</span>
+                  <span style="font-size:10px;color:var(--muted)">beating AI</span>
+                </div>
+              </div>
+            </div>
+            <div class="sparkline-wrap">
+              <svg viewBox="0 0 280 52" preserveAspectRatio="none">
+                <!-- AI primary line -->
+                <polyline fill="none" stroke="rgba(0,229,255,.25)" stroke-width="1.5" stroke-dasharray="4,3"
+                  points="0,30 47,25 94,35 141,28 188,22 235,26 280,22"/>
+                <!-- gradient fill for you -->
+                <defs>
+                  <linearGradient id="sparkFill" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="var(--good)" stop-opacity=".25"/>
+                    <stop offset="100%" stop-color="var(--good)" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <polygon fill="url(#sparkFill)"
+                  points="0,52 0,36 47,30 94,40 141,22 188,14 235,18 280,10 280,52"/>
+                <!-- your line -->
+                <polyline fill="none" stroke="var(--good)" stroke-width="2"
+                  points="0,36 47,30 94,40 141,22 188,14 235,18 280,10"/>
+                <!-- dots at each point -->
+                <circle cx="0" cy="36" r="2.5" fill="var(--good)"/>
+                <circle cx="47" cy="30" r="2.5" fill="var(--good)"/>
+                <circle cx="94" cy="40" r="2.5" fill="var(--good)"/>
+                <circle cx="141" cy="22" r="2.5" fill="var(--good)"/>
+                <circle cx="188" cy="14" r="2.5" fill="var(--good)"/>
+                <circle cx="235" cy="18" r="2.5" fill="var(--good)"/>
+                <circle cx="280" cy="10" r="2.5" fill="var(--good)"/>
+              </svg>
+              <div class="spark-label">6 cycles · you vs AI</div>
+            </div>
+            <div style="display:flex;gap:10px;font-family:var(--mono);font-size:10px;color:var(--muted);align-items:center">
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:var(--good);display:inline-block;border-radius:1px"></span>Your MAPE</span>
+              <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:rgba(0,229,255,.4);border:1px dashed rgba(0,229,255,.4);display:inline-block;border-radius:1px"></span>Primary model</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- championship rank -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Season Rank</h3>
+              <div class="card-sub">2026 Championship</div>
+            </div>
+            <span class="season-chip">Season 4</span>
+          </div>
+          <div class="rank-card">
+            <div class="rank-number">#3</div>
+            <div class="rank-of">of 12 analysts</div>
+            <div class="rank-pts">
+              <span>247 pts</span>
+              <span class="rank-pts-delta">+18 this cycle</span>
+            </div>
+            <div class="rank-trend" style="color:var(--good);font-size:11px;margin-top:6px">↑ 2 positions since last cycle</div>
+            <div style="margin-top:12px;width:100%">
+              <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-bottom:5px">
+                <span>Points to #2 (Adriel)</span><span style="color:var(--f1-cyan)">+14 pts needed</span>
+              </div>
+              <div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden">
+                <div style="width:75%;height:100%;background:linear-gradient(90deg,var(--f1-cyan),rgba(0,229,255,.5));border-radius:3px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- pending actions -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Pending Actions</h3>
+              <div class="card-sub">Highest priority first</div>
+            </div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--warn);background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.2);padding:3px 8px;border-radius:5px;font-weight:700">2 urgent</span>
+          </div>
+          <div class="action-list">
+            <div class="action-item urgent" onclick="showTab('secondopinion')">
+              <div class="action-dot urgent"></div>
+              <div class="action-body">
+                <div class="action-title">Second Opinion: Titan XL Sport</div>
+                <div class="action-meta">MDS 0.72 · Bear case –17k · Gate 3 in 36h</div>
+              </div>
+              <div class="action-time">2h ago</div>
+            </div>
+            <div class="action-item urgent" onclick="showTab('secondopinion')">
+              <div class="action-dot urgent"></div>
+              <div class="action-body">
+                <div class="action-title">Second Opinion: Meridian EV</div>
+                <div class="action-meta">MDS 0.61 · Tariff signal unresolved</div>
+              </div>
+              <div class="action-time">5h ago</div>
+            </div>
+            <div class="action-item" onclick="showTab('forecasts')">
+              <div class="action-dot info"></div>
+              <div class="action-body">
+                <div class="action-title">Confirm: Summit LTZ forecast</div>
+                <div class="action-meta">DQ 91 · Ready for Gate 3 commit</div>
+              </div>
+              <div class="action-time">8h ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DQ overview -->
+        <div class="card span2">
+          <div class="card-head">
+            <div>
+              <h3>Data Quality — My Nameplates</h3>
+              <div class="card-sub">6-dimension score · Current cycle</div>
+            </div>
+          </div>
+          <div class="dq-ring-wrap" style="align-items:flex-start;gap:24px">
+            <div style="flex-shrink:0;text-align:center">
+              <svg width="96" height="96" viewBox="0 0 96 96" id="dq-main-ring">
+                <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="7"/>
+                <circle cx="48" cy="48" r="38" fill="none" stroke="var(--good)" stroke-width="7"
+                  stroke-dasharray="238.76" stroke-dashoffset="28.65"
+                  stroke-linecap="round" transform="rotate(-90 48 48)"
+                  style="transition:stroke-dashoffset 1.5s ease"/>
+                <text x="48" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="var(--good)">88</text>
+              </svg>
+              <div class="dq-ring-label">Cycle DQ</div>
+            </div>
+            <div class="dq-dim-list">
+              <div class="dq-dim">
+                <span class="dq-dim-name">Source Freshness</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill good" style="width:91%"></div></div>
+                <span class="dq-dim-score" style="color:var(--good)">91</span>
+              </div>
+              <div class="dq-dim">
+                <span class="dq-dim-name">Lineage Complete</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill good" style="width:94%"></div></div>
+                <span class="dq-dim-score" style="color:var(--good)">94</span>
+              </div>
+              <div class="dq-dim">
+                <span class="dq-dim-name">Override Accuracy</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill good" style="width:88%"></div></div>
+                <span class="dq-dim-score" style="color:var(--good)">88</span>
+              </div>
+              <div class="dq-dim">
+                <span class="dq-dim-name">Cross-Surface Sync</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill warn" style="width:76%"></div></div>
+                <span class="dq-dim-score" style="color:var(--warn)">76</span>
+              </div>
+              <div class="dq-dim">
+                <span class="dq-dim-name">Replay Determinism</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill good" style="width:98%"></div></div>
+                <span class="dq-dim-score" style="color:var(--good)">98</span>
+              </div>
+              <div class="dq-dim">
+                <span class="dq-dim-name">Signal Coverage</span>
+                <div class="dq-dim-bar"><div class="dq-dim-fill warn" style="width:72%"></div></div>
+                <span class="dq-dim-score" style="color:var(--warn)">72</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Signal Freshness</div>
+            <div class="signal-strip">
+              <div class="signal-cell">
+                <div class="signal-name">Dealer Pulse</div>
+                <div class="signal-age good">1d ago</div>
+              </div>
+              <div class="signal-cell warn-bg">
+                <div class="signal-name">Tariff Feeds</div>
+                <div class="signal-age warn">3d ago</div>
+              </div>
+              <div class="signal-cell">
+                <div class="signal-name">MIA Comp Scan</div>
+                <div class="signal-age good">2d ago</div>
+              </div>
+              <div class="signal-cell">
+                <div class="signal-name">Fleet Demand</div>
+                <div class="signal-age good">1d ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- you-were-right history -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>You Were Right</h3>
+              <div class="card-sub">Overrides that beat the model</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="padding:10px 12px;border-radius:var(--radius-sm);border:1px solid rgba(35,209,139,.25);background:rgba(35,209,139,.05)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="font-weight:600;font-size:12px">Titan XL 2500</div>
+                <span style="font-family:var(--mono);font-size:9px;color:var(--good);background:rgba(35,209,139,.1);padding:2px 6px;border-radius:4px;border:1px solid rgba(35,209,139,.2)">+12 pts 🏁</span>
+              </div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--good);margin-top:4px">Your MAPE 2.8% vs Primary 5.5%</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Cycle 4 · Incentive elasticity signal</div>
+            </div>
+            <div style="padding:10px 12px;border-radius:var(--radius-sm);border:1px solid rgba(35,209,139,.2);background:rgba(35,209,139,.03)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="font-weight:600;font-size:12px">Summit RST</div>
+                <span style="font-family:var(--mono);font-size:9px;color:var(--good);background:rgba(35,209,139,.1);padding:2px 6px;border-radius:4px;border:1px solid rgba(35,209,139,.2)">+8 pts</span>
+              </div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--good);margin-top:4px">Your MAPE 1.9% vs Primary 3.7%</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Cycle 3 · Dealer pull-forward</div>
+            </div>
+            <div style="padding:10px 12px;border-radius:var(--radius-sm);border:1px solid rgba(35,209,139,.15);background:rgba(35,209,139,.02)">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div style="font-weight:600;font-size:12px">Meridian AWD</div>
+                <span style="font-family:var(--mono);font-size:9px;color:var(--good);background:rgba(35,209,139,.1);padding:2px 6px;border-radius:4px;border:1px solid rgba(35,209,139,.2)">+6 pts</span>
+              </div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--good);margin-top:4px">Your MAPE 3.1% vs Primary 4.9%</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Cycle 2 · Fleet demand signal</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /dash-grid -->
+    </div><!-- /tab-dashboard -->
+
+
+    <!-- ══════════════ FORECASTS ══════════════ -->
+    <div class="tab-panel" id="tab-forecasts">
+      <div class="section-eyebrow">My Nameplates</div>
+      <div class="section-title">Forecasts</div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 0;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px">
+          <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Cycle 5 · 2026 NARA</div>
+          <div style="flex:1"></div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">Sort by:</div>
+          <select style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink-2);padding:4px 8px;border-radius:6px;outline:none">
+            <option>DQ Score</option><option>State</option><option>Volume</option>
+          </select>
+        </div>
+        <table class="forecast-table">
+          <thead>
+            <tr>
+              <th>Nameplate / Segment</th>
+              <th>P50 Forecast</th>
+              <th>vs Prior Cycle</th>
+              <th>DQ Score</th>
+              <th>State</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="nameplate">Titan XL Sport</div><div class="nameplate-seg">FULL-SIZE TRUCK</div></td>
+              <td><div class="fc-num">284,200</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta up">+2.3%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--warn)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="12.57"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--warn)">75</span>
+                </div>
+              </td>
+              <td><span class="state-pill challenged"><span class="pip"></span>Challenged</span></td>
+              <td><button class="action-btn cyan" onclick="showTab('secondopinion')">Review SO</button></td>
+            </tr>
+            <tr>
+              <td><div class="nameplate">Summit LTZ</div><div class="nameplate-seg">FULL-SIZE SUV</div></td>
+              <td><div class="fc-num">112,800</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta down">–1.1%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--good)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="4.52"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--good)">91</span>
+                </div>
+              </td>
+              <td><span class="state-pill draft"><span class="pip"></span>Draft</span></td>
+              <td><button class="action-btn">Confirm</button></td>
+            </tr>
+            <tr>
+              <td><div class="nameplate">Meridian EV</div><div class="nameplate-seg">COMPACT EV</div></td>
+              <td><div class="fc-num">89,400</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta up">+8.7%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--warn)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="14.07"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--warn)">72</span>
+                </div>
+              </td>
+              <td><span class="state-pill challenged"><span class="pip"></span>Challenged</span></td>
+              <td><button class="action-btn cyan" onclick="showTab('secondopinion')">Review SO</button></td>
+            </tr>
+            <tr>
+              <td><div class="nameplate">Colorado Z71</div><div class="nameplate-seg">MID-SIZE TRUCK</div></td>
+              <td><div class="fc-num">67,100</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta down">–0.5%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--good)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="3.52"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--good)">93</span>
+                </div>
+              </td>
+              <td><span class="state-pill committed"><span class="pip"></span>Committed</span></td>
+              <td><button class="action-btn">View</button></td>
+            </tr>
+            <tr>
+              <td><div class="nameplate">Vortex EV SS</div><div class="nameplate-seg">MID-SIZE EV SUV</div></td>
+              <td><div class="fc-num">41,600</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta up">+14.2%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--good)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="7.54"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--good)">85</span>
+                </div>
+              </td>
+              <td><span class="state-pill draft"><span class="pip"></span>Draft</span></td>
+              <td><button class="action-btn">Confirm</button></td>
+            </tr>
+            <tr>
+              <td><div class="nameplate">Vantage AWD</div><div class="nameplate-seg">3-ROW SUV</div></td>
+              <td><div class="fc-num">98,700</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted)">units</div></td>
+              <td><span class="fc-delta down">–2.8%</span></td>
+              <td>
+                <div class="dq-badge-ring">
+                  <svg width="22" height="22" viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="11" cy="11" r="8" fill="none" stroke="var(--good)" stroke-width="3"
+                      stroke-dasharray="50.27" stroke-dashoffset="4.02"
+                      stroke-linecap="round" transform="rotate(-90 11 11)"/>
+                  </svg>
+                  <span style="color:var(--good)">92</span>
+                </div>
+              </td>
+              <td><span class="state-pill final"><span class="pip"></span>Final</span></td>
+              <td><button class="action-btn">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tab-forecasts -->
+
+
+    <!-- ══════════════ GHOST LAP ══════════════ -->
+    <div class="tab-panel" id="tab-ghostlap">
+      <div class="section-eyebrow">Cycle Comparison</div>
+      <div class="section-title">Ghost Lap</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <div>
+            <h3>Titan XL Sport — NARA 2026 C5</h3>
+            <div class="card-sub">Your call vs. AI primary vs. actuals</div>
+          </div>
+          <div class="ghost-selector">
+            <span class="ghost-chip active-amber">Your Override</span>
+            <span class="ghost-chip active-cyan">AI Primary</span>
+            <span class="ghost-chip" style="background:rgba(35,209,139,.08);color:var(--good);border-color:rgba(35,209,139,.28)">Actuals</span>
+          </div>
+        </div>
+
+        <div class="ghost-chart-wrap">
+          <svg viewBox="0 0 640 280" preserveAspectRatio="none" id="ghost-svg">
+            <defs>
+              <linearGradient id="fanGradCyan" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#00e5ff" stop-opacity=".12"/>
+                <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="fanGradAmber" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ff6b00" stop-opacity=".10"/>
+                <stop offset="100%" stop-color="#ff6b00" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- AI fan: P10–P90 band -->
+            <polygon fill="url(#fanGradCyan)" opacity=".7"
+              points="0,180 107,160 214,150 321,130 428,105 535,85 640,95
+                      640,65 535,60 428,75 321,100 214,120 107,135 0,155"/>
+
+            <!-- Your fan band -->
+            <polygon fill="url(#fanGradAmber)" opacity=".7"
+              points="0,190 107,168 214,155 321,122 428,98 535,80 640,88
+                      640,58 535,52 428,68 321,92 214,126 107,140 0,162"/>
+
+            <!-- AI P50 line (cyan dashed) -->
+            <polyline fill="none" stroke="var(--f1-cyan)" stroke-width="2" stroke-dasharray="6,4" opacity=".8"
+              points="0,167 107,147 214,135 321,115 428,90 535,72 640,80"/>
+
+            <!-- Your override line (amber solid) -->
+            <polyline fill="none" stroke="var(--f1-amber)" stroke-width="2.5"
+              points="0,176 107,154 214,140 321,107 428,83 535,66 640,73"/>
+
+            <!-- Actuals (green dots + line, only first 4 cycles shown) -->
+            <polyline fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="3,3"
+              points="0,172 107,148 214,138 321,109"/>
+            <circle cx="0" cy="172" r="4" fill="var(--good)" opacity=".9"/>
+            <circle cx="107" cy="148" r="4" fill="var(--good)" opacity=".9"/>
+            <circle cx="214" cy="138" r="4" fill="var(--good)" opacity=".9"/>
+            <circle cx="321" cy="109" r="4" fill="var(--good)" opacity=".9"/>
+
+            <!-- cycle labels -->
+            <text x="0" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C1</text>
+            <text x="107" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C2</text>
+            <text x="214" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C3</text>
+            <text x="321" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C4</text>
+            <text x="428" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#ff6b00" text-anchor="middle">C5 →</text>
+            <text x="535" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C6</text>
+            <text x="640" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C7</text>
+
+            <!-- current cycle marker -->
+            <line x1="428" y1="10" x2="428" y2="260" stroke="rgba(255,107,0,.2)" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="435" y="22" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--f1-amber)">Current</text>
+
+            <!-- volume axis -->
+            <text x="8" y="180" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">260k</text>
+            <text x="8" y="130" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">280k</text>
+            <text x="8" y="80" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">300k</text>
+          </svg>
+        </div>
+
+        <div class="fan-legend">
+          <span><span class="sw" style="background:var(--f1-amber);height:3px"></span>Your Override</span>
+          <span><span class="sw" style="background:rgba(0,229,255,.5)"></span>AI P10–P90 Band</span>
+          <span><span class="sw" style="background:rgba(0,229,255,.7);height:2px"></span>AI P50</span>
+          <span><span class="sw" style="background:var(--good)"></span>Actuals (4 cycles)</span>
+        </div>
+      </div>
+
+      <!-- personal accuracy cards -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Personal Accuracy — Titan XL Sport</h3>
+        </div>
+        <div class="ghost-personal">
+          <div class="gp-cell">
+            <div class="lbl">Your MAPE</div>
+            <div class="val good">3.1%</div>
+            <div class="sub">6-cycle avg</div>
+          </div>
+          <div class="gp-cell">
+            <div class="lbl">AI Primary</div>
+            <div class="val cyan">4.8%</div>
+            <div class="sub">Same period</div>
+          </div>
+          <div class="gp-cell">
+            <div class="lbl">Beats AI</div>
+            <div class="val amber">4 of 6</div>
+            <div class="sub">cycles</div>
+          </div>
+          <div class="gp-cell">
+            <div class="lbl">Season Pts</div>
+            <div class="val" style="color:var(--cad-champagne)">+36</div>
+            <div class="sub">from this NS</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(35,209,139,.05);border:1px solid rgba(35,209,139,.2);font-size:12px;color:var(--ink-2)">
+          <strong style="color:var(--good)">Trend:</strong> Your accuracy on Titan XL has improved 1.4pp over the last 3 cycles. The incentive elasticity signal you flagged in C3 has been a consistent edge.
+        </div>
+      </div>
+    </div><!-- /tab-ghostlap -->
+
+
+    <!-- ══════════════ SECOND OPINION ══════════════ -->
+    <div class="tab-panel" id="tab-secondopinion">
+      <div class="section-eyebrow">AI Challenge Review</div>
+      <div class="section-title">Second Opinion Queue</div>
+
+      <!-- Challenge 1 -->
+      <div class="so-card">
+        <div class="so-header">
+          <div>
+            <div class="so-title">Titan XL Sport — Bear Case Challenge</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px">NARA · 2026 C5 · Triggered 2h ago · Gate 3 in 36h</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="mds-badge">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 3v2.5l1.5 1.5" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"/></svg>
+              MDS 0.72
+            </div>
+            <span class="state-pill challenged"><span class="pip"></span>Challenged</span>
+          </div>
+        </div>
+
+        <div class="so-numbers">
+          <div class="so-num">
+            <div class="n-label">Your Forecast</div>
+            <div class="n-val" style="color:var(--f1-amber)">284,200</div>
+            <div class="n-sub">P50 · submitted C4</div>
+          </div>
+          <div class="so-num highlight">
+            <div class="n-label">AI Bear Case</div>
+            <div class="n-val" style="color:var(--warn)">267,000</div>
+            <div class="n-sub">–17,200 vs your call</div>
+          </div>
+          <div class="so-num">
+            <div class="n-label">Divergence</div>
+            <div class="n-val" style="color:var(--risk)">–6.1%</div>
+            <div class="n-sub">MDS threshold: 0.65</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Divergent Factors</div>
+        <div class="factor-list">
+          <div class="factor">
+            <div class="factor-icon warn">⚡</div>
+            <div class="factor-body">
+              <div class="factor-name">Tariff Feed Stale — 3 days</div>
+              <div class="factor-desc">TARIFF-US-AUTO feed last updated 72h ago. AI bear case assumes tariff escalation risk not captured.</div>
+            </div>
+            <span class="factor-weight">35%</span>
+          </div>
+          <div class="factor">
+            <div class="factor-icon warn">📊</div>
+            <div class="factor-body">
+              <div class="factor-name">Incentive Elasticity Divergence</div>
+              <div class="factor-desc">AI model forecasts 2.1% lower incentive pull-through than analyst's dealer visit signal suggests.</div>
+            </div>
+            <span class="factor-weight">28%</span>
+          </div>
+          <div class="factor">
+            <div class="factor-icon info">🔍</div>
+            <div class="factor-body">
+              <div class="factor-name">Fleet Demand Signal Gap</div>
+              <div class="factor-desc">Fleet demand index shows 4% YoY softness; your model incorporated retail-weighted mix vs AI's fleet-weighted.</div>
+            </div>
+            <span class="factor-weight">22%</span>
+          </div>
+          <div class="factor">
+            <div class="factor-icon risk">⚠️</div>
+            <div class="factor-body">
+              <div class="factor-name">Competitive Pressure — Ford F-150</div>
+              <div class="factor-desc">MIA scan shows F-150 lease promotion. AI weights competitive impact 1.8% higher than analyst.</div>
+            </div>
+            <span class="factor-weight">15%</span>
+          </div>
+        </div>
+
+        <div class="so-actions">
+          <button class="btn-primary" onclick="acceptOverride()">Accept My Forecast (284,200)</button>
+          <button class="btn-secondary" onclick="toggleOverrideForm()">Submit Revised Override</button>
+          <button class="btn-ghost">Escalate to SME (Chris Hammond)</button>
+        </div>
+
+        <div class="override-form" id="override-form">
+          <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--f1-cyan);margin-bottom:12px">Submit Override</div>
+          <div class="field-group">
+            <div class="field">
+              <label>Override Volume</label>
+              <input type="number" value="267000" placeholder="e.g. 267000">
+            </div>
+            <div class="field">
+              <label>Confidence</label>
+              <select>
+                <option>High — dealer visit confirmed</option>
+                <option>Medium — inference from signals</option>
+                <option>Low — directional only</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Reasoning (for HIBT)</label>
+            <textarea placeholder="Explain why your override differs from the AI bear case...">Confirmed incentive elasticity with dealer network last week. F-150 lease promotion impact overstated — our retail mix is 78% vs AI's 65% assumption. Tariff stale data acknowledged but fleet contracts already locked at current rate.</textarea>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn-primary" style="padding:8px 16px;font-size:12px">Submit to HIBT</button>
+            <button class="btn-ghost" style="padding:8px 16px;font-size:12px" onclick="toggleOverrideForm()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 2 (collapsed) -->
+      <div class="card" style="border-color:rgba(255,149,0,.2)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:600;font-size:15px">Meridian EV — Tariff Risk Challenge</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px">MDS 0.61 · Trigged 5h ago · Lower urgency</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="state-pill challenged"><span class="pip"></span>Challenged</span>
+            <button class="action-btn cyan">Expand</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-secondopinion -->
+
+
+    <!-- ══════════════ CHAMPIONSHIP ══════════════ -->
+    <div class="tab-panel" id="tab-championship">
+      <div class="section-eyebrow">Season 4 · 2026</div>
+      <div class="section-title">Championship Table</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="champ-header">
+          <div>
+            <div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Cycle 5 of 8 · Updated 1h ago</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="font-family:var(--serif);font-size:18px;font-weight:600">NARA Forecasting League</div>
+              <span class="season-chip">Season 4</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Your position</div>
+            <div style="font-family:var(--serif);font-size:28px;font-weight:700;color:var(--f1-cyan);line-height:1">#3</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--good);margin-top:2px">↑2 this cycle</div>
+          </div>
+        </div>
+
+        <!-- podium -->
+        <div class="podium">
+          <!-- 2nd -->
+          <div class="podium-slot">
+            <div class="podium-avatar silver" style="color:var(--buick-platinum)">AV</div>
+            <div class="podium-name">Adriel V.</div>
+            <div class="podium-pts">261 pts</div>
+            <div class="podium-platform p2">2</div>
+          </div>
+          <!-- 1st -->
+          <div class="podium-slot">
+            <div class="podium-avatar gold" style="color:var(--cad-champagne)">MR</div>
+            <div class="podium-name">Marcus R.</div>
+            <div class="podium-pts">318 pts</div>
+            <div class="podium-platform p1">1</div>
+          </div>
+          <!-- 3rd (you) -->
+          <div class="podium-slot you">
+            <div class="podium-avatar" style="background:linear-gradient(135deg,#0a4a55,#003540);border:2px solid rgba(0,229,255,.4);color:var(--f1-cyan)">KG</div>
+            <div class="podium-name">Diana W.</div>
+            <div class="podium-pts">247 pts</div>
+            <div class="podium-platform p3">3</div>
+          </div>
+        </div>
+
+        <!-- full standings -->
+        <table class="standings">
+          <thead>
+            <tr>
+              <th>Pos</th><th>Analyst</th><th>Points</th><th>MAPE</th><th>Overrides</th><th>Δ This Cycle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pos" style="color:var(--cad-champagne)">1</td>
+              <td class="analyst-name">Marcus R.</td>
+              <td class="pts">318</td>
+              <td class="mape good">2.7%</td>
+              <td style="font-family:var(--mono);color:var(--muted)">14 of 16</td>
+              <td><span class="delta-col none">—</span></td>
+            </tr>
+            <tr>
+              <td class="pos" style="color:var(--buick-platinum)">2</td>
+              <td class="analyst-name">Adriel V.</td>
+              <td class="pts">261</td>
+              <td class="mape good">3.0%</td>
+              <td style="font-family:var(--mono);color:var(--muted)">11 of 14</td>
+              <td><span class="delta-col down">↓1</span></td>
+            </tr>
+            <tr class="you-row">
+              <td class="pos">3</td>
+              <td class="analyst-name">Diana W. ★</td>
+              <td class="pts">247</td>
+              <td class="mape good">3.1%</td>
+              <td style="font-family:var(--mono);">9 of 12</td>
+              <td><span class="delta-col up">↑2</span></td>
+            </tr>
+            <tr>
+              <td class="pos">4</td>
+              <td class="analyst-name">Yuna K.</td>
+              <td class="pts">231</td>
+              <td class="mape">3.4%</td>
+              <td style="font-family:var(--mono);color:var(--muted)">8 of 12</td>
+              <td><span class="delta-col down">↓1</span></td>
+            </tr>
+            <tr>
+              <td class="pos">5</td>
+              <td class="analyst-name">Dmitri S.</td>
+              <td class="pts">218</td>
+              <td class="mape">3.6%</td>
+              <td style="font-family:var(--mono);color:var(--muted)">10 of 14</td>
+              <td><span class="delta-col none">—</span></td>
+            </tr>
+            <tr>
+              <td class="pos">6</td>
+              <td class="analyst-name">Priya M.</td>
+              <td class="pts">204</td>
+              <td class="mape">3.9%</td>
+              <td style="font-family:var(--mono);color:var(--muted)">7 of 10</td>
+              <td><span class="delta-col up">↑1</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:14px;padding:12px 14px;border-radius:var(--radius-sm);background:rgba(0,229,255,.04);border:1px solid rgba(0,229,255,.15);font-size:12px;color:var(--ink-2)">
+          <strong style="color:var(--f1-cyan)">14 points from #2.</strong> Adriel dropped a position this cycle. Two more accurate overrides with high confidence on your challenged nameplates could close the gap before C6.
+        </div>
+      </div>
+    </div><!-- /tab-championship -->
+
+
+    <!-- ══════════════ AI CHAT ══════════════ -->
+    <div class="tab-panel" id="tab-aichat">
+      <div class="section-eyebrow">Pit Wall AI</div>
+      <div class="section-title">AI Chat</div>
+
+      <div class="chat-layout">
+        <div class="chat-messages" id="chat-messages">
+
+          <div class="msg ai">
+            <div class="msg-avatar ai">PW</div>
+            <div>
+              <div class="msg-bubble">
+                Good morning, Diana. Here's your briefing for today:<br><br>
+                <strong>2 Second Opinion challenges</strong> need resolution before Gate 3 (36h). Titan XL has MDS 0.72 — above threshold, requires your decision. Meridian EV has MDS 0.61 — tariff signal is the primary driver.<br><br>
+                Your cycle DQ is <strong>88</strong> — tariff feeds are 3 days stale, which is affecting the Titan challenge. Do you want me to flag this to GovOps?
+              </div>
+              <span class="msg-time">9:01 AM</span>
+            </div>
+          </div>
+
+          <div class="msg user">
+            <div class="msg-avatar user">KG</div>
+            <div>
+              <div class="msg-bubble">Show me Titan XL — why is the bear case so different from my forecast?</div>
+              <span class="msg-time">9:03 AM</span>
+            </div>
+          </div>
+
+          <div class="msg ai">
+            <div class="msg-avatar ai">PW</div>
+            <div>
+              <div class="msg-bubble">
+                The bear case is <span class="mono">267,000</span> vs your <span class="mono">284,200</span> — a 6.1% gap, which triggered the MDS threshold at 0.72.<br><br>
+                Four factors are driving this:<br>
+                1. <strong>Tariff stale data (35%)</strong> — the AI is pricing in unresolved tariff risk that your model doesn't fully incorporate because the feed is 72h old<br>
+                2. <strong>Incentive elasticity (28%)</strong> — your dealer network signal says pull-through is stronger than the model's assumption<br>
+                3. <strong>Fleet demand mix (22%)</strong> — you used retail-weighted mix; AI used fleet-weighted<br>
+                4. <strong>F-150 competitive pressure (15%)</strong> — lease promotion impact<br><br>
+                The stale tariff feed is the biggest swing factor. Do you want me to flag to Jordan to refresh the feed before you decide?
+              </div>
+              <span class="msg-time">9:03 AM</span>
+            </div>
+          </div>
+
+          <div class="msg user">
+            <div class="msg-avatar user">KG</div>
+            <div>
+              <div class="msg-bubble">Yes, flag the tariff feed. And I think my forecast stands at 284k — I confirmed the incentive elasticity with dealers last week.</div>
+              <span class="msg-time">9:05 AM</span>
+            </div>
+          </div>
+
+          <div class="msg ai">
+            <div class="msg-avatar ai">PW</div>
+            <div>
+              <div class="msg-bubble">
+                Done — <strong>tariff feed alert sent to Jordan</strong> (Ops channel).<br><br>
+                Logging your reasoning to HIBT: <em>"Incentive elasticity confirmed with dealer network. Retail mix 78% vs AI's 65% assumption."</em><br><br>
+                Your forecast <span class="mono">284,200</span> is accepted. Gate 3 is unblocked for Titan XL pending tariff feed refresh. Ghost Lap updated. <strong>+12 Championship points</strong> logged against this override — result confirmed in C6. 🏁
+              </div>
+              <span class="msg-time">9:05 AM</span>
+            </div>
+          </div>
+
+        </div><!-- /chat-messages -->
+
+        <div>
+          <div class="chat-input-wrap">
+            <textarea class="chat-input" id="chat-input" placeholder="Ask about any nameplate, DQ score, or override..." rows="1"
+              onkeydown="handleChatKey(event)"></textarea>
+            <button class="chat-send" onclick="sendMessage()">Send</button>
+          </div>
+          <div class="chat-suggestions">
+            <span class="chat-sug" onclick="insertSug('Show me my accuracy trend on Meridian EV')">Meridian accuracy trend</span>
+            <span class="chat-sug" onclick="insertSug('What is the tariff feed status?')">Tariff feed status</span>
+            <span class="chat-sug" onclick="insertSug('How many points to reach #2?')">Points to #2</span>
+            <span class="chat-sug" onclick="insertSug('Show Ghost Lap for Summit LTZ')">Summit ghost lap</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-aichat -->
+
+
+    <!-- ══════════════ INBOX ══════════════ -->
+    <div class="tab-panel" id="tab-inbox">
+      <div class="section-eyebrow">Notifications</div>
+      <div class="section-title">Inbox</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div class="card" style="border-color:rgba(35,209,139,.3);background:rgba(35,209,139,.04)">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.3);display:grid;place-items:center;font-size:20px;flex-shrink:0">🏁</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--ink)">You Were Right — Titan XL 2500</div>
+              <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">Your Cycle 4 override (<strong style="color:var(--good)">284,200</strong>) beat the primary model. MAPE 2.8% vs 5.5%. <strong>+12 Championship points</strong> logged to HIBT.</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Today 8:44 AM · Titan XL 2500 · HIBT-REF-2026-C4-0882</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:10px;background:rgba(200,178,115,.1);border:1px solid rgba(200,178,115,.2);color:var(--cad-champagne);padding:3px 9px;border-radius:5px;white-space:nowrap">+12 pts</div>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(255,149,0,.25)">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.25);display:grid;place-items:center;font-size:20px;flex-shrink:0">⚡</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--ink)">Second Opinion Triggered — Titan XL Sport</div>
+              <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">AI bear case diverged 6.1% from your forecast. MDS 0.72 — above threshold. <strong>Gate 3 blocked</strong> pending your review.</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Today 7:12 AM · Titan XL Sport · 36h to Gate 3</div>
+            </div>
+            <button class="action-btn cyan" onclick="showTab('secondopinion')">Review</button>
+          </div>
+        </div>
+
+        <div class="card" style="border-color:rgba(255,149,0,.2)">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.2);display:grid;place-items:center;font-size:20px;flex-shrink:0">⚡</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--ink)">Second Opinion Triggered — Meridian EV</div>
+              <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">Tariff risk signal unresolved. MDS 0.61 — review recommended before commit.</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Today 4:30 AM · Meridian EV · Lower urgency</div>
+            </div>
+            <button class="action-btn cyan" onclick="showTab('secondopinion')">Review</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(200,178,115,.08);border:1px solid rgba(200,178,115,.2);display:grid;place-items:center;font-size:20px;flex-shrink:0">🏆</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--ink)">Championship Update — You moved to #3</div>
+              <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">+18 points this cycle. You passed Yuna K. and Dmitri S. after Cycle 4 accuracy results. 14 points from #2 (Adriel V.).</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Yesterday 6:00 PM · Season 4 · Cycle 5 standings</div>
+            </div>
+            <button class="action-btn" onclick="showTab('championship')">View</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:flex-start;gap:14px">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.18);display:grid;place-items:center;font-size:20px;flex-shrink:0">👋</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:14px;color:var(--ink)">Lap Clap from Marcus R.</div>
+              <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">Marcus clapped your Titan XL 2500 call from Cycle 4. "Nailed the dealer pull-forward signal — good read."</div>
+              <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Yesterday 3:22 PM · Lap Clap · Cycle 4</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-inbox -->
+
+  </main><!-- /main -->
+</div><!-- /shell -->
+
+
+<!-- ── "YOU WERE RIGHT" TOAST ── -->
+<div class="toast" id="yw-toast">
+  <button class="toast-close" onclick="dismissToast()">✕</button>
+  <div class="toast-top">
+    <div class="toast-icon">🏁</div>
+    <div class="toast-body">
+      <div class="toast-title">You Were Right</div>
+      <div class="toast-msg">Your <strong>Titan XL 2500</strong> call beat the primary model. MAPE <strong>2.8%</strong> vs 5.5%.</div>
+      <div class="toast-pts">🏆 +12 Championship points</div>
+    </div>
+  </div>
+  <div class="toast-bar"><div class="toast-bar-fill"></div></div>
+</div>
+
+
+<script>
+// ── tab navigation ──
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  const navMap = {
+    dashboard:'Dashboard',forecasts:'Forecasts',ghostlap:'Ghost Lap',
+    secondopinion:'Second Opinion',championship:'Championship',aichat:'AI Chat',inbox:'Inbox'
+  };
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().startsWith(navMap[name] || '___')) n.classList.add('active');
+  });
+  document.getElementById('main-content').scrollTo(0, 0);
+}
+
+// ── override form toggle ──
+function toggleOverrideForm() {
+  const f = document.getElementById('override-form');
+  f.classList.toggle('open');
+}
+
+// ── accept override ──
+function acceptOverride() {
+  const btn = event.target;
+  btn.textContent = '✓ Accepted — Logged to HIBT';
+  btn.style.background = 'linear-gradient(135deg,var(--good),#2fe899)';
+  btn.style.color = '#001a10';
+  btn.disabled = true;
+  setTimeout(() => showToast('lc'), 800);
+}
+
+// ── toast ──
+function showToast(type) {
+  const t = document.getElementById('yw-toast');
+  t.classList.add('show');
+  setTimeout(() => dismissToast(), 4800);
+}
+function dismissToast() {
+  document.getElementById('yw-toast').classList.remove('show');
+}
+
+// ── AI chat ──
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+function insertSug(text) {
+  document.getElementById('chat-input').value = text;
+  document.getElementById('chat-input').focus();
+}
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const msgs = document.getElementById('chat-messages');
+
+  // user bubble
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.innerHTML = `
+    <div class="msg-avatar user">KG</div>
+    <div>
+      <div class="msg-bubble">${escHtml(text)}</div>
+      <span class="msg-time">Just now</span>
+    </div>`;
+  msgs.appendChild(userMsg);
+  input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // AI response with small delay
+  setTimeout(() => {
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'msg ai';
+    aiMsg.innerHTML = `
+      <div class="msg-avatar ai">PW</div>
+      <div>
+        <div class="msg-bubble">${getAIResponse(text)}</div>
+        <span class="msg-time">Just now</span>
+      </div>`;
+    msgs.appendChild(aiMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 700);
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function getAIResponse(text) {
+  const t = text.toLowerCase();
+  if (t.includes('equinox') && t.includes('accuracy')) {
+    return 'Your 6-cycle MAPE on <strong>Meridian EV</strong> is <span class="mono">4.2%</span> — slightly above the primary model (3.9%). The tariff signal has been the main source of divergence. Your C3 override was 5.1% off actuals. Want me to pull the full Ghost Lap?';
+  }
+  if (t.includes('tariff')) {
+    return 'Tariff feed <strong>TARIFF-US-AUTO</strong> last refreshed <strong>72h ago</strong> (threshold: 48h for yellow, 120h for red). Currently at Yellow status. Alert sent to Jordan 47 minutes ago — no acknowledgement yet. Estimated refresh: within 4h if prioritized.';
+  }
+  if (t.includes('#2') || t.includes('points')) {
+    return 'You need <strong>14 more points</strong> to reach #2 (Adriel V., 261 pts). Two accurate overrides on challenged nameplates score approx 10–14 pts each. If you accept your Titan XL forecast and it confirms accurate in C6, that alone could close the gap. 🏆';
+  }
+  if (t.includes('tahoe') && t.includes('ghost')) {
+    return 'Summit LTZ Ghost Lap: your 6-cycle MAPE is <span class="mono">2.4%</span> vs primary <span class="mono">3.1%</span>. You\'ve beaten the model in 5 of 6 cycles — your dealer pull-forward signal has been particularly accurate. Want me to open the Ghost Lap view?';
+  }
+  return 'I\'m analyzing your request. To be more specific, I can look up any nameplate\'s forecast, DQ score, override history, Ghost Lap comparison, or Championship points. What would you like to know?';
+}
+
+// ── auto show toast on load ──
+window.addEventListener('load', () => {
+  setTimeout(() => showToast('yw'), 1800);
+});
+</script>
+
+</body>
+</html>

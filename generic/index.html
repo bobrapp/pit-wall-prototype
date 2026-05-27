@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forecast Intelligence Platform — Demo Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#0a0c10;
+  --carbon:#13161e;
+  --pit:#1c2030;
+  --pit-2:#252a3b;
+  --line:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.14);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --cad-champagne:#c8b273;
+  --buick-teal:#7fb0bf;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --radius:18px;
+  --radius-sm:12px;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  background-image:
+    radial-gradient(1100px 600px at 75% -5%, rgba(0,229,255,.055), transparent 55%),
+    radial-gradient(800px 500px at -5% 55%, rgba(255,107,0,.04), transparent 65%),
+    radial-gradient(600px 400px at 50% 100%, rgba(200,178,115,.03), transparent 60%);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+
+/* ── topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:saturate(150%) blur(20px);
+  -webkit-backdrop-filter:saturate(150%) blur(20px);
+  background:rgba(10,12,16,.78);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1200px;margin:0 auto;
+  padding:14px 32px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{
+  width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,#222837,#0c0e14);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.15em;color:var(--f1-cyan);
+  box-shadow:0 0 18px rgba(0,229,255,.18);
+  flex-shrink:0;
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand-sub{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin-top:1px}
+.ver-chip{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;
+  background:rgba(0,229,255,.07);color:var(--f1-cyan);
+  border:1px solid rgba(0,229,255,.2);
+}
+.topbar-links{display:flex;align-items:center;gap:4px}
+.topbar-link{
+  font-size:13px;font-weight:500;color:var(--ink-2);
+  padding:7px 12px;border-radius:8px;
+  transition:all .15s ease;
+}
+.topbar-link:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+
+/* ── hero ── */
+.hero{
+  max-width:1200px;margin:0 auto;
+  padding:88px 32px 72px;
+  position:relative;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--f1-cyan);font-weight:700;margin-bottom:20px;
+}
+.hero-eyebrow::before{content:"";width:22px;height:1px;background:currentColor;display:inline-block}
+.hero-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(44px,7vw,96px);
+  line-height:.96;letter-spacing:-.03em;
+  margin-bottom:22px;max-width:860px;
+}
+.hero-headline em{font-style:italic;font-weight:500;color:var(--cad-champagne)}
+.hero-lead{
+  font-size:18px;color:var(--ink-2);max-width:58ch;line-height:1.6;
+  margin-bottom:36px;
+}
+.hero-meta{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);
+}
+.hero-meta .sep{color:var(--muted-2)}
+.hero-meta a{color:var(--muted);transition:color .15s}
+.hero-meta a:hover{color:var(--f1-cyan)}
+
+/* ── section ── */
+.section{max-width:1200px;margin:0 auto;padding:0 32px 80px}
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:20px;
+}
+.section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ── persona grid ── */
+.persona-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+
+/* ── persona card ── */
+.p-card{
+  position:relative;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.p-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--line-strong);
+  box-shadow:0 24px 64px rgba(0,0,0,.5);
+}
+.p-card .top-bar{
+  height:3px;
+  width:100%;
+}
+.p-card-inner{padding:26px 26px 22px;flex:1;display:flex;flex-direction:column}
+.p-card .persona-tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:700;margin-bottom:12px;
+}
+.p-card .card-title{
+  font-family:var(--serif);font-weight:700;font-size:24px;letter-spacing:-.015em;
+  margin-bottom:8px;line-height:1.1;
+}
+.p-card .card-desc{font-size:13px;color:var(--ink-2);line-height:1.6;flex:1;margin-bottom:18px}
+.p-card .feature-list{
+  display:flex;flex-direction:column;gap:5px;margin-bottom:20px;
+}
+.p-card .feature{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em;
+}
+.p-card .feature::before{content:"—";color:var(--muted-2);flex-shrink:0}
+.p-card .card-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+.p-card .status-chip{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;font-weight:700;
+}
+.status-live{background:rgba(35,209,139,.1);color:var(--start-green);border:1px solid rgba(35,209,139,.25)}
+.status-spec{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line)}
+.launch-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:999px;
+  font-weight:700;font-size:12px;letter-spacing:.02em;
+  border:1px solid transparent;
+  transition:all .2s ease;
+  cursor:pointer;white-space:nowrap;
+}
+.launch-btn.active{
+  background:linear-gradient(135deg,var(--f1-cyan),#54f0ff);
+  color:#001a1f;
+  box-shadow:0 6px 24px rgba(0,229,255,.25);
+}
+.launch-btn.active:hover{box-shadow:0 10px 36px rgba(0,229,255,.4);transform:translateY(-1px)}
+.launch-btn.inactive{
+  background:rgba(255,255,255,.03);color:var(--muted-2);
+  border-color:var(--line);cursor:default;
+}
+
+/* persona accent variants */
+.p-card.analyst .top-bar{background:var(--f1-cyan)}
+.p-card.analyst .persona-tag{color:var(--f1-cyan)}
+.p-card.analyst:hover{border-color:rgba(0,229,255,.25);box-shadow:0 24px 64px rgba(0,0,0,.5),0 0 0 1px rgba(0,229,255,.1)}
+
+.p-card.leadership .top-bar{background:var(--cad-champagne)}
+.p-card.leadership .persona-tag{color:var(--cad-champagne)}
+.p-card.leadership:hover{border-color:rgba(200,178,115,.25)}
+
+.p-card.engineering .top-bar{background:var(--buick-teal)}
+.p-card.engineering .persona-tag{color:var(--buick-teal)}
+.p-card.engineering:hover{border-color:rgba(127,176,191,.25)}
+
+/* ── additional resources ── */
+.resources-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:12px;
+}
+.res-card{
+  padding:18px 20px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  display:flex;align-items:flex-start;gap:14px;
+  transition:all .2s ease;
+  cursor:pointer;
+}
+.res-card:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04);transform:translateY(-2px)}
+.res-icon{
+  width:36px;height:36px;border-radius:9px;
+  display:grid;place-items:center;font-size:18px;
+  flex-shrink:0;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+}
+.res-body{flex:1;min-width:0}
+.res-title{font-weight:600;font-size:13px;color:var(--ink);margin-bottom:3px}
+.res-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.res-tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted-2);margin-top:5px;
+}
+
+/* ── grid separator ── */
+.divider{
+  max-width:1200px;margin:0 auto 52px;
+  padding:0 32px;
+}
+.divider hr{border:none;border-top:1px solid var(--line)}
+
+/* ── footer ── */
+footer{
+  max-width:1200px;margin:0 auto;
+  padding:28px 32px 48px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted-2);text-transform:uppercase;
+}
+footer a{color:var(--muted);transition:color .15s}
+footer a:hover{color:var(--f1-cyan)}
+
+/* ── responsive ── */
+@media(max-width:900px){
+  .persona-grid{grid-template-columns:1fr}
+  .resources-grid{grid-template-columns:1fr 1fr}
+  .hero-headline{font-size:clamp(38px,10vw,72px)}
+}
+@media(max-width:600px){
+  .topbar-links{display:none}
+  .resources-grid{grid-template-columns:1fr}
+  .hero{padding:56px 20px 52px}
+  .section{padding:0 20px 56px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">PW</div>
+      <div>
+        <div class="brand-name">Pit Wall</div>
+        <div class="brand-sub">NARA Forecast Intelligence</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="ver-chip">v4.0 Prototype</span>
+      <div class="topbar-links">
+        <a class="topbar-link" href="01-product/v4.0-redesign-spec.md">Spec</a>
+        <a class="topbar-link" href="https://github.com/generic-forecast-platform" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-eyebrow">Prototype Index</div>
+  <h1 class="hero-headline">Every team member,<br><em>every surface.</em></h1>
+  <p class="hero-lead">Three persona-specific apps for the Forecast Intelligence Platform forecast intelligence platform — Analyst, Leadership, and Engineering. Pick your seat.</p>
+  <div class="hero-meta">
+    <span>NARA v4.0</span>
+    <span class="sep">·</span>
+    <span>5 Personas</span>
+    <span class="sep">·</span>
+    <span>10 Surfaces</span>
+    <span class="sep">·</span>
+    <span>HIBT-first</span>
+    <span class="sep">·</span>
+    <a href="https://github.com/generic-forecast-platform" target="_blank">generic-forecast-platform ↗</a>
+  </div>
+</div>
+
+<!-- ── PERSONA APPS ── -->
+<div class="section">
+  <div class="section-label">Demo Apps — by Persona</div>
+
+  <div class="persona-grid">
+
+    <!-- ANALYST -->
+    <div class="p-card analyst">
+      <div class="top-bar"></div>
+      <div class="p-card-inner">
+        <div class="persona-tag">Analyst · Workbench</div>
+        <div class="card-title">Pit Wall Lovable App</div>
+        <p class="card-desc">Full Workbench experience for the daily forecasting analyst. Personal accuracy, Championship ranking, Ghost Lap comparison, Second Opinion review, and AI Chat — all in one place.</p>
+        <div class="feature-list">
+          <div class="feature">My Dashboard — personal MAPE sparkline</div>
+          <div class="feature">Ghost Lap — your call vs. AI fan chart</div>
+          <div class="feature">Second Opinion — MDS review + override</div>
+          <div class="feature">Championship — season standings + podium</div>
+          <div class="feature">AI Chat — conversational forecast assistant</div>
+          <div class="feature">Inbox — You Were Right moments + alerts</div>
+        </div>
+        <div class="card-footer">
+          <span class="status-chip status-live">● Live</span>
+          <a class="launch-btn active" href="analyst-app.html">
+            Launch App →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERSHIP -->
+    <div class="p-card leadership">
+      <div class="top-bar"></div>
+      <div class="p-card-inner">
+        <div class="persona-tag">Leadership · Executive View</div>
+        <div class="card-title">Figma Make App</div>
+        <p class="card-desc">Read-only executive dashboard for VP NARA and S&OP sponsors. Cycle health at a glance, team performance, Championship Table, and one-click PowerPoint generation.</p>
+        <div class="feature-list">
+          <div class="feature">Cycle health — one-number hero indicator</div>
+          <div class="feature">Team performance — rolling MAPE by analyst</div>
+          <div class="feature">Championship Table — season standings</div>
+          <div class="feature">Override impact — vs plan-of-record delta</div>
+          <div class="feature">One-click PPT — auto-generated S&OP deck</div>
+        </div>
+        <div class="card-footer">
+          <span class="status-chip status-live">● Live</span>
+          <a class="launch-btn active" href="leadership-app.html">
+            Launch App →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGINEERING -->
+    <div class="p-card engineering">
+      <div class="top-bar"></div>
+      <div class="p-card-inner">
+        <div class="persona-tag">Engineering · GovOps</div>
+        <div class="card-title">Replit App</div>
+        <p class="card-desc">FastAPI + React sandbox for engineers and AI GovOps. DQ score engine tuner, HIBT ledger explorer, surface adapter test harness, and pipeline health dashboard.</p>
+        <div class="feature-list">
+          <div class="feature">DQ engine tuner — 6-dimension weight sliders</div>
+          <div class="feature">HIBT ledger — immutable decision replay</div>
+          <div class="feature">Pipeline health — staleness heatmap</div>
+          <div class="feature">Surface adapter — test harness + sync status</div>
+          <div class="feature">MDS calculator — second opinion sandbox</div>
+        </div>
+        <div class="card-footer">
+          <span class="status-chip status-live">● Live</span>
+          <a class="launch-btn active" href="engineering-app.html">
+            Launch App →
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DIVIDER ── -->
+<div class="divider"><hr></div>
+
+<!-- ── ADDITIONAL RESOURCES ── -->
+<div class="section">
+  <div class="section-label">Additional Resources</div>
+
+  <div class="resources-grid">
+
+    <a class="res-card" href="01-strategic-narrative/v2.4-interactive-app.html">
+      <div class="res-icon">🏎</div>
+      <div class="res-body">
+        <div class="res-title">v2.4 Interactive App</div>
+        <div class="res-desc">Full agentic ensemble forecasting demo with persona selector, Workbench, and telemetry strip.</div>
+        <div class="res-tag">Strategic Narrative · HTML Demo</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="02-story-arc/end-to-end-demo-and-agent-studio.html">
+      <div class="res-icon">🎬</div>
+      <div class="res-body">
+        <div class="res-title">End-to-End Demo</div>
+        <div class="res-desc">Chapter-based story arc walking through the full forecasting lifecycle and Agent Studio.</div>
+        <div class="res-tag">Story Arc · HTML Demo</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="01-strategic-narrative/12-slide-pitch-deck.html">
+      <div class="res-icon">📊</div>
+      <div class="res-body">
+        <div class="res-title">12-Slide Pitch Deck</div>
+        <div class="res-desc">Executive presentation for stakeholder alignment and sponsorship conversations.</div>
+        <div class="res-tag">Strategic Narrative · Deck</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="01-strategic-narrative/executive-one-pager.html">
+      <div class="res-icon">📄</div>
+      <div class="res-body">
+        <div class="res-title">Executive One-Pager</div>
+        <div class="res-desc">Single-page summary of the Pit Wall platform for senior leadership distribution.</div>
+        <div class="res-tag">Strategic Narrative · Summary</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="01-product/v4.0-redesign-spec.md">
+      <div class="res-icon">📐</div>
+      <div class="res-body">
+        <div class="res-title">v4.0 Redesign Spec</div>
+        <div class="res-desc">Full product specification: personas, surfaces, DQ engine, conversation architecture, success metrics.</div>
+        <div class="res-tag">Product · Specification</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="03-strategic-specs/second-opinion-agent-design-doc.md">
+      <div class="res-icon">🤖</div>
+      <div class="res-body">
+        <div class="res-title">Second Opinion Design Doc</div>
+        <div class="res-desc">Implementation-grade design document for the MDS algorithm, agent architecture, and eval harness.</div>
+        <div class="res-tag">Engineering · Design Doc</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="decisions.html">
+      <div class="res-icon">📋</div>
+      <div class="res-body">
+        <div class="res-title">Decisions, Workflows &amp; Versions</div>
+        <div class="res-desc">All locked decisions, open questions, DQ and MDS formulas, governance workflows, and version timeline in one reference page.</div>
+        <div class="res-tag">Platform · Reference</div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>Forecast Intelligence Platform · HIBT-first · Surface-native</div>
+  <div style="display:flex;gap:20px">
+    <a href="https://github.com/generic-forecast-platform" target="_blank">GitHub ↗</a>
+    <span>Built by Alex Chen</span>
+  </div>
+</footer>
+
+</body>
+</html>
