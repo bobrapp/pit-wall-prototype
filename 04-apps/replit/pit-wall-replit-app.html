@@ -668,6 +668,47 @@ select.conf-select{
 .mt-16{margin-top:16px}
 .mt-20{margin-top:20px}
 .flex-between{display:flex;align-items:center;justify-content:space-between}
+
+/* ── replay diff output ── */
+.replay-diff{margin-top:8px;border-top:1px solid rgba(127,176,191,.18);padding-top:8px}
+.replay-diff-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.replay-det{font-size:12px;font-weight:700}
+.replay-det.pass{color:var(--good)}
+.replay-det.warn{color:var(--warn)}
+.replay-det.fail{color:var(--risk)}
+.replay-diff-row{display:flex;gap:8px;align-items:center;padding:2px 0;font-size:10px}
+.replay-diff-field{color:var(--muted);min-width:130px;flex-shrink:0}
+.replay-diff-from{color:var(--ink-2);text-decoration:line-through;opacity:.6}
+.replay-diff-to{color:var(--f1-cyan)}
+.replay-diff-same{color:var(--muted-2)}
+
+/* ── mobile responsive ── */
+@media(max-width:768px){
+  html,body{height:auto;overflow:auto}
+  .shell{flex-direction:column;overflow:visible}
+  .sidebar{display:none}
+  .main{overflow:visible}
+  .tab-panel{padding:16px}
+  .bottom-nav-r{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:300;
+    background:rgba(10,12,16,.95);backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    gap:2px;
+  }
+  .bottom-nav-r-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;border-radius:8px;cursor:pointer;
+    font-family:var(--mono);font-size:8px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);transition:color .15s;
+  }
+  .bottom-nav-r-item.active{color:var(--buick-teal)}
+  .bottom-nav-r-item svg{width:18px;height:18px}
+  body{padding-bottom:64px}
+  .topbar{padding:0 12px}
+  .brand-ver{display:none}
+}
+@media(min-width:769px){.bottom-nav-r{display:none}}
 </style>
 </head>
 
@@ -1493,20 +1534,36 @@ function renderLedger(rows) {
   tbody.querySelectorAll('.replay-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const id  = btn.dataset.id;
-      const match = btn.dataset.match;
+      const matchPct = parseFloat(btn.dataset.match);
       const out = document.getElementById('ro-' + id);
       if (out.classList.contains('visible')) {
         out.classList.remove('visible');
         return;
       }
-      out.innerHTML = `<span class="replay-muted">$ ghost_lap replay --id ${id}</span>`;
+      out.innerHTML = `<span class="replay-muted">$ ghost_lap replay --id ${id} --verify-determinism</span>`;
       out.classList.add('visible');
+
+      // generate deterministic-looking diff based on match pct
+      const numDiverge = Math.round((100 - matchPct) / 2.5);
+      const dimNames = ['freshness_score','lineage_hash','override_accuracy','cross_surface_consistency','signal_coverage','dq_total'];
+      const origVals = [92, 'a3f9b2c1', 88, 79, 85, 87];
+      const shuffled = [...dimNames].sort(() => Math.random() - 0.5).slice(0, Math.max(1, numDiverge));
+      const diffRows = shuffled.map((d, i) => {
+        const idx = dimNames.indexOf(d);
+        const from = origVals[idx];
+        const delta = typeof from === 'number' ? (Math.random() > .5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2)) : null;
+        const to = delta !== null ? from + delta : 'a3f9c1d2';
+        return { field: d, from, to };
+      });
+
       let step = 0;
+      const statusClass = matchPct >= 98 ? 'pass' : matchPct >= 90 ? 'warn' : 'fail';
+      const statusLabel = matchPct >= 98 ? 'PASS' : matchPct >= 90 ? 'WARNING' : 'FAIL';
       const steps = [
         `<br><span class="replay-muted">→ Loading HIBT snapshot…</span>`,
-        `<br><span class="replay-muted">→ Reconstructing surface payload…</span>`,
-        `<br><span class="replay-muted">→ Re-running DQ engine v4.0…</span>`,
-        `<br><span class="replay-ok">✓ Re-running ${id}…  Match: ${match}%</span>`,
+        `<br><span class="replay-muted">→ Reconstructing surface payload at T+0…</span>`,
+        `<br><span class="replay-muted">→ Re-running DQ engine v4.0 with pinned seeds…</span>`,
+        `<br><span class="replay-muted">→ Comparing ${dimNames.length} output fields…</span>`,
       ];
       const interval = setInterval(() => {
         if (step < steps.length) {
@@ -1514,8 +1571,26 @@ function renderLedger(rows) {
           step++;
         } else {
           clearInterval(interval);
+          // render rich diff
+          const diffHtml = diffRows.map(r =>
+            `<div class="replay-diff-row">
+              <span class="replay-diff-field">${r.field}</span>
+              <span class="replay-diff-from">${r.from}</span>
+              <span class="replay-diff-to">→ ${r.to}</span>
+            </div>`
+          ).join('');
+          const sameCount = dimNames.length - diffRows.length;
+          out.innerHTML += `
+            <div class="replay-diff">
+              <div class="replay-diff-header">
+                <span class="replay-det ${statusClass}">● ${statusLabel} — ${matchPct}% determinism</span>
+                <span class="replay-muted">${diffRows.length} diverged · ${sameCount} identical</span>
+              </div>
+              ${diffHtml}
+              ${Array(sameCount).fill(0).map((_,i) => `<div class="replay-diff-row"><span class="replay-diff-field">${dimNames.find(d => !shuffled.includes(d)) || dimNames[i % dimNames.length]}</span><span class="replay-diff-same">— unchanged</span></div>`).join('')}
+            </div>`;
         }
-      }, 320);
+      }, 280);
     });
   });
 }
@@ -1759,6 +1834,42 @@ setInterval(() => {
   if (el) el.textContent = `${m}:${s} elapsed`;
 }, 1000);
 
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav-r" id="bottom-nav-r">
+  <div class="bottom-nav-r-item active" onclick="switchTabMobile('dq',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="12" height="2" rx="1"/><circle cx="6" cy="8" r="2" fill="currentColor" stroke="none"/></svg>
+    DQ Tuner
+  </div>
+  <div class="bottom-nav-r-item" onclick="switchTabMobile('hibt',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2.5 1.5" stroke-linecap="round"/></svg>
+    HIBT
+  </div>
+  <div class="bottom-nav-r-item" onclick="switchTabMobile('surface',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 8H13a1 1 0 011 1v3a1 1 0 01-1 1H10a1 1 0 01-1-1V9a1 1 0 011-1z"/><circle cx="5" cy="5" r="2.5"/></svg>
+    Surface
+  </div>
+  <div class="bottom-nav-r-item" onclick="switchTabMobile('mds',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M8 5v6M5 8h6" stroke-linecap="round"/></svg>
+    MDS
+  </div>
+  <div class="bottom-nav-r-item" onclick="switchTabMobile('pipeline',this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h12" stroke-linecap="round"/></svg>
+    Pipeline
+  </div>
+</nav>
+
+<script>
+function switchTabMobile(name, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const p = document.getElementById('tab-' + name);
+  if (p) p.classList.add('active');
+  document.querySelectorAll('[data-tab="' + name + '"]').forEach(n => n.classList.add('active'));
+  document.querySelectorAll('.bottom-nav-r-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
 </script>
 </body>
 </html>

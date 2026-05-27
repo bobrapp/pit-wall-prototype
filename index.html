@@ -85,6 +85,8 @@ a{color:inherit;text-decoration:none}
   transition:all .15s ease;
 }
 .topbar-link:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+.topbar-link-generic{color:var(--cad-champagne);border:1px solid rgba(200,178,115,.25);border-radius:8px}
+.topbar-link-generic:hover{background:rgba(200,178,115,.08);color:var(--cad-champagne)}
 
 /* ── hero ── */
 .hero{
@@ -243,6 +245,39 @@ a{color:inherit;text-decoration:none}
   color:var(--muted-2);margin-top:5px;
 }
 
+/* ── generic callout ── */
+.generic-callout{
+  display:flex;align-items:center;gap:24px;
+  padding:24px 28px;
+  border-radius:var(--radius);
+  border:1px solid rgba(200,178,115,.2);
+  background:linear-gradient(135deg,rgba(200,178,115,.06),rgba(200,178,115,.02));
+  flex-wrap:wrap;
+}
+.generic-callout-icon{
+  font-size:32px;flex-shrink:0;
+  width:56px;height:56px;display:grid;place-items:center;
+  border-radius:14px;background:rgba(200,178,115,.1);border:1px solid rgba(200,178,115,.2);
+}
+.generic-callout-body{flex:1;min-width:200px}
+.generic-callout-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cad-champagne);font-weight:700;margin-bottom:5px;
+}
+.generic-callout-title{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.01em;margin-bottom:6px}
+.generic-callout-desc{font-size:13px;color:var(--ink-2);line-height:1.5;max-width:60ch}
+.generic-callout-btn{
+  display:inline-flex;align-items:center;
+  padding:11px 22px;border-radius:999px;
+  background:rgba(200,178,115,.12);
+  border:1px solid rgba(200,178,115,.35);
+  color:var(--cad-champagne);
+  font-weight:700;font-size:13px;letter-spacing:.02em;
+  white-space:nowrap;
+  transition:all .2s ease;flex-shrink:0;
+}
+.generic-callout-btn:hover{background:rgba(200,178,115,.22);box-shadow:0 6px 20px rgba(200,178,115,.15)}
+
 /* ── grid separator ── */
 .divider{
   max-width:1200px;margin:0 auto 52px;
@@ -291,6 +326,9 @@ footer a:hover{color:var(--f1-cyan)}
       <span class="ver-chip">v4.0 Prototype</span>
       <div class="topbar-links">
         <a class="topbar-link" href="01-product/v4.0-redesign-spec.md">Spec</a>
+        <a class="topbar-link" href="decisions.html">Decisions</a>
+        <a class="topbar-link" href="demo.html">Demo Script</a>
+        <a class="topbar-link topbar-link-generic" href="generic/index.html">Generic Demo ↗</a>
         <a class="topbar-link" href="https://github.com/bobrapp/pit-wall-prototype" target="_blank">GitHub</a>
       </div>
     </div>
@@ -394,6 +432,19 @@ footer a:hover{color:var(--f1-cyan)}
   </div>
 </div>
 
+<!-- ── GENERIC DEMO CALLOUT ── -->
+<div class="section" style="padding-bottom:48px">
+  <div class="generic-callout">
+    <div class="generic-callout-icon">🎭</div>
+    <div class="generic-callout-body">
+      <div class="generic-callout-label">Share-Safe Version</div>
+      <div class="generic-callout-title">Generic Demo — no GM references</div>
+      <p class="generic-callout-desc">All GM brand names, NAMA references, vehicle models, and real employee names have been replaced with fictional equivalents (Apex Motors, NARA, Titan XL, etc.). Safe to share externally or with stakeholders outside the program.</p>
+    </div>
+    <a class="generic-callout-btn" href="generic/index.html">View Generic Demo →</a>
+  </div>
+</div>
+
 <!-- ── DIVIDER ── -->
 <div class="divider"><hr></div>
 
@@ -463,6 +514,24 @@ footer a:hover{color:var(--f1-cyan)}
         <div class="res-title">Decisions, Workflows &amp; Versions</div>
         <div class="res-desc">All locked decisions, open questions, DQ and MDS formulas, governance workflows, and version timeline in one reference page.</div>
         <div class="res-tag">Platform · Reference</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="demo.html">
+      <div class="res-icon">🎯</div>
+      <div class="res-body">
+        <div class="res-title">Demo Script</div>
+        <div class="res-desc">Three guided stakeholder scenarios: Analyst override flow, Leadership PPT export, and Engineering DQ audit. Step-by-step with deep links.</div>
+        <div class="res-tag">Enablement · Script</div>
+      </div>
+    </a>
+
+    <a class="res-card" href="generic/index.html">
+      <div class="res-icon">🎭</div>
+      <div class="res-body">
+        <div class="res-title">Generic Demo</div>
+        <div class="res-desc">Share-safe version with all GM brand names, vehicle models, and employee names replaced by fictional equivalents.</div>
+        <div class="res-tag">Enablement · External-Safe</div>
       </div>
     </a>
 

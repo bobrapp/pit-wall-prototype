@@ -339,6 +339,20 @@ a:hover{text-decoration:underline}
 @media(max-width:900px){
   .body-wrap{flex-direction:column;padding:24px 20px 60px}
   .toc{position:static;width:100%;max-height:none}
+  .toc-section{display:inline-flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+  .toc-heading{display:none}
+  .toc-link{white-space:nowrap;border-radius:999px;border:1px solid var(--line-strong);padding:4px 10px;font-size:11px}
+  .toc-link.active{border-color:var(--accent)}
+}
+@media(max-width:600px){
+  .topbar-inner{padding:0 16px}
+  .topbar-nav{display:none}
+  .page-title{font-size:24px}
+  .body-wrap{padding:16px 16px 48px;gap:24px}
+  .dtable{font-size:12px}
+  .dtable th,.dtable td{padding:8px 10px}
+  .flag-name{min-width:140px}
+  .legend-key{min-width:120px}
 }
 </style>
 </head>

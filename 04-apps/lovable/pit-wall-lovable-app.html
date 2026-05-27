@@ -692,6 +692,37 @@ body{
 }
 .toast-bar-fill{height:100%;background:var(--good);border-radius:1px;animation:bar-drain 4.5s linear forwards}
 @keyframes bar-drain{from{width:100%}to{width:0%}}
+
+/* ── mobile responsive ── */
+@media(max-width:768px){
+  :root{--sidebar-w:0px}
+  html,body{height:auto;overflow:auto}
+  .shell{flex-direction:column;overflow:visible}
+  .sidebar{display:none}
+  .main{overflow:visible;min-height:0}
+  .tab-panel{padding:16px}
+  .bottom-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:300;
+    background:rgba(13,15,20,.95);backdrop-filter:blur(20px);
+    border-top:1px solid var(--line);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    gap:2px;
+  }
+  .bottom-nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;border-radius:8px;cursor:pointer;
+    font-family:var(--mono);font-size:8px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);transition:color .15s;
+  }
+  .bottom-nav-item.active{color:var(--f1-cyan)}
+  .bottom-nav-item svg{width:18px;height:18px}
+  body{padding-bottom:64px}
+  .toast{bottom:76px;right:12px;left:12px;max-width:none}
+  .greeting-bar{display:none}
+  .rank-badge{font-size:10px;padding:4px 8px}
+  .topbar{padding:0 12px}
+}
+@media(min-width:769px){.bottom-nav{display:none}}
 </style>
 </head>
 <body>
@@ -1409,7 +1440,7 @@ body{
             <textarea placeholder="Explain why your override differs from the AI bear case...">Confirmed incentive elasticity with dealer network last week. F-150 lease promotion impact overstated — our retail mix is 78% vs AI's 65% assumption. Tariff stale data acknowledged but fleet contracts already locked at current rate.</textarea>
           </div>
           <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn-primary" style="padding:8px 16px;font-size:12px">Submit to HIBT</button>
+            <button class="btn-primary" style="padding:8px 16px;font-size:12px" onclick="submitOverride()">Submit to HIBT</button>
             <button class="btn-ghost" style="padding:8px 16px;font-size:12px" onclick="toggleOverrideForm()">Cancel</button>
           </div>
         </div>
@@ -1700,6 +1731,30 @@ body{
 </div><!-- /shell -->
 
 
+<!-- ── MOBILE BOTTOM NAV ── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-item active" onclick="showTab('dashboard');setBottomActive(this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+    Home
+  </div>
+  <div class="bottom-nav-item" onclick="showTab('forecasts');setBottomActive(this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 L5 8 L8 9.5 L11 5 L14 7"/></svg>
+    Forecasts
+  </div>
+  <div class="bottom-nav-item" onclick="showTab('secondopinion');setBottomActive(this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M8 9v4M6 13h4" stroke-linecap="round"/></svg>
+    2nd Opinion
+  </div>
+  <div class="bottom-nav-item" onclick="showTab('aichat');setBottomActive(this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v8H9l-3 2v-2H2V3z"/></svg>
+    AI Chat
+  </div>
+  <div class="bottom-nav-item" onclick="showTab('inbox');setBottomActive(this)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12l-5 6H7L2 3z"/><path d="M2 3v8h12V3"/></svg>
+    Inbox
+  </div>
+</nav>
+
 <!-- ── "YOU WERE RIGHT" TOAST ── -->
 <div class="toast" id="yw-toast">
   <button class="toast-close" onclick="dismissToast()">✕</button>
@@ -1820,6 +1875,58 @@ function getAIResponse(text) {
     return 'Tahoe LTZ Ghost Lap: your 6-cycle MAPE is <span class="mono">2.4%</span> vs primary <span class="mono">3.1%</span>. You\'ve beaten the model in 5 of 6 cycles — your dealer pull-forward signal has been particularly accurate. Want me to open the Ghost Lap view?';
   }
   return 'I\'m analyzing your request. To be more specific, I can look up any nameplate\'s forecast, DQ score, override history, Ghost Lap comparison, or Championship points. What would you like to know?';
+}
+
+// ── bottom nav active state ──
+function setBottomActive(el) {
+  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── submit override to HIBT ──
+function submitOverride() {
+  const form = document.getElementById('override-form');
+  const vol = form.querySelector('input[type="number"]').value || '267,000';
+  const reason = form.querySelector('textarea').value.trim().slice(0, 80);
+
+  // mark challenge card as resolved
+  const soCard = form.closest('.so-card');
+  const pill = soCard.querySelector('.state-pill');
+  if (pill) { pill.textContent = '✓ Override Submitted'; pill.style.background='rgba(35,209,139,.12)'; pill.style.color='var(--good)'; pill.style.borderColor='rgba(35,209,139,.3)'; }
+
+  // disable action buttons
+  soCard.querySelectorAll('.so-actions button').forEach(b => { b.disabled = true; b.style.opacity='.4'; });
+  form.classList.remove('open');
+
+  // add inbox item
+  const inboxList = document.querySelector('#tab-inbox > div');
+  const newItem = document.createElement('div');
+  newItem.className = 'card';
+  newItem.style.cssText = 'border-color:rgba(35,209,139,.3);background:rgba(35,209,139,.04)';
+  newItem.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.3);display:grid;place-items:center;font-size:20px;flex-shrink:0">✅</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px;color:var(--ink)">Override Submitted — Silverado HD 1500</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">Volume override <strong style="color:var(--good)">${Number(vol).toLocaleString()}</strong> submitted to HIBT. Gate 3 unblocked. HIBT reference logged.</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Just now · Silverado HD 1500 · HIBT-REF-2026-C5-${Math.floor(Math.random()*9000+1000)}</div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--f1-cyan);padding:3px 9px;border-radius:5px;white-space:nowrap">Submitted</div>
+    </div>`;
+  inboxList.prepend(newItem);
+
+  // show submit toast
+  showSubmitToast(Number(vol).toLocaleString());
+}
+
+function showSubmitToast(vol) {
+  const t = document.getElementById('yw-toast');
+  t.querySelector('.toast-title').textContent = 'Override Logged to HIBT';
+  t.querySelector('.toast-msg').innerHTML = `Silverado HD 1500 override <strong>${vol}</strong> committed. Gate 3 unblocked.`;
+  t.querySelector('.toast-pts').innerHTML = '🔒 HIBT reference created';
+  t.classList.add('show');
+  setTimeout(() => { t.querySelector('.toast-title').textContent='You Were Right'; }, 4800);
+  setTimeout(() => dismissToast(), 4800);
 }
 
 // ── auto show toast on load ──
