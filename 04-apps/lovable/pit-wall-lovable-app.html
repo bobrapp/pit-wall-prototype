@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pit Wall — Analyst Workbench</title><link rel="stylesheet" href="../../fonts.css">
+<title>Pit Wall — Analyst Workbench</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<meta name="theme-color" content="#0a0c10">
+<meta property="og:title" content="Pit Wall — Analyst Workbench">
+<meta property="og:description" content="Personal accuracy dashboard, Ghost Lap comparison, Second Opinion review, and AI Chat for NAMA forecast analysts.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="../../fonts.css">
 <style>
 /* ── tokens ── */
 :root {
@@ -415,7 +421,36 @@ body{
 }
 .ghost-chip.active-amber{background:rgba(255,107,0,.1);color:var(--f1-amber);border-color:rgba(255,107,0,.35)}
 .ghost-chip.active-cyan{background:rgba(0,229,255,.08);color:var(--f1-cyan);border-color:rgba(0,229,255,.3)}
-.ghost-chip:not(.active-amber):not(.active-cyan):hover{border-color:var(--line-strong);color:var(--ink-2)}
+.ghost-chip.active-green{background:rgba(35,209,139,.08);color:var(--good);border-color:rgba(35,209,139,.3)}
+.ghost-chip:hover{border-color:var(--line-strong);color:var(--ink-2)}
+.ghost-chip.dim{opacity:.3;filter:grayscale(.8)}
+
+/* nameplate selector */
+.gl-ns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.gl-np-btn{
+  padding:5px 14px;border-radius:999px;
+  font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;
+  border:1px solid var(--line);color:var(--muted);
+  cursor:pointer;background:none;
+  transition:all .18s;
+}
+.gl-np-btn:hover{border-color:var(--line-strong);color:var(--ink-2)}
+.gl-np-btn.active{border-color:rgba(255,107,0,.4);color:var(--f1-amber);background:rgba(255,107,0,.07)}
+
+/* ghost tooltip */
+.ghost-tooltip{
+  position:absolute;z-index:10;pointer-events:none;
+  background:var(--carbon);border:1px solid var(--line-strong);
+  border-radius:var(--radius-sm);padding:10px 14px;
+  opacity:0;transition:opacity .12s;
+  font-family:var(--mono);font-size:11px;min-width:152px;
+  box-shadow:0 8px 28px rgba(0,0,0,.55);
+}
+.ghost-tooltip.show{opacity:1}
+.ghost-tooltip .tt-cycle{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.ghost-tooltip .tt-row{display:flex;justify-content:space-between;gap:14px;line-height:1.9;font-size:11px}
+.ghost-tooltip .tt-label{color:var(--muted)}
+.ghost-tooltip .tt-val{font-weight:700}
 .ghost-chart-wrap{position:relative;height:280px;width:100%}
 .ghost-chart-wrap svg{width:100%;height:100%}
 .fan-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted);align-items:center}
@@ -693,6 +728,47 @@ body{
 .toast-bar-fill{height:100%;background:var(--good);border-radius:1px;animation:bar-drain 4.5s linear forwards}
 @keyframes bar-drain{from{width:100%}to{width:0%}}
 
+/* ── gate countdown banner ── */
+.gate-banner{
+  background:rgba(255,149,0,.07);
+  border-bottom:1px solid rgba(255,149,0,.18);
+  padding:7px 28px;
+  position:sticky;top:0;z-index:50;
+  transition:background .4s,border-color .4s;
+}
+.gate-banner.urgent{background:rgba(255,69,58,.08);border-bottom-color:rgba(255,69,58,.22)}
+.gate-banner-inner{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;color:var(--warn);
+}
+.gate-banner.urgent .gate-banner-inner{color:var(--risk)}
+.gate-icon{font-size:13px;flex-shrink:0}
+.gate-time-txt{white-space:nowrap}
+.gate-time-txt strong{font-size:13px}
+.gate-progress-wrap{
+  height:4px;border-radius:2px;flex:0 0 80px;
+  background:rgba(255,149,0,.15);overflow:hidden;
+}
+.gate-banner.urgent .gate-progress-wrap{background:rgba(255,69,58,.15)}
+.gate-progress-bar{
+  height:100%;border-radius:2px;
+  width:99.9%;background:var(--warn);
+  transition:width 1s linear;
+}
+.gate-banner.urgent .gate-progress-bar{background:var(--risk)}
+.gate-items{
+  flex:1;color:var(--muted);font-size:10px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.gate-action-btn{
+  background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.3);
+  border-radius:5px;padding:3px 10px;
+  font-family:var(--mono);font-size:10px;font-weight:700;color:var(--warn);
+  cursor:pointer;flex-shrink:0;transition:background .15s;
+}
+.gate-action-btn:hover{background:rgba(255,149,0,.22)}
+.gate-banner.urgent .gate-action-btn{border-color:rgba(255,69,58,.35);color:var(--risk);background:rgba(255,69,58,.1)}
+
 /* ── mobile responsive ── */
 @media(max-width:768px){
   :root{--sidebar-w:0px}
@@ -833,6 +909,17 @@ body{
 
   <!-- ── MAIN ── -->
   <main class="main" id="main-content">
+
+    <!-- ── GATE 3 COUNTDOWN BANNER ── -->
+    <div class="gate-banner" id="gate-banner">
+      <div class="gate-banner-inner">
+        <span class="gate-icon">⏱</span>
+        <span class="gate-time-txt">Gate 3 in <strong id="gate-time">35h 59m</strong></span>
+        <div class="gate-progress-wrap"><div class="gate-progress-bar" id="gate-bar"></div></div>
+        <span class="gate-items">Silverado HD · Equinox EV pending resolution</span>
+        <button class="gate-action-btn" onclick="showTab('secondopinion')">Review →</button>
+      </div>
+    </div>
 
     <!-- ══════════════ DASHBOARD ══════════════ -->
     <div class="tab-panel active" id="tab-dashboard">
@@ -1225,19 +1312,26 @@ body{
       <div class="section-title">Ghost Lap</div>
 
       <div class="card" style="margin-bottom:16px">
+        <!-- nameplate selector -->
+        <div class="gl-ns">
+          <button class="gl-np-btn active" data-np="silverado" onclick="switchGhostLap('silverado',this)">Silverado HD 1500</button>
+          <button class="gl-np-btn" data-np="equinox" onclick="switchGhostLap('equinox',this)">Equinox EV</button>
+          <button class="gl-np-btn" data-np="tahoe" onclick="switchGhostLap('tahoe',this)">Tahoe LTZ</button>
+        </div>
+
         <div class="card-head">
           <div>
-            <h3>Silverado HD 1500 — NAMA 2026 C5</h3>
-            <div class="card-sub">Your call vs. AI primary vs. actuals</div>
+            <h3 id="gl-title">Silverado HD 1500 — NAMA 2026 C5</h3>
+            <div class="card-sub">Your call vs. AI primary vs. actuals · hover chart to inspect values</div>
           </div>
           <div class="ghost-selector">
-            <span class="ghost-chip active-amber">Your Override</span>
-            <span class="ghost-chip active-cyan">AI Primary</span>
-            <span class="ghost-chip" style="background:rgba(35,209,139,.08);color:var(--good);border-color:rgba(35,209,139,.28)">Actuals</span>
+            <span class="ghost-chip active-amber" data-series="yours" onclick="toggleGhostSeries('yours',this)">Your Override</span>
+            <span class="ghost-chip active-cyan" data-series="ai" onclick="toggleGhostSeries('ai',this)">AI Primary</span>
+            <span class="ghost-chip active-green" data-series="actuals" onclick="toggleGhostSeries('actuals',this)">Actuals</span>
           </div>
         </div>
 
-        <div class="ghost-chart-wrap">
+        <div class="ghost-chart-wrap" id="gl-wrap">
           <svg viewBox="0 0 640 280" preserveAspectRatio="none" id="ghost-svg">
             <defs>
               <linearGradient id="fanGradCyan" x1="0" x2="0" y1="0" y2="1">
@@ -1250,34 +1344,34 @@ body{
               </linearGradient>
             </defs>
 
-            <!-- AI fan: P10–P90 band -->
-            <polygon fill="url(#fanGradCyan)" opacity=".7"
-              points="0,180 107,160 214,150 321,130 428,105 535,85 640,95
-                      640,65 535,60 428,75 321,100 214,120 107,135 0,155"/>
+            <!-- AI series group -->
+            <g id="gl-ai">
+              <polygon id="gl-ai-fan" fill="url(#fanGradCyan)" opacity=".7"
+                points="0,180 107,160 214,150 321,130 428,105 535,85 640,95 640,65 535,60 428,75 321,100 214,120 107,135 0,155"/>
+              <polyline id="gl-ai-line" fill="none" stroke="var(--f1-cyan)" stroke-width="2" stroke-dasharray="6,4" opacity=".8"
+                points="0,167 107,147 214,135 321,115 428,90 535,72 640,80"/>
+            </g>
 
-            <!-- Your fan band -->
-            <polygon fill="url(#fanGradAmber)" opacity=".7"
-              points="0,190 107,168 214,155 321,122 428,98 535,80 640,88
-                      640,58 535,52 428,68 321,92 214,126 107,140 0,162"/>
+            <!-- Your series group -->
+            <g id="gl-yours">
+              <polygon id="gl-your-fan" fill="url(#fanGradAmber)" opacity=".7"
+                points="0,190 107,168 214,155 321,122 428,98 535,80 640,88 640,58 535,52 428,68 321,92 214,126 107,140 0,162"/>
+              <polyline id="gl-your-line" fill="none" stroke="var(--f1-amber)" stroke-width="2.5"
+                points="0,176 107,154 214,140 321,107 428,83 535,66 640,73"/>
+            </g>
 
-            <!-- AI P50 line (cyan dashed) -->
-            <polyline fill="none" stroke="var(--f1-cyan)" stroke-width="2" stroke-dasharray="6,4" opacity=".8"
-              points="0,167 107,147 214,135 321,115 428,90 535,72 640,80"/>
-
-            <!-- Your override line (amber solid) -->
-            <polyline fill="none" stroke="var(--f1-amber)" stroke-width="2.5"
-              points="0,176 107,154 214,140 321,107 428,83 535,66 640,73"/>
-
-            <!-- Actuals (green dots + line, only first 4 cycles shown) -->
-            <polyline fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="3,3"
-              points="0,172 107,148 214,138 321,109"/>
-            <circle cx="0" cy="172" r="4" fill="var(--good)" opacity=".9"/>
-            <circle cx="107" cy="148" r="4" fill="var(--good)" opacity=".9"/>
-            <circle cx="214" cy="138" r="4" fill="var(--good)" opacity=".9"/>
-            <circle cx="321" cy="109" r="4" fill="var(--good)" opacity=".9"/>
+            <!-- Actuals series group -->
+            <g id="gl-actuals">
+              <polyline id="gl-actuals-line" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="3,3"
+                points="0,172 107,148 214,138 321,109"/>
+              <circle id="gl-dot-0" cx="0"   cy="172" r="4" fill="var(--good)" opacity=".9"/>
+              <circle id="gl-dot-1" cx="107" cy="148" r="4" fill="var(--good)" opacity=".9"/>
+              <circle id="gl-dot-2" cx="214" cy="138" r="4" fill="var(--good)" opacity=".9"/>
+              <circle id="gl-dot-3" cx="321" cy="109" r="4" fill="var(--good)" opacity=".9"/>
+            </g>
 
             <!-- cycle labels -->
-            <text x="0" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C1</text>
+            <text x="0"   y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C1</text>
             <text x="107" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C2</text>
             <text x="214" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C3</text>
             <text x="321" y="275" font-family="JetBrains Mono,monospace" font-size="10" fill="#5e6373" text-anchor="middle">C4</text>
@@ -1289,11 +1383,33 @@ body{
             <line x1="428" y1="10" x2="428" y2="260" stroke="rgba(255,107,0,.2)" stroke-width="1" stroke-dasharray="4,3"/>
             <text x="435" y="22" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--f1-amber)">Current</text>
 
-            <!-- volume axis -->
-            <text x="8" y="180" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">260k</text>
-            <text x="8" y="130" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">280k</text>
-            <text x="8" y="80" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">300k</text>
+            <!-- volume axis (IDs for dynamic update) -->
+            <text id="gl-axis-low"  x="8" y="185" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">260k</text>
+            <text id="gl-axis-mid"  x="8" y="130" font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">280k</text>
+            <text id="gl-axis-high" x="8" y="75"  font-family="JetBrains Mono,monospace" font-size="9" fill="#5e6373">300k</text>
+
+            <!-- hover crosshair (hidden until mousemove) -->
+            <line id="gl-crosshair" x1="0" y1="10" x2="0" y2="260"
+              stroke="rgba(255,255,255,.22)" stroke-width="1" stroke-dasharray="3,3"
+              opacity="0" style="pointer-events:none;transition:opacity .1s"/>
           </svg>
+
+          <!-- hover tooltip -->
+          <div class="ghost-tooltip" id="ghost-tooltip">
+            <div class="tt-cycle" id="tt-cycle">Cycle 1</div>
+            <div class="tt-row">
+              <span class="tt-label">Your call</span>
+              <span class="tt-val" id="tt-yours" style="color:var(--f1-amber)">—</span>
+            </div>
+            <div class="tt-row">
+              <span class="tt-label">AI P50</span>
+              <span class="tt-val" id="tt-ai" style="color:var(--f1-cyan)">—</span>
+            </div>
+            <div class="tt-row" id="tt-actuals-row">
+              <span class="tt-label">Actuals</span>
+              <span class="tt-val" id="tt-actuals" style="color:var(--good)">—</span>
+            </div>
+          </div>
         </div>
 
         <div class="fan-legend">
@@ -1307,32 +1423,32 @@ body{
       <!-- personal accuracy cards -->
       <div class="card">
         <div class="card-head">
-          <h3>Personal Accuracy — Silverado HD 1500</h3>
+          <h3>Personal Accuracy — <span id="gl-np-label">Silverado HD 1500</span></h3>
         </div>
         <div class="ghost-personal">
           <div class="gp-cell">
             <div class="lbl">Your MAPE</div>
-            <div class="val good">3.1%</div>
+            <div class="val good" id="gl-mape-you">3.1%</div>
             <div class="sub">6-cycle avg</div>
           </div>
           <div class="gp-cell">
             <div class="lbl">AI Primary</div>
-            <div class="val cyan">4.8%</div>
+            <div class="val cyan" id="gl-mape-ai">4.8%</div>
             <div class="sub">Same period</div>
           </div>
           <div class="gp-cell">
             <div class="lbl">Beats AI</div>
-            <div class="val amber">4 of 6</div>
+            <div class="val amber" id="gl-beats">4 of 6</div>
             <div class="sub">cycles</div>
           </div>
           <div class="gp-cell">
             <div class="lbl">Season Pts</div>
-            <div class="val" style="color:var(--cad-champagne)">+36</div>
+            <div class="val" style="color:var(--cad-champagne)" id="gl-pts">+36</div>
             <div class="sub">from this NS</div>
           </div>
         </div>
         <div style="margin-top:12px;padding:10px 12px;border-radius:var(--radius-sm);background:rgba(35,209,139,.05);border:1px solid rgba(35,209,139,.2);font-size:12px;color:var(--ink-2)">
-          <strong style="color:var(--good)">Trend:</strong> Your accuracy on Silverado HD has improved 1.4pp over the last 3 cycles. The incentive elasticity signal you flagged in C3 has been a consistent edge.
+          <strong style="color:var(--good)">Trend:</strong> <span id="gl-trend-text">Your accuracy on Silverado HD has improved 1.4pp over the last 3 cycles. The incentive elasticity signal you flagged in C3 has been a consistent edge.</span>
         </div>
       </div>
     </div><!-- /tab-ghostlap -->
@@ -1984,6 +2100,149 @@ function getAIResponse(text) {
   }
   return 'I\'m analyzing your request. To be more specific, I can look up any nameplate\'s forecast, DQ score, override history, Ghost Lap comparison, or Championship points. What would you like to know?';
 }
+
+// ── Gate 3 countdown ──────────────────────────────────
+(function () {
+  const TOTAL = 36 * 3600; // 36h in seconds
+  let remaining = 35 * 3600 + 59 * 60; // start display at 35h 59m
+  const timeEl = document.getElementById('gate-time');
+  const barEl  = document.getElementById('gate-bar');
+  const banner = document.getElementById('gate-banner');
+  function tick() {
+    if (!timeEl) return;
+    remaining = Math.max(0, remaining - 1);
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    timeEl.textContent = h + 'h ' + String(m).padStart(2,'0') + 'm';
+    barEl.style.width  = (remaining / TOTAL * 100).toFixed(2) + '%';
+    if (h < 4) banner.classList.add('urgent');
+  }
+  setInterval(tick, 1000);
+}());
+
+// ── Ghost Lap ──────────────────────────────────────────
+const GL_CX = [0, 107, 214, 321, 428, 535, 640];
+const GL_DATA = {
+  silverado: {
+    label:'Silverado HD 1500', title:'Silverado HD 1500 — NAMA 2026 C5',
+    axisLabels:['260k','280k','300k'],
+    yoursY:  [176,154,140,107, 83, 66, 73],
+    aiY:     [167,147,135,115, 90, 72, 80],
+    actualsY:[172,148,138,109,null,null,null],
+    yoursV:  ['262k','271k','276k','289k','297k','301k','300k'],
+    aiV:     ['264k','269k','274k','285k','293k','301k','299k'],
+    actualsV:['263k','270k','275k','287k','—','—','—'],
+    mapeYou:'3.1%',mapeAI:'4.8%',beats:'4 of 6',pts:'+36',
+    trend:"Your accuracy on Silverado HD has improved 1.4pp over the last 3 cycles. The incentive elasticity signal flagged in C3 has been a consistent edge."
+  },
+  equinox: {
+    label:'Equinox EV', title:'Equinox EV — NAMA 2026 C5',
+    axisLabels:['36k','40k','44k'],
+    yoursY:  [165,148,135,115,100, 88, 93],
+    aiY:     [162,145,132,118,105, 90, 97],
+    actualsY:[163,146,134,117,null,null,null],
+    yoursV:  ['38.4k','39.2k','40.1k','41.8k','43.1k','44.2k','43.8k'],
+    aiV:     ['38.8k','39.5k','40.4k','41.2k','42.6k','43.7k','43.0k'],
+    actualsV:['38.5k','39.3k','40.2k','41.4k','—','—','—'],
+    mapeYou:'4.2%',mapeAI:'3.9%',beats:'2 of 6',pts:'+8',
+    trend:"Tariff uncertainty has been the primary divergence driver on Equinox EV. AI model has outperformed your call in 4 of 6 cycles — mainly on tariff risk weeks."
+  },
+  tahoe: {
+    label:'Tahoe LTZ', title:'Tahoe LTZ — NAMA 2026 C5',
+    axisLabels:['105k','110k','115k'],
+    yoursY:  [178,158,132,110, 95, 84, 88],
+    aiY:     [176,160,138,118,101, 90, 93],
+    actualsY:[177,159,134,113,null,null,null],
+    yoursV:  ['108k','110k','112k','113k','114k','115k','115k'],
+    aiV:     ['108k','110k','111k','112k','113k','114k','114k'],
+    actualsV:['108k','110k','111k','113k','—','—','—'],
+    mapeYou:'2.4%',mapeAI:'3.1%',beats:'5 of 6',pts:'+52',
+    trend:"Your dealer pull-forward signal has been particularly accurate on Tahoe LTZ. You've beaten the AI in 5 of 6 cycles — the strongest edge in your portfolio."
+  }
+};
+let currentGlKey = 'silverado';
+const glSeries = { yours:true, ai:true, actuals:true };
+
+function switchGhostLap(key, btn) {
+  document.querySelectorAll('.gl-np-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGlKey = key;
+  const d = GL_DATA[key];
+  document.getElementById('gl-title').textContent     = d.title;
+  document.getElementById('gl-np-label').textContent  = d.label;
+  document.getElementById('gl-axis-low').textContent  = d.axisLabels[0];
+  document.getElementById('gl-axis-mid').textContent  = d.axisLabels[1];
+  document.getElementById('gl-axis-high').textContent = d.axisLabels[2];
+  // update lines
+  document.getElementById('gl-your-line').setAttribute('points', GL_CX.map((x,i)=>x+','+d.yoursY[i]).join(' '));
+  document.getElementById('gl-ai-line').setAttribute('points',   GL_CX.map((x,i)=>x+','+d.aiY[i]).join(' '));
+  // actuals line (only valid cycles)
+  const aIdx = d.actualsY.map((v,i)=>v!==null?i:-1).filter(i=>i>=0);
+  document.getElementById('gl-actuals-line').setAttribute('points', aIdx.map(i=>GL_CX[i]+','+d.actualsY[i]).join(' '));
+  for (let i=0;i<4;i++) {
+    const dot = document.getElementById('gl-dot-'+i);
+    if (!dot) continue;
+    const y = d.actualsY[i];
+    dot.setAttribute('cy', y !== null ? y : -99);
+    dot.setAttribute('opacity', y !== null ? '0.9' : '0');
+  }
+  // update fans (±12/10 band around P50)
+  const yfPts = GL_CX.map((x,i)=>x+','+(d.yoursY[i]+12)).join(' ')+' '+GL_CX.slice().reverse().map((x,i,arr)=>x+','+(d.yoursY[arr.length-1-i]-10)).join(' ');
+  const aiFPts = GL_CX.map((x,i)=>x+','+(d.aiY[i]+13)).join(' ')+' '+GL_CX.slice().reverse().map((x,i,arr)=>x+','+(d.aiY[arr.length-1-i]-9)).join(' ');
+  document.getElementById('gl-your-fan').setAttribute('points', yfPts);
+  document.getElementById('gl-ai-fan').setAttribute('points',   aiFPts);
+  // stats
+  const youWins = parseFloat(d.mapeYou) < parseFloat(d.mapeAI);
+  document.getElementById('gl-mape-you').textContent = d.mapeYou;
+  document.getElementById('gl-mape-you').className   = 'val ' + (youWins ? 'good' : 'amber');
+  document.getElementById('gl-mape-ai').textContent  = d.mapeAI;
+  document.getElementById('gl-mape-ai').className    = 'val ' + (youWins ? 'cyan' : 'good');
+  document.getElementById('gl-beats').textContent    = d.beats;
+  document.getElementById('gl-pts').textContent      = d.pts;
+  document.getElementById('gl-trend-text').textContent = d.trend;
+}
+
+function toggleGhostSeries(series, chip) {
+  glSeries[series] = !glSeries[series];
+  const grp = document.getElementById('gl-' + series);
+  if (grp) grp.style.opacity = glSeries[series] ? '1' : '0.06';
+  chip.classList.toggle('dim', !glSeries[series]);
+}
+
+// hover crosshair + tooltip
+(function () {
+  const wrap = document.getElementById('gl-wrap');
+  const tip  = document.getElementById('ghost-tooltip');
+  const ch   = document.getElementById('gl-crosshair');
+  if (!wrap || !tip || !ch) return;
+  wrap.addEventListener('mousemove', function(e) {
+    const rect = wrap.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    const relY = e.clientY - rect.top;
+    const svgX = relX / rect.width * 640;
+    const idx  = Math.min(6, Math.max(0, Math.round(svgX / 107)));
+    const d    = GL_DATA[currentGlKey];
+    ch.setAttribute('x1', GL_CX[idx]); ch.setAttribute('x2', GL_CX[idx]);
+    ch.setAttribute('opacity', '1');
+    document.getElementById('tt-cycle').textContent   = 'Cycle ' + (idx + 1);
+    document.getElementById('tt-yours').textContent   = d.yoursV[idx];
+    document.getElementById('tt-ai').textContent      = d.aiV[idx];
+    document.getElementById('tt-actuals').textContent = d.actualsV[idx];
+    document.getElementById('tt-actuals-row').style.opacity = d.actualsV[idx] === '—' ? '.4' : '1';
+    // position tooltip avoiding right/bottom overflow
+    const ttW = 162, ttH = 90;
+    let tx = relX + 14, ty = relY - ttH/2;
+    if (tx + ttW > rect.width - 4) tx = relX - ttW - 10;
+    if (ty < 4) ty = 4;
+    if (ty + ttH > rect.height - 4) ty = rect.height - ttH - 4;
+    tip.style.left = tx + 'px'; tip.style.top = ty + 'px';
+    tip.classList.add('show');
+  });
+  wrap.addEventListener('mouseleave', function() {
+    ch.setAttribute('opacity', '0');
+    tip.classList.remove('show');
+  });
+}());
 
 // ── bottom nav active state ──
 function setBottomActive(el) {

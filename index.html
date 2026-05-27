@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pit Wall v4.0 — Prototype Index</title><link rel="stylesheet" href="fonts.css">
+<title>Pit Wall v4.0 — Prototype Index</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0a0c10">
+<meta property="og:title" content="Pit Wall v4.0 — Prototype Index">
+<meta property="og:description" content="Three persona-specific apps for NAMA forecast intelligence — Analyst, Leadership, and Engineering. Surface-native, HIBT-first.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="fonts.css">
 <style>
 :root {
   --void:#0a0c10;
@@ -296,6 +302,81 @@ footer{
 footer a{color:var(--muted);transition:color .15s}
 footer a:hover{color:var(--f1-cyan)}
 
+/* ── command palette ── */
+.cmdpal-overlay{
+  display:none;position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  align-items:flex-start;justify-content:center;
+  padding-top:14vh;
+}
+.cmdpal-overlay.open{display:flex}
+.cmdpal{
+  width:min(560px,92vw);
+  background:var(--carbon);
+  border:1px solid var(--line-strong);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.7);
+}
+.cmdpal-input-wrap{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 18px;border-bottom:1px solid var(--line);
+}
+.cmdpal-icon{color:var(--muted);flex-shrink:0;font-size:16px}
+.cmdpal-input{
+  flex:1;background:none;border:none;outline:none;
+  font-family:var(--sans);font-size:15px;color:var(--ink);
+}
+.cmdpal-input::placeholder{color:var(--muted-2)}
+.cmdpal-kb{
+  font-family:var(--mono);font-size:10px;color:var(--muted-2);
+  background:var(--pit);border:1px solid var(--line-strong);
+  border-radius:5px;padding:2px 7px;flex-shrink:0;
+}
+.cmdpal-results{max-height:360px;overflow-y:auto;padding:6px 0}
+.cmdpal-results::-webkit-scrollbar{width:4px}
+.cmdpal-results::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:2px}
+.cmdpal-group{
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted-2);padding:8px 18px 4px;
+}
+.cmdpal-item{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 18px;cursor:pointer;
+  transition:background .1s;
+  text-decoration:none;color:var(--ink);
+}
+.cmdpal-item:hover,.cmdpal-item.sel{background:rgba(255,255,255,.05)}
+.cmdpal-item.sel{background:rgba(0,229,255,.07)}
+.cmdpal-item-icon{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+}
+.cmdpal-item-body{flex:1;min-width:0}
+.cmdpal-item-label{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmdpal-item-hint{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmdpal-item-arrow{color:var(--muted-2);font-size:13px;flex-shrink:0}
+.cmdpal-empty{padding:24px 18px;text-align:center;color:var(--muted);font-size:13px}
+.cmdpal-footer{
+  padding:8px 18px;border-top:1px solid var(--line);
+  display:flex;gap:12px;
+  font-family:var(--mono);font-size:10px;color:var(--muted-2);
+}
+.cmdpal-footer kbd{
+  background:var(--pit);border:1px solid var(--line-strong);
+  border-radius:4px;padding:1px 5px;margin-right:3px;
+}
+/* ── cmd-k hint in topbar ── */
+.cmdpal-hint{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.04em;
+  color:var(--muted-2);cursor:pointer;padding:5px 8px;border-radius:7px;
+  border:1px solid var(--line);transition:all .15s;
+}
+.cmdpal-hint:hover{border-color:var(--line-strong);color:var(--muted)}
+.cmdpal-hint kbd{font-size:9px}
+
 /* ── responsive ── */
 @media(max-width:900px){
   .persona-grid{grid-template-columns:1fr}
@@ -323,6 +404,10 @@ footer a:hover{color:var(--f1-cyan)}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
+      <div class="cmdpal-hint" onclick="openCmdPal()">
+        <span>⌘K</span>
+        <span style="color:var(--muted-2)">Search</span>
+      </div>
       <span class="ver-chip">v4.0 Prototype</span>
       <div class="topbar-links">
         <a class="topbar-link" href="01-product/v4.0-redesign-spec.md">Spec</a>
@@ -547,5 +632,138 @@ footer a:hover{color:var(--f1-cyan)}
   </div>
 </footer>
 
+<!-- ── COMMAND PALETTE ── -->
+<div class="cmdpal-overlay" id="cmdpal-overlay" onclick="closeCmdPalOnBg(event)">
+  <div class="cmdpal">
+    <div class="cmdpal-input-wrap">
+      <span class="cmdpal-icon">⌘</span>
+      <input class="cmdpal-input" id="cmdpal-input" placeholder="Search apps, tabs, pages…" autocomplete="off" spellcheck="false">
+      <span class="cmdpal-kb">ESC</span>
+    </div>
+    <div class="cmdpal-results" id="cmdpal-results"></div>
+    <div class="cmdpal-footer">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const CMD_ITEMS = [
+  // Apps
+  {g:'Apps',icon:'🏎',label:'Analyst Workbench',hint:'Lovable App · Analyst persona',url:'04-apps/lovable/pit-wall-lovable-app.html',tags:'analyst workbench lovable override chat'},
+  {g:'Apps',icon:'📊',label:'Leadership Dashboard',hint:'Figma Make App · Executive view',url:'04-apps/figma-make/pit-wall-figma-make-app.html',tags:'leadership executive ppt export figma'},
+  {g:'Apps',icon:'⚙️',label:'Engineering Sandbox',hint:'Replit App · GovOps tools',url:'04-apps/replit/pit-wall-replit-app.html',tags:'engineering dq hibt sandbox govops replit'},
+  // Analyst tabs
+  {g:'Analyst Tabs',icon:'📋',label:'Second Opinion',hint:'Analyst · MDS challenge review',url:'04-apps/lovable/pit-wall-lovable-app.html#secondopinion',tags:'second opinion mds override challenge gate'},
+  {g:'Analyst Tabs',icon:'👻',label:'Ghost Lap',hint:'Analyst · Your call vs AI fan chart',url:'04-apps/lovable/pit-wall-lovable-app.html#ghostlap',tags:'ghost lap mape comparison accuracy'},
+  {g:'Analyst Tabs',icon:'📈',label:'Forecasts',hint:'Analyst · Nameplate forecast table',url:'04-apps/lovable/pit-wall-lovable-app.html#forecasts',tags:'forecasts nameplates table silverado equinox'},
+  {g:'Analyst Tabs',icon:'🏆',label:'Championship',hint:'Analyst · Season standings',url:'04-apps/lovable/pit-wall-lovable-app.html#championship',tags:'championship standings podium points'},
+  {g:'Analyst Tabs',icon:'💬',label:'AI Chat',hint:'Analyst · Conversational assistant',url:'04-apps/lovable/pit-wall-lovable-app.html#aichat',tags:'chat ai assistant conversation'},
+  {g:'Analyst Tabs',icon:'📬',label:'Inbox',hint:'Analyst · Notifications & alerts',url:'04-apps/lovable/pit-wall-lovable-app.html#inbox',tags:'inbox notifications alerts you were right'},
+  // Leadership tabs
+  {g:'Leadership Tabs',icon:'💚',label:'Cycle Health',hint:'Leadership · DQ score overview',url:'04-apps/figma-make/pit-wall-figma-make-app.html#cycle-health',tags:'cycle health dq score nameplates'},
+  {g:'Leadership Tabs',icon:'👥',label:'Team Performance',hint:'Leadership · MAPE leaderboard',url:'04-apps/figma-make/pit-wall-figma-make-app.html#team-perf',tags:'team performance mape leaderboard analysts'},
+  {g:'Leadership Tabs',icon:'📤',label:'Export PowerPoint',hint:'Leadership · One-click S&OP deck',url:'04-apps/figma-make/pit-wall-figma-make-app.html#export',tags:'export powerpoint ppt deck sop'},
+  // Engineering tabs
+  {g:'Engineering Tabs',icon:'🔧',label:'DQ Tuner',hint:'Engineering · Weight sliders',url:'04-apps/replit/pit-wall-replit-app.html#dq',tags:'dq tuner weights sliders score freshness'},
+  {g:'Engineering Tabs',icon:'🔒',label:'HIBT Ledger',hint:'Engineering · Immutable audit log',url:'04-apps/replit/pit-wall-replit-app.html#hibt',tags:'hibt ledger replay audit determinism'},
+  {g:'Engineering Tabs',icon:'🔌',label:'Surface Adapter',hint:'Engineering · Sync test harness',url:'04-apps/replit/pit-wall-replit-app.html#surface',tags:'surface adapter sync slack teams outlook'},
+  {g:'Engineering Tabs',icon:'🧮',label:'MDS Calculator',hint:'Engineering · Second opinion sandbox',url:'04-apps/replit/pit-wall-replit-app.html#mds',tags:'mds calculator second opinion sandbox'},
+  // Pages
+  {g:'Pages',icon:'📋',label:'Decisions & Workflows',hint:'Platform reference — formulas, governance',url:'decisions.html',tags:'decisions workflows versions formulas dq mds got'},
+  {g:'Pages',icon:'🎯',label:'Demo Script',hint:'Stakeholder playbook — 3 scenarios',url:'demo.html',tags:'demo script playbook scenarios walkthrough'},
+  {g:'Pages',icon:'🎭',label:'Generic Demo',hint:'Share-safe — GM names removed',url:'generic/index.html',tags:'generic external share anonymous'},
+];
+
+let cpSelIdx = 0;
+let cpFiltered = [];
+
+function openCmdPal() {
+  document.getElementById('cmdpal-overlay').classList.add('open');
+  document.getElementById('cmdpal-input').value = '';
+  renderCmdPalResults('');
+  setTimeout(() => document.getElementById('cmdpal-input').focus(), 50);
+}
+function closeCmdPal() {
+  document.getElementById('cmdpal-overlay').classList.remove('open');
+}
+function closeCmdPalOnBg(e) {
+  if (e.target === document.getElementById('cmdpal-overlay')) closeCmdPal();
+}
+
+function renderCmdPalResults(q) {
+  const term = q.toLowerCase().trim();
+  if (!term) {
+    cpFiltered = CMD_ITEMS.slice(0, 12);
+  } else {
+    cpFiltered = CMD_ITEMS.filter(item =>
+      item.label.toLowerCase().includes(term) ||
+      item.hint.toLowerCase().includes(term) ||
+      item.tags.toLowerCase().includes(term) ||
+      item.g.toLowerCase().includes(term)
+    );
+  }
+  cpSelIdx = 0;
+  const container = document.getElementById('cmdpal-results');
+  if (!cpFiltered.length) {
+    container.innerHTML = '<div class="cmdpal-empty">No results for "' + escCp(q) + '"</div>';
+    return;
+  }
+  let html = '';
+  let lastGroup = '';
+  cpFiltered.forEach((item, i) => {
+    if (item.g !== lastGroup && !term) {
+      html += '<div class="cmdpal-group">' + escCp(item.g) + '</div>';
+      lastGroup = item.g;
+    }
+    html += `<a class="cmdpal-item${i===0?' sel':''}" href="${item.url}" data-idx="${i}">
+      <div class="cmdpal-item-icon">${item.icon}</div>
+      <div class="cmdpal-item-body">
+        <div class="cmdpal-item-label">${escCp(item.label)}</div>
+        <div class="cmdpal-item-hint">${escCp(item.hint)}</div>
+      </div>
+      <span class="cmdpal-item-arrow">↗</span>
+    </a>`;
+  });
+  container.innerHTML = html;
+}
+
+function escCp(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function moveCpSel(dir) {
+  const items = document.querySelectorAll('.cmdpal-item');
+  if (!items.length) return;
+  items[cpSelIdx]?.classList.remove('sel');
+  cpSelIdx = (cpSelIdx + dir + items.length) % items.length;
+  items[cpSelIdx]?.classList.add('sel');
+  items[cpSelIdx]?.scrollIntoView({block:'nearest'});
+}
+
+document.getElementById('cmdpal-input').addEventListener('input', function() {
+  renderCmdPalResults(this.value);
+});
+document.getElementById('cmdpal-input').addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowDown') { e.preventDefault(); moveCpSel(1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); moveCpSel(-1); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    const sel = document.querySelector('.cmdpal-item.sel');
+    if (sel) { window.location.href = sel.href; closeCmdPal(); }
+  } else if (e.key === 'Escape') { closeCmdPal(); }
+});
+
+document.addEventListener('keydown', function(e) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    const overlay = document.getElementById('cmdpal-overlay');
+    overlay.classList.contains('open') ? closeCmdPal() : openCmdPal();
+  }
+  if (e.key === 'Escape' && document.getElementById('cmdpal-overlay').classList.contains('open')) {
+    closeCmdPal();
+  }
+});
+</script>
 </body>
 </html>

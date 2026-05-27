@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#13161e"/>
+  <rect x="1" y="1" width="30" height="30" rx="6" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+  <text x="16" y="22" font-family="monospace" font-size="12" font-weight="700" fill="#00e5ff" text-anchor="middle" letter-spacing="2">PW</text>
+</svg>
