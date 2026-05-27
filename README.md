@@ -1,114 +1,193 @@
-# NAMA Pit Wall — Complete Package
+# 🏁 Pit Wall v4.0 — Forecast Intelligence Platform
 
-> **One planning brain. Many surfaces. Human judgment preserved.**
+> **Simpler. Safer. Deeper data quality. Every team member, every surface they already use.**
 
-This repository is the complete deliverable package for the **NAMA Pit Wall v2.4** — a co-working forecasting platform for GM's North American Markets organization. Five persona seats, eight surfaces, seven NAMA-certified AI agents, one trusted forecast substrate.
-
-**Status:** Pre-engineering deliverable package. Working frontend scaffold + complete strategic specs. Pre-backend; pre-production.
-
-**Version:** v2.4 · 2026-05-12
-**Architect:** Bob Rapp
-**Sponsor:** Ramzi Abdelmoula
+The Pit Wall is a conversational-first, surface-aware forecast intelligence platform for NAMA vehicle demand forecasting. It replaces one-size-fits-all dashboards with personalized engagement — meeting each team member in Slack, Outlook, Teams, Glean, Excel, PowerPoint, Power BI, SharePoint, Copilot Agents, or Databricks — while deepening data quality evaluation and maintaining a complete AI audit trail (HIBT).
 
 ---
 
-## Folder structure
+## What's New in v4.0
+
+| Area | v2.4/v3.0 | v4.0 |
+|---|---|---|
+| **Primary experience** | Workbench web app | All surfaces first-class (Slack, Outlook, Teams, Glean, Copilot, Excel, PBI, SharePoint, PPT) |
+| **Data quality** | Basic staleness flags | 6-dimension DQ score, cross-surface consistency, lineage hash, replay accuracy |
+| **Engagement mode** | Analyst logs into app | Analyst picks their surface; forecasting happens where they already work |
+| **Override flow** | Form in Workbench | In-surface (Slack /pitwall, Outlook reply, Teams adaptive card, Excel cell, Copilot chat) |
+| **Personal delighters** | Championship table only | Per-person dashboard, Ghost Lap personal accuracy history, AI personal digest, Lap Clap |
+| **Conversation** | None | End-to-end AI conversation in any surface — ask, modify, guess, confirm, evaluate |
+| **Repo structure** | Strategy + specs | Full clean-break reorganization (see below) |
+
+---
+
+## Repository Structure (v4.0)
 
 ```
 pit-wall-prototype/
-├── README.md                          ← you are here
-├── 01-strategic-narrative/            ← what to read / show first
-│   ├── deliverables-index.html        — single-page index of everything (open this first)
-│   ├── executive-one-pager.html       — printable letter-portrait brief
-│   ├── 12-slide-pitch-deck.html       — cinematic sponsor-review deck
-│   ├── v2.4-interactive-app.html      — the working Pit Wall demo
-│   └── mega-package-index.html        — index of the 52-file dev package
+├── README.md                          ← This file
 │
-├── 02-story-arc/                      ← the 3-minute experience
-│   ├── end-to-end-demo-and-agent-studio.html  — 15-scene walkthrough with chapter picker
-│   ├── maya-narration-3min.mp3         — 3-min spoken tour (Kore voice, clean General American)
-│   └── demo-narration-3min.mp3         — original demo narration (Charon voice)
+├── 00-design-system/                  ← Tokens, brand, surface guide
+│   ├── design-tokens.md
+│   ├── surface-catalog.md             ← 10 engagement surfaces defined
+│   └── persona-guide.md              ← Leadership / Analyst / SME / Ops / GovOps
 │
-├── 03-strategic-specs/                ← the v3.0 strategy documents
-│   ├── v3.0-delighters-prd-addendum.md  — PRD addendum for the 3 v3.0 features
-│   ├── engineering-spec-stub.md         — stub-depth eng spec + honest staffing gap
-│   └── second-opinion-agent-design-doc.md  — implementation-grade design for SO Agent
+├── 01-product/                        ← Strategy and narrative
+│   ├── strategic-narrative.md        ← (from 01-strategic-narrative)
+│   ├── story-arc.md                  ← (from 02-story-arc)
+│   └── v4.0-redesign-spec.md         ← *** NEW — this release ***
 │
-├── 04-mega-package/                   ← the 52-file developer-ready monorepo
-│   └── nama-pit-wall-mega-package.tar.gz
-│       — Untar to access:
-│         README · EXEC_SUMMARY · PRD · PRD-FAQ · MRD · PERSONAS · ARCHITECTURE
-│         DESIGN_SPEC · ROADMAP · 5 ADRs · OpenAPI 3.1 · Postgres DDL
-│         runnable React/Vite/TypeScript scaffold (9 components, typed, mock data)
-│         4 runbook stubs · 4 platform export guides (Replit/Lovable/Claude Code/Codex)
-│         design tokens · brand pitch deck + one-pager · HIBT build log
+├── 02-features/                       ← Feature PRDs
+│   ├── f1-ghost-lap.md
+│   ├── f2-second-opinion.md
+│   ├── f3-championship-table.md
+│   ├── f4-data-quality-engine.md      ← NEW
+│   ├── f5-conversation-surfaces.md   ← NEW
+│   └── f6-personal-delighters.md     ← NEW
 │
-└── 05-brand-visuals/                  ← cinematic stills + spokesperson portraits
-    ├── maya-corporate-portrait-mid40s.jpg   — for everyday use (LinkedIn / intranet / slide)
-    ├── maya-cinematic-portrait.jpg          — for editorial moments
-    ├── pit-wall-command-center-hero.jpg     — primary brand hero
-    ├── workbench-cockpit-overhead.jpg       — workbench section accent
-    └── cadillac-cockpit-forecasting.jpg     — leadership-feel accent
+├── 03-engineering/                    ← Technical specs
+│   ├── architecture.md               ← 4-layer + 10-surface extension
+│   ├── data-quality-spec.md          ← DQ score algorithm, lineage, cross-surface sync
+│   ├── conversation-api.md           ← Surface adapter contracts
+│   ├── second-opinion-design-doc.md  ← (from 03-strategic-specs)
+│   ├── engineering-spec-stub.md      ← (from 03-strategic-specs, updated)
+│   └── hibt-audit-spec.md            ← NEW — immutable ledger, 7yr retention
+│
+├── 04-apps/                           ← Deployable prototypes
+│   ├── lovable/                       ← Analyst persona (this app)
+│   │   └── pit-wall-lovable-app.html
+│   ├── replit/                        ← Engineering sandbox README
+│   │   └── README.md
+│   └── figma-make/                    ← Leadership persona README
+│       └── README.md
+│
+├── 05-surface-adapters/               ← Per-surface integration specs
+│   ├── slack-bot.md
+│   ├── outlook-adaptive-card.md
+│   ├── teams-tab.md
+│   ├── glean-connector.md
+│   ├── copilot-agent.md
+│   ├── powerbi-embed.md
+│   ├── sharepoint-webpart.md
+│   ├── excel-addin.md
+│   ├── databricks-widget.md
+│   └── powerpoint-export.md
+│
+├── 06-brand-visuals/                  ← (from 05-brand-visuals)
+│
+└── 07-governance/                     ← GM enterprise governance
+    ├── aigovops-framework.md
+    ├── hibt-retention-policy.md
+    ├── championship-hr-policy.md
+    └── vendor-security-checklist.md
 ```
 
 ---
 
-## Quick start by audience
+## The 6-Dimension Data Quality Score
 
-**Sponsor (Ramzi)** — open `01-strategic-narrative/deliverables-index.html` and work through the embedded review checklist.
+Each forecast carries a DQ score (0-100) computed from six independent dimensions:
 
-**Engineering team** — extract `04-mega-package/nama-pit-wall-mega-package.tar.gz`, read its README, then start with `ARCHITECTURE.md` and the OpenAPI spec.
-
-**Forecasting team (Krisztina, Jim)** — open `01-strategic-narrative/v2.4-interactive-app.html`, test all 5 seats, click "Run race" in the 15-minute race section.
-
-**Designers** — see `05-brand-visuals/` for hero imagery + Maya portraits. Design tokens are inside the mega-package tarball at `brand/tokens.css` and `brand/tokens.json`.
-
-**Anyone exploring the whole picture** — open `01-strategic-narrative/deliverables-index.html`. It's the single-page navigation hub.
-
----
-
-## Operating principle
-
-> Agents do the rework, the research, the toil. Humans do the judgment, the dissent, the commit. The Pit Wall keeps them honest to each other.
-
----
-
-## What's in each folder, briefly
-
-| Folder | Purpose | Audience |
+| Dimension | Weight | What it measures |
 |---|---|---|
-| `01-strategic-narrative/` | Show & tell. The 5 polished deliverables to share with leadership. | Sponsors · execs |
-| `02-story-arc/` | The 3-minute experience. Interactive demo + narration audio. | Anyone learning the system |
-| `03-strategic-specs/` | The v3.0 vision in three documents. | Product · engineering |
-| `04-mega-package/` | The 52-file dev-ready monorepo (compressed tarball). | Engineering team |
-| `05-brand-visuals/` | Hero photography + spokesperson portraits. | Marketing · design · brand |
+| **Source Freshness** | 25% | Age of each input feed vs. staleness threshold |
+| **Lineage Completeness** | 20% | % of forecast value traceable to a versioned, hashed source |
+| **Override Accuracy History** | 20% | Analyst's MAPE on prior overrides for this nameplate/segment |
+| **Cross-Surface Consistency** | 15% | Whether all surfaces show the same value (PBI = Excel = Glean = Workbench) |
+| **Replay Determinism** | 10% | HIBT replay ≥98% match to original run |
+| **Signal Coverage** | 10% | % of known relevant signals (dealer, tariff, macro, competitive) included |
+
+A DQ score below 70 triggers a yellow warning badge. Below 55 triggers a red block requiring GovOps review before Gate commit.
 
 ---
 
-## Status, ownership, decision window
+## 10 Engagement Surfaces
 
-| | |
+Every action in the Pit Wall — confirm a forecast, submit an override, respond to a Second Opinion challenge, view a Ghost Lap, check your Championship ranking — is available on all 10 surfaces:
+
+| Surface | Primary Persona | Action Mode |
+|---|---|---|
+| **Pit Wall Workbench** (web app) | Analyst, SME | Full UI, all features |
+| **Slack Bot** (`/pitwall`, `@pitwall`) | All | Command + DM digest |
+| **Outlook Adaptive Card** | Leadership, Analyst | Inline confirm/override in email |
+| **Microsoft Teams Tab** | All | Embedded full app in Teams |
+| **Copilot Agent** | All | Natural language, proactive push |
+| **Glean Connector + Answer Card** | All | Search-first, card-based |
+| **Power BI Embedded** | Leadership, Ops | Dashboard + drill-through |
+| **SharePoint Web Part** | Leadership | S&OP cycle status page |
+| **Excel Add-in** | Analyst, Finance | Cell-level forecast + lineage |
+| **Databricks Widget** | Engineering, Data | Raw data + DQ deep dive |
+
+**PowerPoint Export** is available as a one-click action from any surface, generating a presentation-ready slide deck from the current cycle's forecast state.
+
+---
+
+## End-to-End Conversation Flow
+
+A team member can engage the full forecasting lifecycle — from raw data evaluation to Gate 3 commit — entirely within a single conversation in their preferred surface:
+
+```
+[Analyst in Slack]
+  @pitwall show me Silverado HD
+  → PW: Current P50 284,200 · DQ 78 (tariff stale) · 1 SO challenge
+  
+  @pitwall why is the second opinion lower?
+  → PW: [Explains MDS factors + bear case reasoning]
+  
+  @pitwall I think 267,000 — incentive elasticity confirmed by dealer visit
+  → PW: Override logged 267,000 · Reason: incentive elasticity · Confirm?
+
+  @pitwall confirm
+  → PW: ✓ Logged to HIBT · Gate 3 unblocked · Ghost Lap updated
+```
+
+The same flow works in Outlook (reply-to-confirm), Teams (Adaptive Card buttons), Glean (Answer Card actions), Copilot (natural language), or the Workbench UI.
+
+---
+
+## Three App Builds — Different Personas
+
+### Lovable App (Analyst Persona)
+**Path:** `04-apps/lovable/pit-wall-lovable-app.html`  
+Rich, polished web app. Full Workbench experience. My Dashboard, Forecasts, Data Quality, Ghost Lap, Second Opinion, Championship, AI Chat, Inbox, Team View. Optimized for daily analyst workflow.
+
+### Replit App (Engineering Persona)
+**Path:** `04-apps/replit/`  
+Python FastAPI + React sandbox. Data Quality engine internals, HIBT ledger explorer, DQ score algorithm tuner, surface adapter test harness. For engineers building and debugging the platform.
+
+### Figma + Make App (Leadership Persona)
+**Path:** `04-apps/figma-make/`  
+Read-only executive view. Cycle health at a glance, team performance summary, override impact, Championship Table. Connected via Make.com webhooks to live data. No override capability — view and approve only.
+
+---
+
+## Quickstart
+
+```bash
+# Clone
+git clone https://github.com/bobrapp/pit-wall-prototype.git
+cd pit-wall-prototype
+
+# Run Lovable app (analyst prototype)
+open 04-apps/lovable/pit-wall-lovable-app.html
+
+# Read the full redesign spec
+open 01-product/v4.0-redesign-spec.md
+```
+
+---
+
+## Owners
+
+| Role | Owner |
 |---|---|
-| Build status | Pre-engineering deliverable package complete |
-| Decision window | 14 days from sponsor review |
-| Signoff required from | Ramzi (sponsor) · Bob (architect) · Don (GovOps) |
-| First production code | After Phase 0 sponsor signoff + ML engineer hire |
-| First user-facing pilot | Week 4 of build (Forecast Workbench, 3 users) |
+| Product / Architecture | Bob Rapp |
+| Backend + Platform | Mansoor Alghooneh |
+| API + Data | Govinda Chaluvadi |
+| AI GovOps + Eval | Don S. |
+| Forecasting Partner | Krisztina Gilezan |
+| SME Routing | Jim Kyle |
+| Sponsor | Ramzi Abdelmoula |
 
 ---
 
-## Versions
-
-| Version | Status | What ships |
-|---------|--------|-----------|
-| **v2.4** | Pre-engineering complete (this package) | 5 seats · 15-min race · monthly cycle · HIBT v2.0 spec · Agent Studio |
-| **v3.0** | Spec'd; awaiting greenlight | Second-Opinion Agent · Ghost Lap · Championship Table · Constraint twin |
-| **v3.5** | Vision only | Strategic 3-5y · auto-S&OP pre-read · external signal marketplace · cross-region wall |
-
----
-
-## Provenance
-
-Built end-to-end in a single focused thread, May 2026. HIBT-logged per the `aigovops-foundation-rapp-how-i-built-this` discipline. Full build provenance is inside `04-mega-package/nama-pit-wall-mega-package.tar.gz/docs/HIBT_LOG.md`.
-
-— Bob Rapp
+*Built with AIGovOps Foundation governance framework. HIBT-first. Every AI decision replayable.*
