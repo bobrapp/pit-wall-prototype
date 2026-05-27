@@ -1329,6 +1329,7 @@ select.conf-select{
 <!-- Toast -->
 <div id="toast">Weights saved to Unity Catalog</div>
 
+<script src="../shared/pit-wall-state.js"></script>
 <script>
 /* ═══════════════════════════════════════════════════
    NAVIGATION
@@ -1385,6 +1386,10 @@ function updatePreview() {
   totalEl.className = 'weight-total-val';
   if (total > 100) totalEl.classList.add('over');
   else if (total < 100) totalEl.classList.add('under');
+
+  if (window.PW && total > 0) {
+    PW.set({ dqScore: calcScore(nameplateBaseline[0].dims, weights) });
+  }
 
   nameplateBaseline.forEach((np, i) => {
     const newScore = calcScore(np.dims, weights);

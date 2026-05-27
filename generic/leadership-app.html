@@ -1239,6 +1239,9 @@
     .gate-indicator-dot.active { background: var(--good); box-shadow: 0 0 5px rgba(35,209,139,.5); }
     .gate-indicator-dot.warn { background: var(--warn); }
     .gate-indicator-dot.risk { background: var(--risk); }
+    .gate-indicator-dot.blocked { background: var(--risk); animation: g-pulse .8s ease-in-out infinite alternate; }
+    @keyframes g-pulse { from { opacity:.5; box-shadow:0 0 3px rgba(255,69,58,.4); } to { opacity:1; box-shadow:0 0 7px rgba(255,69,58,.8); } }
+    .gate-indicator-dot.cleared { background: var(--good); box-shadow: 0 0 6px rgba(35,209,139,.7); }
 
     /* ── Present exit btn ── */
     .present-exit-btn {
@@ -1328,11 +1331,13 @@
           <div class="gate-indicator-dot active"></div>
           G2
         </div>
-        <div class="gate-indicator">
-          <div class="gate-indicator-dot warn"></div>
-          G3
+        <div class="gate-indicator" id="g3-indicator">
+          <div class="gate-indicator-dot warn" id="g3-dot"></div>
+          <span id="g3-label">G3</span>
         </div>
       </div>
+      <div class="topbar-sep"></div>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--muted-2);letter-spacing:.06em">DQ <strong id="lv-dq-val" style="color:var(--good)">88</strong></span>
     </div>
 
     <nav class="tab-nav" role="tablist" aria-label="Leadership navigation">
@@ -2114,6 +2119,7 @@
   <!-- ══════════════════════════════════════════════
        JAVASCRIPT
   ══════════════════════════════════════════════ -->
+  <script src="../shared/pit-wall-state.js"></script>
   <script>
     (function () {
       'use strict';
@@ -2139,6 +2145,44 @@
         btn.addEventListener('click', function () {
           activateTab(btn.dataset.tab);
         });
+      });
+
+      // hash routing on load
+      (function () {
+        var hash = location.hash.replace('#', '');
+        var validTabs = ['cycle-health','team-perf','championship','export'];
+        if (hash && validTabs.indexOf(hash) !== -1) activateTab(hash);
+      }());
+
+      // ── Shared state sync ─────────────────────────────
+      function applyLvGateState(status, dqScore) {
+        var dot   = document.getElementById('g3-dot');
+        var label = document.getElementById('g3-label');
+        var dqEl  = document.getElementById('lv-dq-val');
+        if (dqEl && typeof dqScore === 'number') {
+          dqEl.textContent = dqScore;
+          dqEl.style.color = dqScore >= 85 ? 'var(--good)' : dqScore >= 78 ? 'var(--warn)' : 'var(--risk)';
+        }
+        if (!dot) return;
+        dot.className = 'gate-indicator-dot';
+        if (status === 'blocked') {
+          dot.classList.add('blocked');
+          if (label) { label.textContent = 'G3 ✗'; label.style.color = 'var(--risk)'; }
+        } else if (status === 'clear') {
+          dot.classList.add('cleared');
+          if (label) { label.textContent = 'G3 ✓'; label.style.color = 'var(--good)'; }
+        } else {
+          dot.classList.add('warn');
+          if (label) { label.textContent = 'G3'; label.style.color = ''; }
+        }
+      }
+
+      if (window.PW) {
+        var s = PW.get();
+        applyLvGateState(s.gateStatus, s.dqScore);
+      }
+      window.addEventListener('pw:change', function (e) {
+        applyLvGateState(e.detail.gateStatus, e.detail.dqScore);
       });
 
       // ── Present mode toggle ───────────────────────────

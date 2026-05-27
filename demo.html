@@ -164,6 +164,10 @@ a{color:inherit;text-decoration:none}
 .leadership .sc-launch{background:linear-gradient(135deg,var(--cad-champagne),#dcc88a);color:#1a1200;box-shadow:0 4px 18px rgba(200,178,115,.2)}
 .engineering .sc-launch{background:linear-gradient(135deg,var(--buick-teal),#9fd4e6);color:#001618;box-shadow:0 4px 18px rgba(127,176,191,.2)}
 .sc-launch:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.sc-launch-group{display:flex;flex-direction:column;gap:6px;align-items:stretch;min-width:148px}
+.sc-preset{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:5px 12px;font-family:var(--mono);font-size:10px;color:var(--muted-2);cursor:pointer;text-align:center;transition:background .15s,color .15s}
+.sc-preset:hover{background:rgba(255,255,255,.1);color:var(--ink)}
+.sc-preset.flash{background:rgba(35,209,139,.12);color:var(--good);border-color:rgba(35,209,139,.25)}
 
 /* ── steps ── */
 .steps{display:flex;flex-direction:column;gap:0}
@@ -312,7 +316,11 @@ footer a:hover{color:var(--f1-cyan)}
           <div class="sc-meta-item"><strong>Goal:</strong> Unblock Gate 3 via override + HIBT commit</div>
         </div>
       </div>
-      <a class="sc-launch" href="04-apps/lovable/pit-wall-lovable-app.html" target="_blank">Launch App →</a>
+      <div class="sc-launch-group">
+        <a class="sc-launch" href="04-apps/lovable/pit-wall-lovable-app.html" target="_blank">Launch App →</a>
+        <button class="sc-preset" onclick="setScenario('analyst-blocked',this)">⚡ Set: Gate Blocked</button>
+        <button class="sc-preset" onclick="setScenario('reset',this)">↺ Reset State</button>
+      </div>
     </div>
 
     <div class="steps analyst">
@@ -412,7 +420,11 @@ footer a:hover{color:var(--f1-cyan)}
           <div class="sc-meta-item"><strong>Goal:</strong> Assess cycle health and export PPT for executive meeting</div>
         </div>
       </div>
-      <a class="sc-launch" href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank">Launch App →</a>
+      <div class="sc-launch-group">
+        <a class="sc-launch" href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank">Launch App →</a>
+        <button class="sc-preset" onclick="setScenario('leader-clear',this)">✅ Set: Gate Cleared</button>
+        <button class="sc-preset" onclick="setScenario('reset',this)">↺ Reset State</button>
+      </div>
     </div>
 
     <div class="steps leadership">
@@ -496,7 +508,11 @@ footer a:hover{color:var(--f1-cyan)}
           <div class="sc-meta-item"><strong>Goal:</strong> Tune DQ weights, verify HIBT replay determinism</div>
         </div>
       </div>
-      <a class="sc-launch" href="04-apps/replit/pit-wall-replit-app.html" target="_blank">Launch App →</a>
+      <div class="sc-launch-group">
+        <a class="sc-launch" href="04-apps/replit/pit-wall-replit-app.html" target="_blank">Launch App →</a>
+        <button class="sc-preset" onclick="setScenario('eng-dq-low',this)">📉 Set: DQ Degraded</button>
+        <button class="sc-preset" onclick="setScenario('reset',this)">↺ Reset State</button>
+      </div>
     </div>
 
     <div class="steps engineering">
@@ -611,6 +627,26 @@ function resetDemoState() {
     btn.textContent = '✓ Reset';
     btn.style.color = 'var(--good, #23D18B)';
     setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+  }
+}
+
+const SCENARIOS = {
+  'analyst-blocked': { dqScore: 62, gateStatus: 'blocked', overrideSubmitted: false, equinoxSubmitted: false },
+  'leader-clear':    { dqScore: 91, gateStatus: 'clear',   overrideSubmitted: true,  equinoxSubmitted: true  },
+  'eng-dq-low':      { dqScore: 64, gateStatus: 'blocked', overrideSubmitted: false, equinoxSubmitted: false },
+  'reset':           null,
+};
+
+function setScenario(key, btn) {
+  if (!window.PW) return;
+  const preset = SCENARIOS[key];
+  preset ? PW.set(preset) : PW.reset();
+
+  if (btn) {
+    btn.classList.add('flash');
+    const orig = btn.textContent;
+    btn.textContent = '✓ State set';
+    setTimeout(() => { btn.classList.remove('flash'); btn.textContent = orig; }, 1800);
   }
 }
 </script>

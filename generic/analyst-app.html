@@ -786,14 +786,14 @@ body{
       <div class="dq-mini">
         <svg class="dq-ring-sm" width="38" height="38" viewBox="0 0 38 38">
           <circle cx="19" cy="19" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
-          <circle cx="19" cy="19" r="14" fill="none" stroke="var(--good)" stroke-width="4"
+          <circle id="g-dq-circle" cx="19" cy="19" r="14" fill="none" stroke="var(--good)" stroke-width="4"
             stroke-dasharray="87.96" stroke-dashoffset="10.56"
             stroke-linecap="round" transform="rotate(-90 19 19)"
             style="transition:stroke-dashoffset 1.2s ease"/>
         </svg>
         <div class="dq-mini-info">
           <div class="dq-mini-label">Cycle DQ</div>
-          <div class="dq-mini-val">88</div>
+          <div class="dq-mini-val" id="g-dq-val">88</div>
           <div class="dq-mini-sub">14 of 16 green</div>
         </div>
       </div>
@@ -1714,7 +1714,7 @@ body{
   <div class="toast-bar"><div class="toast-bar-fill"></div></div>
 </div>
 
-
+<script src="../shared/pit-wall-state.js"></script>
 <script>
 // ── tab navigation ──
 function showTab(name) {
@@ -1745,7 +1745,20 @@ function acceptOverride() {
   btn.style.background = 'linear-gradient(135deg,var(--good),#2fe899)';
   btn.style.color = '#001a10';
   btn.disabled = true;
+  if (window.PW) {
+    const cur = PW.get().dqScore || 88;
+    PW.set({ overrideSubmitted: true, dqScore: cur + 2 });
+    syncGDQRing(cur + 2);
+  }
   setTimeout(() => showToast('lc'), 800);
+}
+
+function syncGDQRing(score) {
+  const circ = 87.96;
+  const c = document.getElementById('g-dq-circle');
+  const v = document.getElementById('g-dq-val');
+  if (c) c.setAttribute('stroke-dashoffset', (circ * (1 - score / 100)).toFixed(2));
+  if (v) v.textContent = score;
 }
 
 // ── toast ──
@@ -1822,8 +1835,18 @@ function getAIResponse(text) {
   return 'I\'m analyzing your request. To be more specific, I can look up any nameplate\'s forecast, DQ score, override history, Ghost Lap comparison, or Championship points. What would you like to know?';
 }
 
+// ── cross-tab state sync ──
+window.addEventListener('pw:change', function (e) {
+  const s = e.detail;
+  if (typeof s.dqScore === 'number') syncGDQRing(s.dqScore);
+});
+
 // ── auto show toast on load ──
 window.addEventListener('load', () => {
+  if (window.PW) {
+    const s = PW.get();
+    if (s.dqScore !== 88) syncGDQRing(s.dqScore);
+  }
   setTimeout(() => showToast('yw'), 1800);
 });
 </script>
