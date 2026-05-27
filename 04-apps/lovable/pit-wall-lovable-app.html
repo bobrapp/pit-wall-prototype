@@ -817,14 +817,14 @@ body{
       <div class="dq-mini">
         <svg class="dq-ring-sm" width="38" height="38" viewBox="0 0 38 38">
           <circle cx="19" cy="19" r="14" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
-          <circle cx="19" cy="19" r="14" fill="none" stroke="var(--good)" stroke-width="4"
+          <circle id="dq-sidebar-circle" cx="19" cy="19" r="14" fill="none" stroke="var(--good)" stroke-width="4"
             stroke-dasharray="87.96" stroke-dashoffset="10.56"
             stroke-linecap="round" transform="rotate(-90 19 19)"
             style="transition:stroke-dashoffset 1.2s ease"/>
         </svg>
         <div class="dq-mini-info">
           <div class="dq-mini-label">Cycle DQ</div>
-          <div class="dq-mini-val">88</div>
+          <div class="dq-mini-val" id="dq-sidebar-val">88</div>
           <div class="dq-mini-sub">14 of 16 green</div>
         </div>
       </div>
@@ -974,11 +974,11 @@ body{
             <div style="flex-shrink:0;text-align:center">
               <svg width="96" height="96" viewBox="0 0 96 96" id="dq-main-ring">
                 <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="7"/>
-                <circle cx="48" cy="48" r="38" fill="none" stroke="var(--good)" stroke-width="7"
+                <circle id="dq-main-circle" cx="48" cy="48" r="38" fill="none" stroke="var(--good)" stroke-width="7"
                   stroke-dasharray="238.76" stroke-dashoffset="28.65"
                   stroke-linecap="round" transform="rotate(-90 48 48)"
                   style="transition:stroke-dashoffset 1.5s ease"/>
-                <text x="48" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="var(--good)">88</text>
+                <text id="dq-main-text" x="48" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="var(--good)">88</text>
               </svg>
               <div class="dq-ring-label">Cycle DQ</div>
             </div>
@@ -1416,7 +1416,7 @@ body{
         <div class="so-actions">
           <button class="btn-primary" onclick="acceptOverride()">Accept My Forecast (284,200)</button>
           <button class="btn-secondary" onclick="toggleOverrideForm()">Submit Revised Override</button>
-          <button class="btn-ghost">Escalate to SME (Jim Kyle)</button>
+          <button class="btn-ghost" id="escalate-btn" onclick="escalateToSME()">Escalate to SME (Jim Kyle)</button>
         </div>
 
         <div class="override-form" id="override-form">
@@ -1446,16 +1446,97 @@ body{
         </div>
       </div>
 
-      <!-- Challenge 2 (collapsed) -->
-      <div class="card" style="border-color:rgba(255,149,0,.2)">
+      <!-- Challenge 2 (expandable) -->
+      <div class="card" id="equinox-card" style="border-color:rgba(255,149,0,.2)">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-weight:600;font-size:15px">Equinox EV — Tariff Risk Challenge</div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px">MDS 0.61 · Trigged 5h ago · Lower urgency</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px">MDS 0.61 · Triggered 5h ago · Lower urgency</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="state-pill challenged"><span class="pip"></span>Challenged</span>
-            <button class="action-btn cyan">Expand</button>
+            <span class="state-pill challenged" id="equinox-pill"><span class="pip"></span>Challenged</span>
+            <button class="action-btn cyan" id="equinox-expand-btn" onclick="expandEquinox(this)">Expand ↓</button>
+          </div>
+        </div>
+
+        <!-- hidden expanded content -->
+        <div id="equinox-details" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:16px">
+          <div class="so-numbers" style="margin-bottom:16px">
+            <div class="so-num">
+              <div class="n-label">Your Forecast</div>
+              <div class="n-val" style="color:var(--f1-amber)">41,800</div>
+              <div class="n-sub">P50 · submitted C4</div>
+            </div>
+            <div class="so-num highlight">
+              <div class="n-label">AI Bear Case</div>
+              <div class="n-val" style="color:var(--warn)">38,200</div>
+              <div class="n-sub">–3,600 vs your call</div>
+            </div>
+            <div class="so-num">
+              <div class="n-label">Divergence</div>
+              <div class="n-val" style="color:var(--warn)">–8.6%</div>
+              <div class="n-sub">MDS threshold: 0.30</div>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Divergent Factors</div>
+          <div class="factor-list" style="margin-bottom:16px">
+            <div class="factor">
+              <div class="factor-icon warn">⚡</div>
+              <div class="factor-body">
+                <div class="factor-name">Tariff Feed Stale — 3 days</div>
+                <div class="factor-desc">TARIFF-US-AUTO feed at 72h. EV tariff escalation risk likely understated in your base case.</div>
+              </div>
+              <span class="factor-weight">42%</span>
+            </div>
+            <div class="factor">
+              <div class="factor-icon risk">⚠️</div>
+              <div class="factor-body">
+                <div class="factor-name">Competitive EV Pressure</div>
+                <div class="factor-desc">Ford Mustang Mach-E lease promotion running in 8 NAMA markets. AI weights competitive impact 3.2% higher.</div>
+              </div>
+              <span class="factor-weight">33%</span>
+            </div>
+            <div class="factor">
+              <div class="factor-icon info">🔍</div>
+              <div class="factor-body">
+                <div class="factor-name">Incentive Spend Gap</div>
+                <div class="factor-desc">AI model projects 4.1% lower incentive effectiveness on EV segment than your retail signal.</div>
+              </div>
+              <span class="factor-weight">25%</span>
+            </div>
+          </div>
+
+          <div class="so-actions" id="equinox-actions">
+            <button class="btn-primary" onclick="acceptEquinox()">Accept My Forecast (41,800)</button>
+            <button class="btn-secondary" onclick="toggleEquinoxForm()">Submit Revised Override</button>
+            <button class="btn-ghost" onclick="escalateEquinox()">Escalate to SME</button>
+          </div>
+
+          <div id="equinox-override-form" class="override-form">
+            <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--f1-cyan);margin-bottom:12px">Submit Override</div>
+            <div class="field-group">
+              <div class="field">
+                <label>Override Volume</label>
+                <input type="number" value="38200" placeholder="e.g. 38200">
+              </div>
+              <div class="field">
+                <label>Confidence</label>
+                <select>
+                  <option>Medium — inference from signals</option>
+                  <option>High — dealer visit confirmed</option>
+                  <option>Low — directional only</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Reasoning (for HIBT)</label>
+              <textarea placeholder="Explain your reasoning...">Tariff risk acknowledged — however, fleet pre-orders for Equinox EV are contracted through Q3. Mach-E promotion primarily in West Coast markets, minimal overlap with our dealer footprint.</textarea>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn-primary" style="padding:8px 16px;font-size:12px" onclick="submitEquinoxOverride()">Submit to HIBT</button>
+              <button class="btn-ghost" style="padding:8px 16px;font-size:12px" onclick="toggleEquinoxForm()">Cancel</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1731,6 +1812,31 @@ body{
 </div><!-- /shell -->
 
 
+<!-- ── ESCALATION MODAL ── -->
+<div id="escalation-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--carbon);border:1px solid rgba(255,149,0,.3);border-radius:18px;padding:28px;max-width:420px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.7)">
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px">
+      <div style="width:44px;height:44px;border-radius:11px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.25);display:grid;place-items:center;font-size:22px;flex-shrink:0">🔔</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px">Escalation — Silverado HD 1500</div>
+        <div style="font-size:12px;color:var(--ink-2);line-height:1.5">Routing to SME on-call (Jim Kyle). GOT-03 reason code applied — analyst escalation due to stale data feed. HIBT reference created.</div>
+      </div>
+    </div>
+    <div style="background:var(--pit);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Escalation Chain</div>
+      <div style="font-size:12px;color:var(--ink-2);line-height:1.8">
+        <div>T+0 → <strong style="color:var(--ink)">Jim Kyle</strong> (SME, on-call)</div>
+        <div>T+2h → <strong style="color:var(--ink)">Don S.</strong> (Team Lead)</div>
+        <div>T+4h → <strong style="color:var(--ink)">Govinda C.</strong> (VP NAMA)</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="confirmEscalation()" style="flex:1;padding:10px 16px;border-radius:999px;background:rgba(255,149,0,.15);border:1px solid rgba(255,149,0,.35);color:var(--warn);font-weight:700;font-size:13px;cursor:pointer;transition:all .15s">Confirm Escalation</button>
+      <button onclick="closeEscalationModal()" style="padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── MOBILE BOTTOM NAV ── -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-item active" onclick="showTab('dashboard');setBottomActive(this)">
@@ -1785,6 +1891,7 @@ function showTab(name) {
     if (n.textContent.trim().startsWith(navMap[name] || '___')) n.classList.add('active');
   });
   document.getElementById('main-content').scrollTo(0, 0);
+  history.replaceState(null, '', '#' + name);
 }
 
 // ── override form toggle ──
@@ -1801,6 +1908,7 @@ function acceptOverride() {
   btn.style.color = '#001a10';
   btn.disabled = true;
   setTimeout(() => showToast('lc'), 800);
+  setTimeout(() => updateDQRing(currentDQ + 2), 1000);
 }
 
 // ── toast ──
@@ -1915,6 +2023,8 @@ function submitOverride() {
     </div>`;
   inboxList.prepend(newItem);
 
+  // update DQ ring
+  setTimeout(() => updateDQRing(currentDQ + 2), 600);
   // show submit toast
   showSubmitToast(Number(vol).toLocaleString());
 }
@@ -1929,9 +2039,112 @@ function showSubmitToast(vol) {
   setTimeout(() => dismissToast(), 4800);
 }
 
+// ── DQ ring updater ──
+let currentDQ = 88;
+function updateDQRing(newScore) {
+  if (newScore <= currentDQ) return;
+  currentDQ = newScore;
+  const circ = 87.96;
+  const newOffset = circ * (1 - newScore / 100);
+  const sideCircle = document.getElementById('dq-sidebar-circle');
+  const sideVal    = document.getElementById('dq-sidebar-val');
+  const mainCircle = document.getElementById('dq-main-circle');
+  const mainText   = document.getElementById('dq-main-text');
+  if (sideCircle) sideCircle.setAttribute('stroke-dashoffset', newOffset.toFixed(2));
+  if (sideVal)    sideVal.textContent = newScore;
+  if (mainCircle) mainCircle.setAttribute('stroke-dashoffset', (238.76 * (1 - newScore / 100)).toFixed(2));
+  if (mainText)   mainText.textContent = newScore;
+}
+
+// ── escalation modal ──
+function escalateToSME() {
+  document.getElementById('escalation-modal').style.display = 'flex';
+}
+function closeEscalationModal() {
+  document.getElementById('escalation-modal').style.display = 'none';
+}
+function confirmEscalation() {
+  closeEscalationModal();
+  const btn = document.getElementById('escalate-btn');
+  if (btn) { btn.textContent = '✓ Escalated to Jim Kyle'; btn.style.color = 'var(--warn)'; btn.disabled = true; }
+  // add inbox item
+  const inboxList = document.querySelector('#tab-inbox > div');
+  const item = document.createElement('div');
+  item.className = 'card';
+  item.style.cssText = 'border-color:rgba(255,149,0,.3)';
+  item.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,149,0,.1);border:1px solid rgba(255,149,0,.25);display:grid;place-items:center;font-size:20px;flex-shrink:0">🔔</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px;color:var(--ink)">Escalation Sent — Silverado HD 1500</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">GOT-03 escalation logged. Jim Kyle notified. Escalation chain: T+2h Don S., T+4h Govinda C.</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Just now · GOT-03 · HIBT-REF-2026-C5-${Math.floor(Math.random()*9000+1000)}</div>
+      </div>
+    </div>`;
+  inboxList.prepend(item);
+}
+
+// ── equinox expand / actions ──
+function expandEquinox(btn) {
+  const details = document.getElementById('equinox-details');
+  const isOpen = details.style.display !== 'none';
+  details.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? 'Expand ↓' : 'Collapse ↑';
+}
+function toggleEquinoxForm() {
+  document.getElementById('equinox-override-form').classList.toggle('open');
+}
+function acceptEquinox() {
+  const actions = document.getElementById('equinox-actions');
+  actions.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
+  const pill = document.getElementById('equinox-pill');
+  if (pill) { pill.innerHTML = '✓ Accepted'; pill.style.background='rgba(35,209,139,.12)'; pill.style.color='var(--good)'; }
+  updateDQRing(currentDQ + 1);
+}
+function escalateEquinox() {
+  const btn = document.createElement('div');
+  escalateToSME();
+}
+function submitEquinoxOverride() {
+  const form = document.getElementById('equinox-override-form');
+  const vol  = form.querySelector('input[type="number"]').value || '38,200';
+  form.classList.remove('open');
+  const actions = document.getElementById('equinox-actions');
+  actions.querySelectorAll('button').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
+  const pill = document.getElementById('equinox-pill');
+  if (pill) { pill.innerHTML = '✓ Override Submitted'; pill.style.background='rgba(35,209,139,.12)'; pill.style.color='var(--good)'; }
+  updateDQRing(currentDQ + 1);
+  const inboxList = document.querySelector('#tab-inbox > div');
+  const item = document.createElement('div');
+  item.className = 'card';
+  item.style.cssText = 'border-color:rgba(35,209,139,.3);background:rgba(35,209,139,.04)';
+  item.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:14px">
+      <div style="width:38px;height:38px;border-radius:10px;background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.3);display:grid;place-items:center;font-size:20px;flex-shrink:0">✅</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px;color:var(--ink)">Override Submitted — Equinox EV</div>
+        <div style="font-size:12px;color:var(--ink-2);margin-top:4px;line-height:1.5">Volume <strong style="color:var(--good)">${Number(vol).toLocaleString()}</strong> committed to HIBT. Gate 3 unblocked.</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px">Just now · Equinox EV · HIBT-REF-2026-C5-${Math.floor(Math.random()*9000+1000)}</div>
+      </div>
+    </div>`;
+  inboxList.prepend(item);
+}
+
 // ── auto show toast on load ──
 window.addEventListener('load', () => {
-  setTimeout(() => showToast('yw'), 1800);
+  // hash-based deep link on load
+  const hash = location.hash.replace('#', '');
+  const validTabs = ['dashboard','forecasts','ghostlap','secondopinion','championship','aichat','inbox'];
+  if (hash && validTabs.includes(hash)) {
+    showTab(hash);
+    // sync bottom nav
+    document.querySelectorAll('.bottom-nav-item').forEach(i => {
+      if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + hash + "'")) i.classList.add('active');
+      else i.classList.remove('active');
+    });
+  } else {
+    setTimeout(() => showToast('yw'), 1800);
+  }
 });
 </script>
 

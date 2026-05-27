@@ -2138,6 +2138,8 @@
       var tabBtns  = document.querySelectorAll('.tab-btn');
       var tabPanes = document.querySelectorAll('.tab-panel');
 
+      var validTabs = ['cycle-health', 'team-perf', 'championship', 'export'];
+
       function activateTab(targetId) {
         tabBtns.forEach(function (btn) {
           var isActive = btn.dataset.tab === targetId;
@@ -2149,6 +2151,8 @@
           var isActive = pane.id === 'tab-' + targetId;
           pane.classList.toggle('active', isActive);
         });
+
+        history.replaceState(null, '', '#' + targetId);
       }
 
       tabBtns.forEach(function (btn) {
@@ -2156,6 +2160,12 @@
           activateTab(btn.dataset.tab);
         });
       });
+
+      // hash-based deep link on load
+      (function () {
+        var hash = location.hash.replace('#', '');
+        if (hash && validTabs.indexOf(hash) !== -1) activateTab(hash);
+      }());
 
       // ── Present mode toggle ───────────────────────────
       var presentToggle = document.getElementById('presentToggle');
