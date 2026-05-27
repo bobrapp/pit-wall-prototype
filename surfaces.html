@@ -205,8 +205,10 @@ a{color:inherit;text-decoration:none}
 .sl-btns{display:flex;gap:8px;flex-wrap:wrap}
 .sl-btn{
   padding:5px 13px;border-radius:4px;font-size:13px;font-weight:600;
-  cursor:default;border:none;
+  cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;
+  transition:opacity .15s;
 }
+.sl-btn:hover{opacity:.85}
 .sl-btn-p{background:#007a5a;color:#fff}
 .sl-btn-s{background:transparent;color:#d1d2d3;border:1px solid rgba(255,255,255,.22)!important}
 .sl-reactions{display:flex;gap:6px;margin-top:6px}
@@ -307,8 +309,10 @@ a{color:inherit;text-decoration:none}
 .xl-ai-btn{
   display:block;width:100%;background:#217346;color:#fff;border:none;
   padding:8px;border-radius:4px;font-size:12px;font-weight:700;
-  cursor:default;text-align:center;margin-top:8px;
+  cursor:pointer;text-align:center;margin-top:8px;text-decoration:none;
+  transition:opacity .15s;
 }
+.xl-ai-btn:hover{opacity:.85}
 
 /* ─────────────────────────────────────────────
    OUTLOOK MOCKUP
@@ -398,8 +402,9 @@ a{color:inherit;text-decoration:none}
 .ol-cta{
   display:inline-flex;align-items:center;gap:6px;
   background:#0078d4;color:#fff;padding:9px 18px;border-radius:4px;
-  font-size:13px;font-weight:600;cursor:default;
+  font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s;
 }
+.ol-cta:hover{opacity:.85}
 
 /* ─────────────────────────────────────────────
    COPILOT MOCKUP
@@ -464,7 +469,9 @@ a{color:inherit;text-decoration:none}
 .cp-link{
   display:inline-flex;align-items:center;gap:4px;margin-top:8px;
   color:#a48cf0;font-size:12px;border-bottom:1px solid rgba(164,140,240,.3);
+  cursor:pointer;transition:color .15s;
 }
+.cp-link:hover{color:#c4b0f8}
 .cp-footer{
   padding:10px 16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;
   display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.2);
@@ -653,7 +660,7 @@ a{color:inherit;text-decoration:none}
   font-size:11px;color:#374151;cursor:default;
 }
 .gl-fc.active{background:#f3f0ff;border-color:#c4b5fd;color:#7c3aed;font-weight:600}
-.gl-result{padding:10px 14px;border-bottom:1px solid #f3f4f6;cursor:default}
+.gl-result{padding:10px 14px;border-bottom:1px solid #f3f4f6;cursor:pointer;text-decoration:none;display:block;color:inherit}
 .gl-result:hover{background:#f9fafb}
 .gl-result-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .gl-result-src{
@@ -745,16 +752,16 @@ a{color:inherit;text-decoration:none}
 <!-- ── PERSONA FILTER ── -->
 <div class="filter-row">
   <button class="flt active" data-f="all">All Surfaces</button>
-  <button class="flt analyst" data-f="analyst">Analyst · 3 surfaces</button>
+  <button class="flt analyst" data-f="analyst">Analyst · 4 surfaces</button>
   <button class="flt leadership" data-f="leadership">Leadership · 4 surfaces</button>
-  <button class="flt engineering" data-f="engineering">Engineering · 1 surface</button>
+  <button class="flt engineering" data-f="engineering">Engineering · 2 surfaces</button>
 </div>
 
 <!-- ── SURFACES GRID ── -->
 <div class="sg">
 
   <!-- ═══════════ SLACK ═══════════ -->
-  <article class="sc" data-persona="analyst">
+  <article id="slack" class="sc" data-persona="analyst">
     <div class="sc-hd">
       <span class="persona-badge pb-analyst">Analyst</span>
       <div class="sc-hd-tool">
@@ -822,8 +829,8 @@ a{color:inherit;text-decoration:none}
                 </div>
                 <div class="sl-bl-body">Second Opinion triggered for <strong style="color:#fff">Krisztina G.</strong> — AI bear case is 267,000 vs your 284,200. Review and commit before Gate 3 closes.</div>
                 <div class="sl-btns">
-                  <button class="sl-btn sl-btn-p">Review in Workbench ↗</button>
-                  <button class="sl-btn sl-btn-s">Escalate to SME →</button>
+                  <a class="sl-btn sl-btn-p" href="04-apps/lovable/pit-wall-lovable-app.html#secondopinion" target="_blank">Review in Workbench ↗</a>
+                  <a class="sl-btn sl-btn-s" href="04-apps/lovable/pit-wall-lovable-app.html#aichat" target="_blank">Escalate to SME →</a>
                 </div>
               </div>
               <div class="sl-reactions">
@@ -847,7 +854,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ OUTLOOK ═══════════ -->
-  <article class="sc" data-persona="analyst">
+  <article id="outlook" class="sc" data-persona="analyst">
     <div class="sc-hd">
       <span class="persona-badge pb-analyst">Analyst</span>
       <div class="sc-hd-tool">
@@ -929,7 +936,7 @@ a{color:inherit;text-decoration:none}
                 <td class="num risk">0.72</td>
               </tr>
             </table>
-            <a class="ol-cta">Review in Workbench ↗</a>
+            <a class="ol-cta" href="04-apps/lovable/pit-wall-lovable-app.html#secondopinion" target="_blank">Review in Workbench ↗</a>
           </div>
         </div>
       </div>
@@ -937,7 +944,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ EXCEL ═══════════ -->
-  <article class="sc" data-persona="analyst">
+  <article id="excel" class="sc" data-persona="analyst">
     <div class="sc-hd">
       <span class="persona-badge pb-analyst">Analyst</span>
       <div class="sc-hd-tool">
@@ -1083,7 +1090,7 @@ a{color:inherit;text-decoration:none}
             <div class="xl-ai-row"><span class="xl-ai-key">Your MAPE</span><span class="xl-ai-val" style="color:#107c10">3.1%</span></div>
             <div class="xl-ai-row"><span class="xl-ai-key">AI Primary</span><span class="xl-ai-val">4.8%</span></div>
             <div class="xl-ai-alert">⚠ Second Opinion pending — review and submit to HIBT before Gate 3.</div>
-            <div class="xl-ai-btn">Open in Workbench ↗</div>
+            <a class="xl-ai-btn" href="04-apps/lovable/pit-wall-lovable-app.html#secondopinion" target="_blank">Open in Workbench ↗</a>
           </div>
         </div>
       </div>
@@ -1091,7 +1098,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ COPILOT ═══════════ -->
-  <article class="sc" data-persona="leadership">
+  <article id="copilot" class="sc" data-persona="leadership">
     <div class="sc-hd">
       <span class="persona-badge pb-leadership">Leadership</span>
       <div class="sc-hd-tool">
@@ -1140,7 +1147,7 @@ a{color:inherit;text-decoration:none}
                   <div class="cp-card-row"><span class="cp-card-key">Gate 3 deadline</span><span class="cp-card-val warn">Jun 12 · 35h</span></div>
                   <div class="cp-card-row"><span class="cp-card-key">Team MAPE vs AI</span><span class="cp-card-val good">–1.7pp better</span></div>
                 </div>
-                <a class="cp-link">Open Leadership View ↗</a>
+                <a class="cp-link" href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank">Open Leadership View ↗</a>
               </div>
               Silverado HD 1500 and Equinox EV have unresolved Second Opinions — Krisztina G. is the owner. Reassign or escalate by Jun 9 to avoid a gate block.
             </div>
@@ -1155,7 +1162,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ POWER BI (full width) ═══════════ -->
-  <article class="sc sc-full" data-persona="leadership">
+  <article id="powerbi" class="sc sc-full" data-persona="leadership">
     <div class="sc-hd">
       <span class="persona-badge pb-leadership">Leadership</span>
       <div class="sc-hd-tool">
@@ -1180,6 +1187,7 @@ a{color:inherit;text-decoration:none}
         <div class="pbi-hd-title">
           <span>NAMA Cycle 5 · Gate 3 Brief · May 2026</span>
           <span style="color:#f2c811;font-size:11px">● Live</span>
+          <a href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank" style="background:#f2c811;color:#111;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;text-decoration:none;margin-left:6px">Open Full View ↗</a>
         </div>
       </div>
       <div class="pbi-filter-bar">
@@ -1329,7 +1337,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ WORD ═══════════ -->
-  <article class="sc" data-persona="leadership">
+  <article id="word" class="sc" data-persona="leadership">
     <div class="sc-hd">
       <span class="persona-badge pb-leadership">Leadership</span>
       <div class="sc-hd-tool">
@@ -1366,7 +1374,10 @@ a{color:inherit;text-decoration:none}
       </div>
       <div class="wd-canvas-wrap">
         <div class="wd-doc">
-          <div class="wd-doc-eyebrow">GM NAMA · CONFIDENTIAL · CYCLE 5 · MAY 2026</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #2b579a;padding-bottom:6px;margin-bottom:14px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#2b579a;font-weight:700">GM NAMA · CONFIDENTIAL · CYCLE 5 · MAY 2026</div>
+            <a href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank" style="font-size:11px;color:#2b579a;font-weight:600;text-decoration:none;border:1px solid #2b579a;padding:2px 8px;border-radius:3px">Open Leadership View ↗</a>
+          </div>
           <div class="wd-doc-title">NAMA Cycle 5 — Gate 3 Executive Brief</div>
           <div class="wd-doc-sub">Prepared by Pit Wall v4.0 · Auto-generated May 27, 2026 · Last updated 7:15 AM</div>
           <div class="wd-doc-section">Executive Summary</div>
@@ -1391,7 +1402,7 @@ a{color:inherit;text-decoration:none}
   </article>
 
   <!-- ═══════════ GLEAN ═══════════ -->
-  <article class="sc" data-persona="engineering">
+  <article id="glean" class="sc" data-persona="engineering">
     <div class="sc-hd">
       <span class="persona-badge pb-engineering">Engineering</span>
       <div class="sc-hd-tool">
@@ -1438,38 +1449,38 @@ a{color:inherit;text-decoration:none}
             <div class="gl-fc">Documents</div>
             <div class="gl-fc">People</div>
           </div>
-          <div class="gl-result">
+          <a class="gl-result" href="04-apps/replit/pit-wall-replit-app.html#hibt" target="_blank">
             <div class="gl-result-top">
               <span class="gl-result-src gl-src-hibt">HIBT Ledger</span>
               <span class="gl-result-time">5 min ago</span>
             </div>
             <div class="gl-result-title">HIBT-2026-C5-0891 · OVERRIDE — <span class="gl-highlight">Silverado HD</span> 1500</div>
             <div class="gl-result-body">Krisztina G. · Workbench · "Incentive elasticity confirmed with dealer network. Retail mix 78% vs AI's 65% assumption." <span class="gl-highlight">Gate 3</span> unblocked · MDS 0.72 resolved.</div>
-          </div>
-          <div class="gl-result">
+          </a>
+          <a class="gl-result" href="04-apps/lovable/pit-wall-lovable-app.html#secondopinion" target="_blank">
             <div class="gl-result-top">
               <span class="gl-result-src gl-src-hibt">HIBT Ledger</span>
               <span class="gl-result-time">36h ago</span>
             </div>
             <div class="gl-result-title">HIBT-2026-C5-0890 · SO_TRIGGER — <span class="gl-highlight">Silverado HD</span> 1500</div>
             <div class="gl-result-body">System · API · "Auto-triggered above MDS threshold 0.72. Tariff feed 72h stale — risk not captured by primary model." Routed to Krisztina G.</div>
-          </div>
-          <div class="gl-result">
+          </a>
+          <a class="gl-result" href="04-apps/lovable/pit-wall-lovable-app.html#forecasts" target="_blank">
             <div class="gl-result-top">
               <span class="gl-result-src gl-src-pitwall">Pit Wall</span>
               <span class="gl-result-time">2h ago</span>
             </div>
             <div class="gl-result-title">Cycle 5 Forecast — <span class="gl-highlight">Silverado HD</span> 1500 · 284,200</div>
             <div class="gl-result-body">6.1% divergence from AI primary (267,000). Four divergence factors: tariff feed stale (35%), incentive elasticity (28%), fleet demand (22%), competitive pressure F-150 (15%).</div>
-          </div>
-          <div class="gl-result">
+          </a>
+          <a class="gl-result" href="decisions.html" target="_blank">
             <div class="gl-result-top">
               <span class="gl-result-src gl-src-doc">Document</span>
               <span class="gl-result-time">Yesterday</span>
             </div>
             <div class="gl-result-title">Second Opinion Design Spec — MDS Bear-Case Challenger</div>
             <div class="gl-result-body">GOV-004 · Engineering spec for SO trigger logic. <span class="gl-highlight">Gate 3</span> blocking criteria: MDS ≥ 0.65. Retention: 7 years per HIBT policy.</div>
-          </div>
+          </a>
         </div>
         <div class="gl-entity-panel">
           <div class="gl-ep-hd">Related Entities</div>
@@ -1491,6 +1502,293 @@ a{color:inherit;text-decoration:none}
               <div class="gl-ep-row"><span class="gl-ep-k">MAPE</span><span class="gl-ep-v good">3.1%</span></div>
               <div class="gl-ep-row"><span class="gl-ep-k">Overrides</span><span class="gl-ep-v">9 / 12</span></div>
               <div class="gl-ep-row"><span class="gl-ep-k">Pending SOs</span><span class="gl-ep-v warn">2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ TEAMS ═══════════ -->
+  <article id="teams" class="sc" data-persona="analyst">
+    <div class="sc-hd">
+      <span class="persona-badge pb-analyst">Analyst</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#5059C9"/>
+          <path d="M15 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM15 9c-1.5 0-2.8.8-3.5 2H17a2 2 0 0 1 2 2v3h1a1 1 0 0 0 1-1v-2.5A3.5 3.5 0 0 0 17.5 9H15Z" fill="#fff"/>
+          <circle cx="10" cy="8" r="2.5" fill="#fff"/>
+          <path d="M10 11.5A4.5 4.5 0 0 0 5.5 16v1a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1v-1a4.5 4.5 0 0 0-4.5-4.5Z" fill="#fff"/>
+        </svg>
+        Microsoft Teams
+      </div>
+      <span class="sc-hd-desc">Gate alerts in team channels</span>
+    </div>
+    <div class="mock-teams" style="display:flex;height:390px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:13px;background:#1b1b2e;color:#e0e0f0;user-select:none">
+      <!-- sidebar -->
+      <div style="width:64px;background:#1e1e3a;display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:6px;flex-shrink:0">
+        <div style="width:40px;height:40px;border-radius:10px;background:#5059c9;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:4px">👾</div>
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:15px;color:#a0a0c0">💬</div>
+        <div style="width:36px;height:36px;border-radius:8px;background:rgba(80,89,201,.25);display:flex;align-items:center;justify-content:center;font-size:15px;color:#8b91e8">👥</div>
+        <div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#a0a0c0">📅</div>
+        <div style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#a0a0c0">📁</div>
+      </div>
+      <!-- teams list -->
+      <div style="width:200px;background:#252540;flex-shrink:0;padding:10px 0">
+        <div style="padding:8px 14px;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em">Teams</div>
+        <div style="padding:7px 14px;font-size:13px;color:rgba(255,255,255,.5);cursor:default;display:flex;align-items:center;gap:8px">
+          <div style="width:24px;height:24px;border-radius:6px;background:#4a5568;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">GM</div>
+          GM NAMA Forecasting
+        </div>
+        <div style="padding:4px 14px 4px 42px;font-size:12px;color:rgba(255,255,255,.45);cursor:default">General</div>
+        <div style="padding:4px 14px 4px 42px;font-size:12px;color:rgba(255,255,255,.45);cursor:default">Cycle 5 Planning</div>
+        <div style="padding:5px 14px 5px 42px;font-size:12px;background:rgba(80,89,201,.2);color:#a8b0f5;font-weight:600;cursor:default;display:flex;align-items:center;justify-content:space-between">
+          <span>📢 Gate Alerts</span>
+          <span style="background:#e05555;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px">1</span>
+        </div>
+        <div style="padding:4px 14px 4px 42px;font-size:12px;color:rgba(255,255,255,.45);cursor:default">DQ Engineering</div>
+        <div style="padding:10px 14px;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-top:4px">Direct Messages</div>
+        <div style="padding:5px 14px;font-size:12px;color:rgba(255,255,255,.45);cursor:default;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">KG</div>Krisztina G.
+        </div>
+        <div style="padding:5px 14px;font-size:12px;color:rgba(255,255,255,.35);cursor:default;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#374151;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#9ca3af;flex-shrink:0">JK</div>Jim Kyle (SME)
+        </div>
+      </div>
+      <!-- main chat -->
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">📢</span>
+          <span style="font-weight:700;color:#fff;font-size:15px">Gate Alerts</span>
+          <span style="font-size:12px;color:rgba(255,255,255,.35);margin-left:4px">GM NAMA Forecasting</span>
+          <span style="margin-left:auto;font-size:12px;color:rgba(255,255,255,.3)">👥 14 members</span>
+        </div>
+        <div style="flex:1;padding:12px 16px;overflow:hidden;display:flex;flex-direction:column;gap:10px">
+          <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px"><div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>Today<div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div></div>
+          <div style="display:flex;gap:10px">
+            <div style="width:32px;height:32px;border-radius:6px;background:#5059c9;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px">PW</div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-weight:700;color:#fff;font-size:13.5px">Pit Wall</span>
+                <span style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);font-size:10px;padding:1px 6px;border-radius:3px">App</span>
+                <span style="color:rgba(255,255,255,.3);font-size:11px">Today at 7:12 AM</span>
+              </div>
+              <!-- Teams card -->
+              <div style="background:#1e1e38;border:1px solid rgba(80,89,201,.4);border-left:4px solid #5059c9;border-radius:6px;padding:12px 14px;margin-top:6px;max-width:420px">
+                <div style="font-size:11px;color:#8b91e8;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🚦 GATE 3 ALERT · PIT WALL</div>
+                <div style="font-weight:700;color:#fff;font-size:14px;margin-bottom:8px">Silverado HD 1500 — Second Opinion Triggered</div>
+                <div style="display:flex;gap:20px;margin-bottom:8px">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">DQ Score</div><div style="font-weight:700;color:#ff9500;font-size:15px">75 ⚠</div></div>
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">MDS</div><div style="font-weight:700;color:#ff9500;font-size:15px">0.72</div></div>
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">Deadline</div><div style="font-weight:700;color:#fff;font-size:15px">35h</div></div>
+                </div>
+                <div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:10px">AI bear case 267,000 diverges –6.1% from your 284,200. Krisztina G. — review before Gate 3 closes.</div>
+                <div style="display:flex;gap:8px">
+                  <a href="04-apps/lovable/pit-wall-lovable-app.html#secondopinion" target="_blank" style="padding:6px 14px;background:#5059c9;color:#fff;border-radius:4px;font-size:12px;font-weight:700;text-decoration:none">Review SO →</a>
+                  <a href="04-apps/lovable/pit-wall-lovable-app.html#aichat" target="_blank" style="padding:6px 14px;background:transparent;color:#a0a8f0;border:1px solid rgba(80,89,201,.4);border-radius:4px;font-size:12px;font-weight:600;text-decoration:none">Ask AI Chat</a>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:6px">
+                <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2px 8px;font-size:12px;cursor:default">👀 4</div>
+                <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2px 8px;font-size:12px;cursor:default">⚡ 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:8px 16px;border-top:1px solid rgba(255,255,255,.07)">
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,.3)">Reply to Gate Alerts…</div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ SHAREPOINT ═══════════ -->
+  <article id="sharepoint" class="sc" data-persona="leadership">
+    <div class="sc-hd">
+      <span class="persona-badge pb-leadership">Leadership</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#038387"/>
+          <circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="2"/>
+          <path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        SharePoint
+      </div>
+      <span class="sc-hd-desc">Live S&OP data site &amp; document hub</span>
+    </div>
+    <div style="display:flex;flex-direction:column;height:400px;overflow:hidden;font-family:'Segoe UI',sans-serif;font-size:13px;background:#f0f4f4;color:#323130;user-select:none">
+      <!-- topbar -->
+      <div style="background:#038387;color:#fff;height:42px;display:flex;align-items:center;padding:0 14px;gap:12px;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="rgba(255,255,255,.15)"/><circle cx="12" cy="12" r="5" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M12 7v10M7 12h10" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span style="font-weight:700;font-size:14px">SharePoint</span>
+        <div style="flex:1;max-width:280px;background:rgba(255,255,255,.15);border-radius:4px;padding:5px 10px;font-size:12px;color:rgba(255,255,255,.65)">🔍 Search this site</div>
+        <div style="margin-left:auto;width:28px;height:28px;border-radius:50%;background:#6264a7;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">VP</div>
+      </div>
+      <!-- site nav -->
+      <div style="background:#025d60;color:rgba(255,255,255,.75);display:flex;gap:0;padding:0 14px;flex-shrink:0">
+        <div style="padding:8px 14px;font-size:12px;cursor:default;border-bottom:3px solid #fff;color:#fff">Home</div>
+        <div style="padding:8px 14px;font-size:12px;cursor:default">Documents</div>
+        <div style="padding:8px 14px;font-size:12px;cursor:default">Pages</div>
+        <div style="padding:8px 14px;font-size:12px;cursor:default">Pit Wall Hub</div>
+      </div>
+      <div style="flex:1;overflow:hidden;display:flex">
+        <!-- left nav -->
+        <div style="width:180px;background:#f3f8f8;border-right:1px solid #dde8e8;padding:10px 0;flex-shrink:0">
+          <div style="padding:6px 14px;font-size:11px;font-weight:700;color:#025d60;text-transform:uppercase;letter-spacing:.05em">Navigation</div>
+          <div style="padding:5px 14px;font-size:12px;color:#323130;cursor:default;background:#e0f0f0;border-left:3px solid #038387;font-weight:600">🏠 Home</div>
+          <div style="padding:5px 14px;font-size:12px;color:#555;cursor:default">📄 Cycle 5 Briefs</div>
+          <div style="padding:5px 14px;font-size:12px;color:#555;cursor:default">📊 Pit Wall Reports</div>
+          <div style="padding:5px 14px;font-size:12px;color:#555;cursor:default">🔒 Gate Decisions</div>
+          <div style="padding:5px 14px;font-size:12px;color:#555;cursor:default">📋 Override Log</div>
+          <div style="padding:5px 14px;font-size:12px;color:#555;cursor:default">👤 Team</div>
+        </div>
+        <!-- content area -->
+        <div style="flex:1;padding:16px 20px;overflow:hidden">
+          <div style="font-size:11px;color:#888;margin-bottom:8px">NAMA Forecast Intelligence · Pit Wall Hub</div>
+          <div style="font-size:19px;font-weight:700;color:#025d60;margin-bottom:14px">Cycle 5 — Gate 3 Status</div>
+          <!-- webpart: live DQ -->
+          <div style="background:#fff;border:1px solid #dde3f0;border-radius:6px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:20px">
+            <div style="font-size:11px;font-weight:700;color:#038387;text-transform:uppercase;letter-spacing:.05em;min-width:80px">LIVE · PIT WALL</div>
+            <div style="flex:1;display:flex;gap:20px;flex-wrap:wrap">
+              <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#23d18b">88%</div><div style="font-size:10px;color:#888">Cycle DQ</div></div>
+              <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#ff9500">2</div><div style="font-size:10px;color:#888">SOs Pending</div></div>
+              <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#23d18b">3.1%</div><div style="font-size:10px;color:#888">Team MAPE</div></div>
+              <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#ff9500">⚠</div><div style="font-size:10px;color:#888">Gate 3</div></div>
+            </div>
+            <a href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank" style="background:#038387;color:#fff;padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;text-decoration:none;flex-shrink:0">Open Dashboard ↗</a>
+          </div>
+          <!-- document library -->
+          <div style="background:#fff;border:1px solid #dde3f0;border-radius:6px;overflow:hidden">
+            <div style="padding:8px 14px;background:#f3f8f8;border-bottom:1px solid #dde3f0;font-size:11px;font-weight:700;color:#025d60;display:flex;align-items:center;justify-content:space-between">
+              <span>RECENT DOCUMENTS</span>
+              <span style="color:#038387;cursor:default;font-size:11px">See all</span>
+            </div>
+            <div style="font-size:11px">
+              <div style="display:grid;grid-template-columns:1fr 100px 90px;padding:6px 14px;background:#f8f8f8;border-bottom:1px solid #f0f0f0;font-weight:600;color:#555">
+                <span>Name</span><span>Modified</span><span>By</span>
+              </div>
+              <a href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank" style="display:grid;grid-template-columns:1fr 100px 90px;padding:7px 14px;border-bottom:1px solid #f4f4f4;color:#323130;text-decoration:none;cursor:pointer">
+                <span style="display:flex;align-items:center;gap:6px;color:#025d60;font-weight:600"><span>📊</span> NAMA Cycle 5 Gate 3 Brief.pptx</span>
+                <span style="color:#888">5 min ago</span><span style="color:#888">Pit Wall</span>
+              </a>
+              <a href="04-apps/lovable/pit-wall-lovable-app.html#forecasts" target="_blank" style="display:grid;grid-template-columns:1fr 100px 90px;padding:7px 14px;border-bottom:1px solid #f4f4f4;color:#323130;text-decoration:none">
+                <span style="display:flex;align-items:center;gap:6px"><span>📄</span> Silverado HD 1500 SO Review.docx</span>
+                <span style="color:#888">2h ago</span><span style="color:#888">Krisztina G.</span>
+              </a>
+              <a href="decisions.html" target="_blank" style="display:grid;grid-template-columns:1fr 100px 90px;padding:7px 14px;color:#323130;text-decoration:none">
+                <span style="display:flex;align-items:center;gap:6px"><span>📋</span> Gate 3 Override Decision Log.xlsx</span>
+                <span style="color:#888">Yesterday</span><span style="color:#888">System</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ DATABRICKS ═══════════ -->
+  <article id="databricks" class="sc" data-persona="engineering">
+    <div class="sc-hd">
+      <span class="persona-badge pb-engineering">Engineering</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#FF3621"/>
+          <path d="M12 4L4 9v6l8 5 8-5V9L12 4Z" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M4 9l8 5 8-5" stroke="#fff" stroke-width="1.5"/>
+          <path d="M12 14v6" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        Databricks
+      </div>
+      <span class="sc-hd-desc">DQ recalc pipeline &amp; HIBT Delta Lake</span>
+    </div>
+    <div style="display:flex;flex-direction:column;height:400px;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px;background:#1a1a1a;color:#d4d4d4;user-select:none">
+      <!-- topbar -->
+      <div style="background:#1c1c1c;border-bottom:1px solid #333;height:40px;display:flex;align-items:center;padding:0 14px;gap:12px;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#FF3621"/><path d="M12 4L4 9v6l8 5 8-5V9L12 4Z" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 9l8 5 8-5" stroke="#fff" stroke-width="1.5"/><path d="M12 14v6" stroke="#fff" stroke-width="1.5"/></svg>
+        <span style="font-size:13px;font-weight:700;color:#fff;font-family:'Segoe UI',sans-serif">Databricks</span>
+        <div style="display:flex;gap:2px;margin-left:8px;font-family:'Segoe UI',sans-serif">
+          <div style="padding:5px 12px;border-radius:4px;font-size:12px;color:rgba(255,255,255,.5);cursor:default">Workspace</div>
+          <div style="padding:5px 12px;border-radius:4px;background:rgba(255,255,255,.07);font-size:12px;color:#fff;cursor:default">SQL Editor</div>
+          <div style="padding:5px 12px;border-radius:4px;font-size:12px;color:rgba(255,255,255,.5);cursor:default">Delta Live Tables</div>
+          <div style="padding:5px 12px;border-radius:4px;font-size:12px;color:rgba(255,255,255,.5);cursor:default">Jobs</div>
+        </div>
+        <div style="margin-left:auto;background:#FF3621;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;font-family:'Segoe UI',sans-serif;cursor:default">▶ Run All</div>
+      </div>
+      <!-- notebook content -->
+      <div style="flex:1;display:flex;min-height:0">
+        <!-- left nav -->
+        <div style="width:190px;background:#151515;border-right:1px solid #2a2a2a;padding:8px 0;flex-shrink:0;font-family:'Segoe UI',sans-serif">
+          <div style="padding:6px 12px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em">Workspace</div>
+          <div style="padding:5px 12px;font-size:12px;color:rgba(255,255,255,.45);cursor:default;display:flex;align-items:center;gap:6px">📁 NAMA-GovOps</div>
+          <div style="padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,.45);cursor:default">📁 notebooks</div>
+          <div style="padding:5px 12px 5px 36px;font-size:12px;background:rgba(255,54,33,.1);border-left:2px solid #FF3621;color:#FF6B52;cursor:default">📓 DQ_Recalc_C5</div>
+          <div style="padding:5px 12px 5px 36px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">📓 HIBT_Query</div>
+          <div style="padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">📁 pipelines</div>
+          <div style="padding:5px 12px 5px 36px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">⚡ DLT_pit_wall</div>
+          <div style="margin-top:8px;padding:6px 12px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.06em">Data</div>
+          <div style="padding:5px 12px;font-size:12px;color:rgba(255,255,255,.45);cursor:default;display:flex;align-items:center;gap:6px">🗄️ hibt_delta_lake</div>
+          <div style="padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">hibt_ledger</div>
+          <div style="padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">dq_scores</div>
+          <div style="padding:5px 12px 5px 24px;font-size:12px;color:rgba(255,255,255,.35);cursor:default">cycle_forecasts</div>
+        </div>
+        <!-- main notebook -->
+        <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+          <!-- notebook header -->
+          <div style="padding:8px 16px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;gap:10px;font-family:'Segoe UI',sans-serif;flex-shrink:0">
+            <span style="font-size:13px;font-weight:700;color:#fff">DQ_Recalc_C5.py</span>
+            <span style="font-size:10px;background:#1e3a1e;color:#23d18b;padding:2px 8px;border-radius:10px;font-weight:700">● RUNNING</span>
+            <span style="font-size:11px;color:rgba(255,255,255,.3);margin-left:auto">Cluster: nama-prod-14.3 LTS · Python 3.11</span>
+          </div>
+          <!-- cells -->
+          <div style="flex:1;overflow:hidden;padding:10px 16px;display:flex;flex-direction:column;gap:8px">
+            <!-- SQL cell -->
+            <div style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:4px;overflow:hidden">
+              <div style="background:#252525;padding:4px 12px;font-size:10px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:8px;border-bottom:1px solid #2a2a2a;font-family:'Segoe UI',sans-serif">
+                <span style="color:#23d18b;font-weight:700">✓ [1]</span>
+                <span>SQL · 0.3s</span>
+              </div>
+              <div style="padding:8px 14px;line-height:1.5;font-size:11px">
+                <span style="color:#569cd6">SELECT</span> nameplate, dq_score, gate_status, so_count<br>
+                <span style="color:#569cd6">FROM</span> <span style="color:#ce9178">hibt_delta_lake.dq_scores</span><br>
+                <span style="color:#569cd6">WHERE</span> cycle = <span style="color:#b5cea8">5</span> <span style="color:#569cd6">AND</span> gate = <span style="color:#b5cea8">3</span><br>
+                <span style="color:#569cd6">ORDER BY</span> dq_score <span style="color:#569cd6">ASC</span>;
+              </div>
+            </div>
+            <!-- output table -->
+            <div style="background:#1e1e1e;border:1px solid #2a2a2a;border-radius:4px;overflow:hidden;font-family:'Segoe UI',sans-serif">
+              <div style="background:#252525;padding:4px 12px;font-size:10px;color:rgba(255,255,255,.35);border-bottom:1px solid #2a2a2a">Output · 6 rows</div>
+              <div style="font-size:11px">
+                <div style="display:grid;grid-template-columns:150px 80px 100px 60px;padding:5px 12px;background:#252525;border-bottom:1px solid #2a2a2a;color:rgba(255,255,255,.5);font-weight:600">
+                  <span>nameplate</span><span>dq_score</span><span>gate_status</span><span>so_count</span>
+                </div>
+                <div style="display:grid;grid-template-columns:150px 80px 100px 60px;padding:4px 12px;border-bottom:1px solid #222">
+                  <span style="color:#ce9178">Equinox EV</span><span style="color:#e05555;font-weight:700">72</span><span style="color:#ff9500">CHALLENGED</span><span style="color:#ff9500">1</span>
+                </div>
+                <div style="display:grid;grid-template-columns:150px 80px 100px 60px;padding:4px 12px;border-bottom:1px solid #222;background:rgba(255,54,33,.04)">
+                  <span style="color:#ce9178">Silverado HD 1500</span><span style="color:#ff9500;font-weight:700">75</span><span style="color:#ff9500">CHALLENGED</span><span style="color:#ff9500">1</span>
+                </div>
+                <div style="display:grid;grid-template-columns:150px 80px 100px 60px;padding:4px 12px;border-bottom:1px solid #222">
+                  <span style="color:#ce9178">Blazer EV SS</span><span style="color:#23d18b;font-weight:700">85</span><span style="color:#23d18b">OK</span><span>0</span>
+                </div>
+                <div style="display:grid;grid-template-columns:150px 80px 100px 60px;padding:4px 12px;border-bottom:1px solid #222">
+                  <span style="color:#ce9178">Tahoe LTZ</span><span style="color:#23d18b;font-weight:700">91</span><span style="color:#23d18b">OK</span><span>0</span>
+                </div>
+              </div>
+            </div>
+            <!-- Python cell running -->
+            <div style="background:#1e1e1e;border:1px solid rgba(255,54,33,.3);border-radius:4px;overflow:hidden">
+              <div style="background:#252525;padding:4px 12px;font-size:10px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:8px;border-bottom:1px solid #2a2a2a;font-family:'Segoe UI',sans-serif">
+                <span style="color:#ff9500;font-weight:700">⟳ [2]</span>
+                <span>Python · running…</span>
+                <a href="04-apps/replit/pit-wall-replit-app.html#pipeline" target="_blank" style="margin-left:auto;font-size:10px;color:#FF6B52;text-decoration:none;font-weight:600">View Pipeline ↗</a>
+              </div>
+              <div style="padding:8px 14px;line-height:1.5;font-size:11px">
+                <span style="color:#c586c0">from</span> <span style="color:#9cdcfe">pw_govops</span> <span style="color:#c586c0">import</span> <span style="color:#9cdcfe">DQEngine, HIBTWriter</span><br>
+                <span style="color:#6a9955"># Recalc with updated weights from Cycle 5</span><br>
+                <span style="color:#9cdcfe">engine</span> = <span style="color:#dcdcaa">DQEngine</span>(<span style="color:#ce9178">cycle=5</span>)<br>
+                <span style="color:#9cdcfe">scores</span> = <span style="color:#9cdcfe">engine</span>.<span style="color:#dcdcaa">recalculate_all</span>()<br>
+                <span style="color:#dcdcaa">HIBTWriter</span>.<span style="color:#dcdcaa">commit</span>(<span style="color:#9cdcfe">scores</span>, <span style="color:#ce9178">action=<span style="color:#ce9178">"DQ_RECALC"</span></span>)
+              </div>
             </div>
           </div>
         </div>

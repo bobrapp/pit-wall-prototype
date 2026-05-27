@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pit Wall v4.0 — The Case</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0a0c10">
+<meta property="og:title" content="Pit Wall v4.0 — The Case">
+<meta property="og:description" content="A forecast intelligence platform that meets every team where they already work — Analyst, Leadership, and Engineering.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{
+  --void:#0a0c10;
+  --carbon:#13161e;
+  --pit:#1c2030;
+  --pit-2:#252a3b;
+  --line:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.14);
+  --ink:#f5f6f8;
+  --ink-2:#cdd1d9;
+  --muted:#8a8f9e;
+  --muted-2:#5e6373;
+  --chevy-red:#da1a2e;
+  --cad-gold:#c8b273;
+  --buick-teal:#7fb0bf;
+  --f1-amber:#ff6b00;
+  --f1-cyan:#00e5ff;
+  --start-green:#00d26a;
+  --warn:#ff9500;
+  --radius:18px;
+  --radius-sm:12px;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  background-image:
+    radial-gradient(1200px 700px at 65% -10%, rgba(0,229,255,.06), transparent 55%),
+    radial-gradient(700px 500px at -5% 50%, rgba(255,107,0,.04), transparent 65%),
+    radial-gradient(600px 400px at 50% 100%, rgba(200,178,115,.03), transparent 60%);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+
+/* ── topbar ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:saturate(150%) blur(20px);
+  -webkit-backdrop-filter:saturate(150%) blur(20px);
+  background:rgba(10,12,16,.78);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1160px;margin:0 auto;
+  padding:14px 32px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{
+  width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,#222837,#0c0e14);
+  border:1px solid var(--line-strong);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:700;font-size:9px;
+  letter-spacing:.15em;color:var(--f1-cyan);
+  box-shadow:0 0 18px rgba(0,229,255,.18);
+  flex-shrink:0;
+}
+.brand-name{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.brand-sub{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin-top:1px}
+.topbar-links{display:flex;align-items:center;gap:4px}
+.topbar-link{font-size:13px;font-weight:500;color:var(--ink-2);padding:7px 12px;border-radius:8px;transition:all .15s ease}
+.topbar-link:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+.topbar-link-active{color:var(--f1-cyan) !important}
+
+/* ── hero ── */
+.hero{
+  max-width:1160px;margin:0 auto;
+  padding:100px 32px 80px;
+  text-align:center;
+  position:relative;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--f1-cyan);font-weight:700;margin-bottom:24px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:"";width:22px;height:1px;background:currentColor;display:inline-block}
+.hero-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(40px,6vw,72px);line-height:1.08;letter-spacing:-.03em;
+  margin-bottom:24px;
+}
+.hero-headline em{font-style:normal;color:var(--f1-cyan)}
+.hero-sub{
+  font-size:clamp(16px,2vw,19px);color:var(--ink-2);line-height:1.6;
+  max-width:680px;margin:0 auto 40px;
+}
+.hero-ctas{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--f1-cyan);color:#000;
+  font-size:14px;font-weight:700;letter-spacing:.02em;
+  padding:13px 28px;border-radius:999px;
+  transition:all .2s ease;
+  box-shadow:0 0 28px rgba(0,229,255,.3);
+}
+.btn-primary:hover{background:#33eeff;box-shadow:0 0 40px rgba(0,229,255,.5);transform:translateY(-1px)}
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.06);color:var(--ink);
+  font-size:14px;font-weight:600;
+  padding:13px 28px;border-radius:999px;
+  border:1px solid var(--line-strong);
+  transition:all .2s ease;
+}
+.btn-secondary:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:6px;
+  color:var(--muted);font-size:13px;
+  padding:8px 16px;border-radius:8px;
+  transition:all .15s ease;
+}
+.btn-ghost:hover{color:var(--ink-2);background:rgba(255,255,255,.04)}
+
+/* ── problem ── */
+.section{max-width:1160px;margin:0 auto;padding:80px 32px}
+.section-label{
+  font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.24em;
+  color:var(--muted);margin-bottom:36px;
+}
+.problem-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+}
+@media(max-width:680px){.problem-grid{grid-template-columns:1fr}}
+.prob-card{
+  background:var(--carbon);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:28px 32px;
+  position:relative;
+  overflow:hidden;
+}
+.prob-card::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(218,26,46,.06),transparent 60%);
+  pointer-events:none;
+}
+.prob-icon{font-size:26px;margin-bottom:14px}
+.prob-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.prob-body{font-size:14px;color:var(--ink-2);line-height:1.6}
+
+/* ── solution callout ── */
+.solution-callout{
+  max-width:1160px;margin:0 auto;padding:0 32px 80px;
+}
+.solution-box{
+  background:linear-gradient(135deg,rgba(0,229,255,.06),rgba(0,229,255,.02));
+  border:1px solid rgba(0,229,255,.18);
+  border-radius:22px;
+  padding:52px 56px;
+  display:grid;grid-template-columns:1fr 1fr;gap:56px;
+  align-items:center;
+}
+@media(max-width:800px){.solution-box{grid-template-columns:1fr;gap:32px;padding:36px 28px}}
+.sol-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.sol-headline span{color:var(--f1-cyan)}
+.sol-body{font-size:15px;color:var(--ink-2);line-height:1.65;margin-bottom:24px}
+.sol-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat-item{border-top:1px solid var(--line);padding-top:16px}
+.stat-num{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--f1-cyan);letter-spacing:-.02em}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px}
+.sol-vis{display:grid;gap:12px}
+.sol-flow-step{
+  background:var(--carbon);border:1px solid var(--line);border-radius:12px;
+  padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  font-size:13px;color:var(--ink-2);
+}
+.sol-flow-step.active{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05);color:var(--ink)}
+.flow-dot{
+  width:30px;height:30px;border-radius:8px;
+  display:grid;place-items:center;
+  font-size:14px;flex-shrink:0;
+}
+.flow-dot.ok{background:rgba(0,210,106,.15);color:var(--start-green)}
+.flow-dot.warn{background:rgba(255,149,0,.15);color:var(--warn)}
+.flow-dot.cyan{background:rgba(0,229,255,.12);color:var(--f1-cyan)}
+.flow-label{font-weight:600;color:inherit;white-space:nowrap}
+
+/* ── personas ── */
+.personas{max-width:1160px;margin:0 auto;padding:0 32px 80px}
+.personas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:900px){.personas-grid{grid-template-columns:1fr}}
+.persona-card{
+  background:var(--carbon);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:32px;
+  display:flex;flex-direction:column;gap:20px;
+  position:relative;overflow:hidden;
+  transition:all .2s ease;
+}
+.persona-card:hover{border-color:var(--line-strong);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.persona-card-analyst{--accent:var(--f1-cyan)}
+.persona-card-leadership{--accent:var(--cad-gold)}
+.persona-card-engineering{--accent:var(--start-green)}
+.persona-card::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent);
+  opacity:.8;
+}
+.persona-eyebrow{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);font-weight:700;
+}
+.persona-title{font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-.01em}
+.persona-role{font-size:12px;color:var(--muted);margin-top:2px}
+.persona-desc{font-size:14px;color:var(--ink-2);line-height:1.6;flex:1}
+.persona-features{display:flex;flex-direction:column;gap:8px}
+.persona-feat{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:13px;color:var(--ink-2);
+}
+.feat-dot{
+  width:18px;height:18px;border-radius:5px;
+  background:rgba(255,255,255,.06);
+  display:grid;place-items:center;
+  font-size:10px;flex-shrink:0;margin-top:1px;
+}
+.persona-launch{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px;
+  font-size:13px;font-weight:600;
+  color:var(--accent);
+  transition:all .15s ease;
+}
+.persona-launch:hover{background:rgba(255,255,255,.08);border-color:var(--line-strong)}
+.persona-launch span{font-size:16px}
+
+/* ── surfaces strip ── */
+.surfaces-strip{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:var(--carbon);
+  padding:56px 32px;
+}
+.surfaces-inner{max-width:1160px;margin:0 auto}
+.surfaces-headline{
+  font-family:var(--serif);font-size:clamp(24px,3vw,34px);font-weight:900;
+  letter-spacing:-.02em;margin-bottom:8px;
+}
+.surfaces-headline span{color:var(--f1-cyan)}
+.surfaces-sub{font-size:14px;color:var(--muted);margin-bottom:36px}
+.surface-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
+.surface-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--pit);border:1px solid var(--line);border-radius:999px;
+  padding:7px 14px;font-size:12px;font-weight:600;
+  transition:all .15s ease;
+}
+.surface-pill:hover{border-color:var(--line-strong);background:var(--pit-2)}
+.surface-pill-icon{font-size:14px}
+.surfaces-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(0,229,255,.3);color:var(--f1-cyan);
+  font-size:13px;font-weight:600;
+  padding:10px 20px;border-radius:999px;
+  transition:all .15s ease;
+  background:rgba(0,229,255,.05);
+}
+.surfaces-cta:hover{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.5)}
+
+/* ── how it works ── */
+.how{max-width:1160px;margin:0 auto;padding:80px 32px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:40px}
+@media(max-width:860px){.how-grid{grid-template-columns:1fr}}
+.how-step{
+  background:var(--carbon);
+  padding:32px;
+  position:relative;
+}
+.how-step:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+.how-step:last-child{border-radius:0 var(--radius) var(--radius) 0}
+@media(max-width:860px){
+  .how-step:first-child{border-radius:var(--radius) var(--radius) 0 0}
+  .how-step:last-child{border-radius:0 0 var(--radius) var(--radius)}
+}
+.how-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px;
+}
+.how-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.how-body{font-size:14px;color:var(--ink-2);line-height:1.6}
+.how-icon{font-size:28px;margin-bottom:16px}
+.step-connector{
+  position:absolute;right:-16px;top:50%;transform:translateY(-50%);
+  font-size:18px;color:var(--muted-2);z-index:1;
+}
+@media(max-width:860px){.step-connector{display:none}}
+
+/* ── bottom CTA ── */
+.bottom-cta{
+  max-width:1160px;margin:0 auto;padding:80px 32px 100px;
+  text-align:center;
+}
+.bottom-headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(32px,5vw,56px);line-height:1.1;letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+.bottom-headline em{font-style:normal;color:var(--f1-cyan)}
+.bottom-sub{font-size:16px;color:var(--ink-2);max-width:520px;margin:0 auto 36px;line-height:1.6}
+.bottom-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+/* ── divider ── */
+.divider{
+  max-width:1160px;margin:0 auto;
+  padding:0 32px;
+  border-top:1px solid var(--line);
+}
+
+/* ── footer ── */
+.footer{
+  max-width:1160px;margin:0 auto;padding:28px 32px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--muted);
+}
+.footer a{color:var(--muted);transition:color .15s}
+.footer a:hover{color:var(--ink-2)}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <div class="mark">PW</div>
+      <div>
+        <div class="brand-name">Pit Wall</div>
+        <div class="brand-sub">Forecast Intelligence</div>
+      </div>
+    </a>
+    <nav class="topbar-links">
+      <a class="topbar-link topbar-link-active" href="pitch.html">The Case</a>
+      <a class="topbar-link" href="demo.html">Demo Script</a>
+      <a class="topbar-link" href="surfaces.html">Surfaces</a>
+      <a class="topbar-link" href="decisions.html">Decisions</a>
+      <a class="topbar-link" href="index.html">All Apps</a>
+    </nav>
+  </div>
+</header>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Pit Wall v4.0 · Strategic Narrative</div>
+  <h1 class="hero-headline">
+    Forecast intelligence<br>
+    <em>where work already happens</em>
+  </h1>
+  <p class="hero-sub">
+    NAMA cycle reviews take too long because the data, the decisions, and the tools live in different systems. Pit Wall closes the gap — surface-native AI that meets every persona where they already work.
+  </p>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="demo.html">Start Demo →</a>
+    <a class="btn-secondary" href="surfaces.html">View All Surfaces</a>
+    <a class="btn-ghost" href="index.html">App Index ↗</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- problem -->
+<section class="section">
+  <div class="section-label">The Problem</div>
+  <div class="problem-grid">
+    <div class="prob-card">
+      <div class="prob-icon">🗓</div>
+      <div class="prob-title">Gate reviews run late</div>
+      <div class="prob-body">Cycle 5 Gate 3 reviews average 3–4 days of back-and-forth. Low-DQ nameplates surface too late for meaningful correction.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">🔀</div>
+      <div class="prob-title">Context fractures across tools</div>
+      <div class="prob-body">An analyst finds a DQ issue in Power BI. The override lives in Excel. The decision memo is in Word. Nothing talks to anything else.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">🧑‍💻</div>
+      <div class="prob-title">Engineering works blind</div>
+      <div class="prob-body">Recalibration runs in Databricks without visibility into business impact. The HIBT pipeline produces scores, not decisions.</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">📊</div>
+      <div class="prob-title">Leadership reads stale data</div>
+      <div class="prob-body">Gate brief decks are assembled manually 48h before the meeting. By the time they land, the numbers have moved.</div>
+    </div>
+  </div>
+</section>
+
+<!-- solution -->
+<section class="solution-callout">
+  <div class="solution-box">
+    <div>
+      <h2 class="sol-headline">One platform.<br><span>Ten surfaces.</span><br>Every persona.</h2>
+      <p class="sol-body">Pit Wall embeds forecast intelligence directly into the tools each team already uses — Slack, Excel, Outlook, Power BI, Word, Glean, Copilot, Teams, SharePoint, and Databricks. No portal logins. No context switching. Just the right signal in the right place.</p>
+      <div class="sol-stats">
+        <div class="stat-item">
+          <div class="stat-num">10</div>
+          <div class="stat-label">Surfaces integrated</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Persona-tuned apps</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">&lt;2h</div>
+          <div class="stat-label">Target gate cycle time</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">88%</div>
+          <div class="stat-label">Cycle DQ (Cycle 5)</div>
+        </div>
+      </div>
+    </div>
+    <div class="sol-vis">
+      <div class="sol-flow-step">
+        <div class="flow-dot warn">⚠</div>
+        <div><span class="flow-label">DQ drops below threshold</span><br>Silverado HD hits 75 — gate at risk</div>
+      </div>
+      <div class="sol-flow-step active">
+        <div class="flow-dot cyan">🔔</div>
+        <div><span class="flow-label">Pit Wall alerts fire</span><br>Slack, Teams, Outlook surface the signal</div>
+      </div>
+      <div class="sol-flow-step active">
+        <div class="flow-dot cyan">🤖</div>
+        <div><span class="flow-label">AI Second Opinion runs</span><br>Analyst reviews, approves, or escalates</div>
+      </div>
+      <div class="sol-flow-step">
+        <div class="flow-dot ok">✓</div>
+        <div><span class="flow-label">Override submitted</span><br>Decision logged, gate clears, brief auto-updates</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- personas -->
+<section class="personas">
+  <div class="section-label">Three Apps — One Platform</div>
+  <div class="personas-grid">
+
+    <!-- Analyst -->
+    <div class="persona-card persona-card-analyst">
+      <div>
+        <div class="persona-eyebrow">Analyst</div>
+        <div class="persona-title">Second Opinion</div>
+        <div class="persona-role">Forecast Analyst · NAMA GovOps</div>
+      </div>
+      <p class="persona-desc">The analyst's workbench for DQ review, AI-assisted second opinions, and override submission. Live DQ scores, HIBT ledger, and an embedded AI chat that knows the full cycle context.</p>
+      <div class="persona-features">
+        <div class="persona-feat"><div class="feat-dot">📊</div>Live DQ scoreboard across all nameplates</div>
+        <div class="persona-feat"><div class="feat-dot">🤖</div>AI Second Opinion with structured reasoning</div>
+        <div class="persona-feat"><div class="feat-dot">✍</div>One-click gate override submission</div>
+        <div class="persona-feat"><div class="feat-dot">📋</div>HIBT ledger with dim-level breakdown</div>
+      </div>
+      <a class="persona-launch" href="04-apps/lovable/pit-wall-lovable-app.html" target="_blank">
+        Launch Analyst App
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Leadership -->
+    <div class="persona-card persona-card-leadership">
+      <div>
+        <div class="persona-eyebrow">Leadership</div>
+        <div class="persona-title">Gate Brief</div>
+        <div class="persona-role">Business Lead · NAMA Planning</div>
+      </div>
+      <p class="persona-desc">Real-time gate health dashboard for business leaders. Risk radar, MDS trends, cycle comparison, and an AI-generated brief that summarizes the cycle in plain language — always current.</p>
+      <div class="persona-features">
+        <div class="persona-feat"><div class="feat-dot">🎯</div>Gate health overview — risk radar</div>
+        <div class="persona-feat"><div class="feat-dot">📈</div>MDS trend charts vs. prior cycles</div>
+        <div class="persona-feat"><div class="feat-dot">📝</div>AI-generated executive brief</div>
+        <div class="persona-feat"><div class="feat-dot">🔗</div>Deep-links into analyst override queue</div>
+      </div>
+      <a class="persona-launch" href="04-apps/figma-make/pit-wall-figma-make-app.html" target="_blank">
+        Launch Leadership App
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Engineering -->
+    <div class="persona-card persona-card-engineering">
+      <div>
+        <div class="persona-eyebrow">Engineering</div>
+        <div class="persona-title">DQ Workbench</div>
+        <div class="persona-role">Data Engineer · HIBT Pipeline</div>
+      </div>
+      <p class="persona-desc">Pipeline health and DQ calibration for the data engineering team. Weight sliders drive live score recalculation across nameplates — changes propagate to the analyst and leadership views in real time.</p>
+      <div class="persona-features">
+        <div class="persona-feat"><div class="feat-dot">⚙</div>Dimension weight sliders — live recalc</div>
+        <div class="persona-feat"><div class="feat-dot">🔄</div>Cross-tab state sync via shared bus</div>
+        <div class="persona-feat"><div class="feat-dot">🔍</div>Nameplate-level DQ diagnostics</div>
+        <div class="persona-feat"><div class="feat-dot">📡</div>HIBT pipeline run status</div>
+      </div>
+      <a class="persona-launch" href="04-apps/replit/pit-wall-replit-app.html" target="_blank">
+        Launch Engineering App
+        <span>→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- surfaces strip -->
+<div class="surfaces-strip">
+  <div class="surfaces-inner">
+    <h3 class="surfaces-headline">Pit Wall lives in <span>10 surfaces</span></h3>
+    <p class="surfaces-sub">Every tool your team already uses. No new portal to learn.</p>
+    <div class="surface-pills">
+      <a class="surface-pill" href="surfaces.html#slack"><span class="surface-pill-icon">💬</span> Slack</a>
+      <a class="surface-pill" href="surfaces.html#outlook"><span class="surface-pill-icon">📧</span> Outlook</a>
+      <a class="surface-pill" href="surfaces.html#excel"><span class="surface-pill-icon">📗</span> Excel</a>
+      <a class="surface-pill" href="surfaces.html#copilot"><span class="surface-pill-icon">✨</span> Copilot</a>
+      <a class="surface-pill" href="surfaces.html#powerbi"><span class="surface-pill-icon">📊</span> Power BI</a>
+      <a class="surface-pill" href="surfaces.html#word"><span class="surface-pill-icon">📄</span> Word</a>
+      <a class="surface-pill" href="surfaces.html#glean"><span class="surface-pill-icon">🔎</span> Glean</a>
+      <a class="surface-pill" href="surfaces.html#teams"><span class="surface-pill-icon">🟣</span> Teams</a>
+      <a class="surface-pill" href="surfaces.html#sharepoint"><span class="surface-pill-icon">🟩</span> SharePoint</a>
+      <a class="surface-pill" href="surfaces.html#databricks"><span class="surface-pill-icon">⬡</span> Databricks</a>
+    </div>
+    <a class="surfaces-cta" href="surfaces.html">Explore all surfaces ↗</a>
+  </div>
+</div>
+
+<!-- how it works -->
+<section class="how">
+  <div class="section-label">How It Works</div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-icon">🔢</div>
+      <div class="how-num">Step 01</div>
+      <div class="how-title">HIBT scores every dimension</div>
+      <div class="how-body">The HIBT pipeline calculates DQ scores across six dimensions for each nameplate. Engineering tunes weights; scores propagate in real time.</div>
+      <div class="step-connector">→</div>
+    </div>
+    <div class="how-step">
+      <div class="how-icon">🚨</div>
+      <div class="how-num">Step 02</div>
+      <div class="how-title">Pit Wall surfaces the signal</div>
+      <div class="how-body">When DQ drops below gate threshold, alerts fire across Slack, Teams, Outlook, and Power BI — wherever the responsible team is working.</div>
+      <div class="step-connector">→</div>
+    </div>
+    <div class="how-step">
+      <div class="how-icon">✅</div>
+      <div class="how-num">Step 03</div>
+      <div class="how-title">Analyst reviews and decides</div>
+      <div class="how-body">The analyst opens the Second Opinion workbench, reviews AI reasoning, submits an override or escalation. The decision logs automatically.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- bottom CTA -->
+<section class="bottom-cta">
+  <h2 class="bottom-headline">Ready to see it<br><em>in motion?</em></h2>
+  <p class="bottom-sub">The demo walks through Gate 3 from alert to override in under 10 minutes. Three scenarios, three personas, one shared state.</p>
+  <div class="bottom-btns">
+    <a class="btn-primary" href="demo.html">Open Demo Script →</a>
+    <a class="btn-secondary" href="04-apps/lovable/pit-wall-lovable-app.html" target="_blank">Launch Analyst App</a>
+    <a class="btn-secondary" href="decisions.html">View Decision Log</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<footer class="footer">
+  <span>Pit Wall v4.0 · NAMA Forecast Intelligence Platform</span>
+  <div style="display:flex;gap:20px">
+    <a href="index.html">App Index</a>
+    <a href="demo.html">Demo</a>
+    <a href="surfaces.html">Surfaces</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="https://github.com/bobrapp/pit-wall-prototype" target="_blank">GitHub ↗</a>
+  </div>
+</footer>
+
+</body>
+</html>
