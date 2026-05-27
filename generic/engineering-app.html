@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pit Wall — Engineering Sandbox</title><link rel="stylesheet" href="../../fonts.css">
+<title>Forecast Platform — Engineering Sandbox</title><link rel="stylesheet" href="../fonts.css">
 <style>
 /* ── design tokens ── */
 :root {
@@ -879,7 +879,7 @@ select.conf-select{
           <div class="preview-title">Live Score Preview</div>
 
           <div class="preview-row">
-            <div class="preview-name">Silverado HD</div>
+            <div class="preview-name">Titan XL</div>
             <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
               <span class="preview-old">75</span>
               <span class="preview-arrow">→</span>
@@ -889,7 +889,7 @@ select.conf-select{
           </div>
 
           <div class="preview-row">
-            <div class="preview-name">Tahoe LTZ</div>
+            <div class="preview-name">Summit LTZ</div>
             <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
               <span class="preview-old">91</span>
               <span class="preview-arrow">→</span>
@@ -899,7 +899,7 @@ select.conf-select{
           </div>
 
           <div class="preview-row">
-            <div class="preview-name">Equinox EV</div>
+            <div class="preview-name">Meridian EV</div>
             <div style="display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px">
               <span class="preview-old">72</span>
               <span class="preview-arrow">→</span>
@@ -921,9 +921,9 @@ select.conf-select{
           <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--line)">
             <div style="font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Dimension Baseline Scores</div>
             <div style="font-family:var(--mono);font-size:10px;line-height:2;color:var(--muted-2)">
-              Silverado HD:&nbsp; 80·70·68·72·85·74<br>
-              Tahoe LTZ:&nbsp;&nbsp;&nbsp;&nbsp; 95·88·92·90·94·91<br>
-              Equinox EV:&nbsp;&nbsp;&nbsp; 58·75·72·68·80·76<br>
+              Titan XL:&nbsp; 80·70·68·72·85·74<br>
+              Summit LTZ:&nbsp;&nbsp;&nbsp;&nbsp; 95·88·92·90·94·91<br>
+              Meridian EV:&nbsp;&nbsp;&nbsp; 58·75·72·68·80·76<br>
               Colorado Z71:&nbsp; 96·90·94·92·98·93
             </div>
           </div>
@@ -943,12 +943,12 @@ select.conf-select{
         <label>Analyst</label>
         <select class="filter-select" id="filter-analyst">
           <option value="">All Analysts</option>
-          <option>Krisztina G.</option>
+          <option>Diana W.</option>
           <option>Adriel V.</option>
           <option>Marcus R.</option>
           <option>Yuna K.</option>
-          <option>Don S.</option>
-          <option>Mansoor A.</option>
+          <option>Morgan T.</option>
+          <option>Jordan P.</option>
           <option>System</option>
         </select>
         <label>Action</label>
@@ -964,7 +964,7 @@ select.conf-select{
           <option>DQ_ALERT</option>
         </select>
         <label>Nameplate</label>
-        <input type="text" class="filter-input" id="filter-nameplate" placeholder="e.g. Silverado">
+        <input type="text" class="filter-input" id="filter-nameplate" placeholder="e.g. Titan">
         <label>From</label>
         <input type="date" class="filter-input" id="filter-from" value="2026-05-25">
         <label>To</label>
@@ -1047,10 +1047,10 @@ select.conf-select{
           <div class="parse-output" id="parse-output">
             <div class="parse-field"><span class="parse-key">Surface</span><span class="parse-val teal" id="out-surface">Slack</span></div>
             <div class="parse-field"><span class="parse-key">Intent</span><span class="parse-val amber" id="out-intent">OVERRIDE</span></div>
-            <div class="parse-field"><span class="parse-key">Analyst</span><span class="parse-val" id="out-analyst">Krisztina G.</span></div>
+            <div class="parse-field"><span class="parse-key">Analyst</span><span class="parse-val" id="out-analyst">Diana W.</span></div>
             <div class="parse-field"><span class="parse-key">Forecast</span><span class="parse-val" id="out-forecast">284,200</span></div>
             <div class="parse-field"><span class="parse-key">Reason</span><span class="parse-val" id="out-reason">incentive elasticity confirmed with dealer network</span></div>
-            <div class="parse-field"><span class="parse-key">Nameplate</span><span class="parse-val" id="out-nameplate">Silverado HD 1500</span></div>
+            <div class="parse-field"><span class="parse-key">Nameplate</span><span class="parse-val" id="out-nameplate">Titan XL Sport</span></div>
             <div class="parse-field"><span class="parse-key">Confidence</span><span class="parse-val green" id="out-confidence">High</span></div>
             <div class="parse-field"><span class="parse-key">HIBT-ready</span><span class="parse-val green parse-ready" id="out-hibt">✓</span></div>
           </div>
@@ -1129,7 +1129,7 @@ select.conf-select{
         </div>
         <div class="mds-threshold" id="mds-threshold-msg">Above 0.65 → Second Opinion triggered automatically</div>
         <div class="mds-routing">
-          Route to: <strong id="mds-routing-val">Krisztina G. (nameplate owner) + Jim Kyle (MIA pricing SME)</strong>
+          Route to: <strong id="mds-routing-val">Diana W. (nameplate owner) + Chris Hammond (MIA pricing SME)</strong>
         </div>
 
         <div class="sub-scores">
@@ -1352,9 +1352,9 @@ navItems.forEach(item => {
 
 // Per-nameplate dimension scores [freshness, lineage, override_acc, cross_surface, replay, signal]
 const nameplateBaseline = [
-  { name:'Silverado HD', base:75, dims:[80, 70, 68, 72, 85, 74] },
-  { name:'Tahoe LTZ',    base:91, dims:[95, 88, 92, 90, 94, 91] },
-  { name:'Equinox EV',   base:72, dims:[58, 75, 72, 68, 80, 76] },
+  { name:'Titan XL', base:75, dims:[80, 70, 68, 72, 85, 74] },
+  { name:'Summit LTZ',    base:91, dims:[95, 88, 92, 90, 94, 91] },
+  { name:'Meridian EV',   base:72, dims:[58, 75, 72, 68, 80, 76] },
   { name:'Colorado Z71', base:93, dims:[96, 90, 94, 92, 98, 93] },
 ];
 
@@ -1455,15 +1455,15 @@ function showToast(msg) {
    TAB 2: HIBT LEDGER
    ═══════════════════════════════════════════════════ */
 const ledgerData = [
-  { id:'HIBT-2026-C5-0891', ts:'2026-05-27 09:05', analyst:'Krisztina G.', surface:'Slack',      nameplate:'Silverado HD',      action:'OVERRIDE',         value:'284,200',    reason:'Incentive elasticity confirmed' },
-  { id:'HIBT-2026-C5-0890', ts:'2026-05-27 09:03', analyst:'System',       surface:'API',        nameplate:'Silverado HD',      action:'SO_TRIGGER',       value:'MDS:0.72',   reason:'Auto-triggered above threshold' },
-  { id:'HIBT-2026-C5-0882', ts:'2026-05-26 18:44', analyst:'System',       surface:'API',        nameplate:'Silverado HD 2500', action:'ACCURACY_CONFIRM', value:'MAPE:2.8%',  reason:'Actuals confirmed override better' },
-  { id:'HIBT-2026-C5-0871', ts:'2026-05-26 14:22', analyst:'Adriel V.',    surface:'Workbench',  nameplate:'Tahoe LTZ',         action:'CONFIRM',          value:'112,800',    reason:'DQ 91 — clean commit' },
+  { id:'HIBT-2026-C5-0891', ts:'2026-05-27 09:05', analyst:'Diana W.', surface:'Slack',      nameplate:'Titan XL',      action:'OVERRIDE',         value:'284,200',    reason:'Incentive elasticity confirmed' },
+  { id:'HIBT-2026-C5-0890', ts:'2026-05-27 09:03', analyst:'System',       surface:'API',        nameplate:'Titan XL',      action:'SO_TRIGGER',       value:'MDS:0.72',   reason:'Auto-triggered above threshold' },
+  { id:'HIBT-2026-C5-0882', ts:'2026-05-26 18:44', analyst:'System',       surface:'API',        nameplate:'Titan XL 2500', action:'ACCURACY_CONFIRM', value:'MAPE:2.8%',  reason:'Actuals confirmed override better' },
+  { id:'HIBT-2026-C5-0871', ts:'2026-05-26 14:22', analyst:'Adriel V.',    surface:'Workbench',  nameplate:'Summit LTZ',         action:'CONFIRM',          value:'112,800',    reason:'DQ 91 — clean commit' },
   { id:'HIBT-2026-C5-0865', ts:'2026-05-26 11:15', analyst:'Marcus R.',    surface:'Teams',      nameplate:'Colorado Z71',      action:'OVERRIDE',         value:'67,100',     reason:'Dealer network signal confirmed' },
   { id:'HIBT-2026-C5-0854', ts:'2026-05-26 09:30', analyst:'System',       surface:'Cron',       nameplate:'All',               action:'DQ_RECALC',        value:'Cycle 5',    reason:'Scheduled 06:00 run' },
-  { id:'HIBT-2026-C5-0847', ts:'2026-05-25 17:45', analyst:'Yuna K.',      surface:'Outlook',    nameplate:'Blazer EV SS',      action:'CONFIRM',          value:'41,600',     reason:'Reply: CONFIRM received' },
-  { id:'HIBT-2026-C5-0839', ts:'2026-05-25 14:22', analyst:'Don S.',       surface:'Databricks', nameplate:'Traverse AWD',      action:'REPLAY',           value:'Match:98.4%',reason:'Replay determinism check passed' },
-  { id:'HIBT-2026-C5-0831', ts:'2026-05-25 10:11', analyst:'Mansoor A.',   surface:'API',        nameplate:'Equinox EV',        action:'DQ_ALERT',         value:'Score:72',   reason:'Tariff feed staleness flagged' },
+  { id:'HIBT-2026-C5-0847', ts:'2026-05-25 17:45', analyst:'Yuna K.',      surface:'Outlook',    nameplate:'Vortex EV SS',      action:'CONFIRM',          value:'41,600',     reason:'Reply: CONFIRM received' },
+  { id:'HIBT-2026-C5-0839', ts:'2026-05-25 14:22', analyst:'Morgan T.',       surface:'Databricks', nameplate:'Vantage AWD',      action:'REPLAY',           value:'Match:98.4%',reason:'Replay determinism check passed' },
+  { id:'HIBT-2026-C5-0831', ts:'2026-05-25 10:11', analyst:'Jordan P.',   surface:'API',        nameplate:'Meridian EV',        action:'DQ_ALERT',         value:'Score:72',   reason:'Tariff feed staleness flagged' },
   { id:'HIBT-2026-C5-0822', ts:'2026-05-25 08:00', analyst:'System',       surface:'Cron',       nameplate:'All',               action:'PIPELINE_SYNC',    value:'6 sources',  reason:'Morning sync completed' },
 ];
 
@@ -1569,10 +1569,10 @@ const slackPayload = `{
   }],
   "metadata": {
     "intent": "OVERRIDE",
-    "nameplate": "Silverado HD 1500",
+    "nameplate": "Titan XL Sport",
     "reason": "incentive elasticity confirmed with dealer network",
     "confidence": "High",
-    "analyst_display": "Krisztina G.",
+    "analyst_display": "Diana W.",
     "hibt_ready": true
   }
 }`;
@@ -1581,22 +1581,22 @@ const surfacePayloads = {
   Slack: slackPayload,
   Outlook: `{
   "from": "krisztina.g@gm.com",
-  "subject": "[PIT-WALL] OVERRIDE Silverado HD 1500",
+  "subject": "[PIT-WALL] OVERRIDE Titan XL Sport",
   "body": "OVERRIDE 284200\\nReason: incentive elasticity confirmed\\nConfidence: High",
   "to": "pit-wall-bot@gm.com",
   "metadata": {
     "intent": "OVERRIDE",
-    "nameplate": "Silverado HD 1500",
+    "nameplate": "Titan XL Sport",
     "forecast": 284200,
     "confidence": "High"
   }
 }`,
   Teams: `{
   "type": "message",
-  "from": { "displayName": "Krisztina G." },
+  "from": { "displayName": "Diana W." },
   "channelIdentity": { "channelId": "pit-wall-forecasts" },
   "body": {
-    "content": "OVERRIDE 284200 for Silverado HD 1500 — incentive elasticity confirmed"
+    "content": "OVERRIDE 284200 for Titan XL Sport — incentive elasticity confirmed"
   },
   "intent": "OVERRIDE",
   "confidence": "High"
@@ -1606,7 +1606,7 @@ const surfacePayloads = {
   "user": "krisztina.g@gm.com",
   "parsed_intent": "OVERRIDE",
   "entities": {
-    "nameplate": "Silverado HD 1500",
+    "nameplate": "Titan XL Sport",
     "volume": 284200,
     "reason": "incentive elasticity confirmed with dealer network",
     "confidence": "High"
@@ -1618,7 +1618,7 @@ const surfacePayloads = {
   "result_type": "forecast_action",
   "action": {
     "type": "OVERRIDE",
-    "nameplate": "Silverado HD 1500",
+    "nameplate": "Titan XL Sport",
     "value": 284200,
     "reason": "incentive elasticity confirmed",
     "confidence": "High"
@@ -1627,11 +1627,11 @@ const surfacePayloads = {
 };
 
 const surfaceParsed = {
-  Slack:   { surface:'Slack',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network', nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
-  Outlook: { surface:'Outlook', intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
-  Teams:   { surface:'Teams',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
-  Copilot: { surface:'Copilot', intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network',   nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
-  Glean:   { surface:'Glean',   intent:'OVERRIDE', analyst:'Krisztina G.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Silverado HD 1500', confidence:'High', hibt:'✓' },
+  Slack:   { surface:'Slack',   intent:'OVERRIDE', analyst:'Diana W.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network', nameplate:'Titan XL Sport', confidence:'High', hibt:'✓' },
+  Outlook: { surface:'Outlook', intent:'OVERRIDE', analyst:'Diana W.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Titan XL Sport', confidence:'High', hibt:'✓' },
+  Teams:   { surface:'Teams',   intent:'OVERRIDE', analyst:'Diana W.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Titan XL Sport', confidence:'High', hibt:'✓' },
+  Copilot: { surface:'Copilot', intent:'OVERRIDE', analyst:'Diana W.', forecast:'284,200', reason:'incentive elasticity confirmed with dealer network',   nameplate:'Titan XL Sport', confidence:'High', hibt:'✓' },
+  Glean:   { surface:'Glean',   intent:'OVERRIDE', analyst:'Diana W.', forecast:'284,200', reason:'incentive elasticity confirmed',                       nameplate:'Titan XL Sport', confidence:'High', hibt:'✓' },
 };
 
 let currentSurface = 'Slack';
