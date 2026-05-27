@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pit Wall v4.0 — Surfaces</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0a0c10">
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{
+  --void:#0a0c10;--carbon:#13161e;--pit:#1c2030;--pit-2:#252a3b;
+  --line:rgba(255,255,255,.07);--line-strong:rgba(255,255,255,.14);
+  --ink:#f5f6f8;--ink-2:#cdd1d9;--muted:#8a8f9e;--muted-2:#5e6373;
+  --chevy-red:#da1a2e;--cad-gold:#c8b273;--buick-teal:#7fb0bf;
+  --cyan:#00e5ff;--amber:#ff9500;--green:#23d18b;--risk:#e05555;
+  --analyst:#00e5ff;--leadership:#c8b273;--engineering:#7fb0bf;
+  --sans:'Inter',-apple-system,sans-serif;
+  --serif:'Fraunces',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  background-image:
+    radial-gradient(1000px 500px at 70% -5%,rgba(0,229,255,.05),transparent 55%),
+    radial-gradient(700px 400px at -5% 60%,rgba(255,107,0,.04),transparent 65%),
+    radial-gradient(500px 400px at 40% 100%,rgba(200,178,115,.03),transparent 60%);
+  color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:saturate(150%) blur(20px);
+  -webkit-backdrop-filter:saturate(150%) blur(20px);
+  background:rgba(10,12,16,.82);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1400px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:56px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{
+  width:32px;height:32px;background:var(--cyan);color:#000;
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;letter-spacing:-.5px;flex-shrink:0;
+}
+.brand-name{font-size:15px;font-weight:700;color:var(--ink);line-height:1.1}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.topbar-nav{display:flex;align-items:center;gap:4px}
+.t-link{
+  padding:6px 14px;border-radius:8px;font-size:13px;color:var(--ink-2);
+  transition:background .15s,color .15s;
+}
+.t-link:hover{background:var(--line-strong);color:var(--ink)}
+.t-link-back{
+  border:1px solid var(--line-strong);color:var(--ink-2);
+  border-radius:8px;padding:6px 14px;font-size:13px;
+}
+.t-link-back:hover{background:var(--line-strong);color:var(--ink)}
+
+/* ── HERO ── */
+.hero{max-width:1400px;margin:0 auto;padding:72px 64px 48px}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:2px;background:var(--cyan)}
+.hero-headline{
+  font-family:var(--serif);font-size:clamp(2.8rem,4.5vw,4.2rem);
+  font-weight:300;line-height:1.05;letter-spacing:-.03em;
+  color:var(--ink);margin-bottom:20px;
+}
+.hero-headline em{font-style:italic;color:var(--cad-gold)}
+.hero-lead{
+  font-size:17px;color:var(--ink-2);line-height:1.6;
+  max-width:560px;margin-bottom:32px;
+}
+.tool-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px}
+.tool-pill{
+  display:flex;align-items:center;gap:6px;
+  border:1px solid var(--line-strong);border-radius:20px;
+  padding:5px 13px;font-size:12px;font-weight:500;color:var(--ink-2);
+  background:rgba(255,255,255,.03);
+}
+.tool-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+.tool-pill.lead{color:var(--leadership);}.tool-pill.lead .dot{background:var(--leadership)}
+.tool-pill.eng{color:var(--engineering);}.tool-pill.eng .dot{background:var(--engineering)}
+
+/* ── PERSONA FILTER ── */
+.filter-row{
+  max-width:1400px;margin:0 auto 28px;padding:0 64px;
+  display:flex;gap:8px;align-items:center;
+}
+.flt{
+  padding:7px 18px;border-radius:8px;font-size:13px;font-weight:500;
+  color:var(--muted);background:transparent;border:1px solid var(--line);
+  cursor:pointer;transition:all .15s;
+}
+.flt:hover{border-color:var(--line-strong);color:var(--ink-2)}
+.flt.active{background:var(--pit-2);border-color:var(--line-strong);color:var(--ink)}
+.flt.analyst.active,.flt.analyst:hover{border-color:rgba(0,229,255,.35);color:var(--analyst)}
+.flt.leadership.active,.flt.leadership:hover{border-color:rgba(200,178,115,.35);color:var(--leadership)}
+.flt.engineering.active,.flt.engineering:hover{border-color:rgba(127,176,191,.35);color:var(--engineering)}
+
+/* ── SURFACES GRID ── */
+.sg{
+  max-width:1400px;margin:0 auto;padding:0 64px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+.sc-full{grid-column:1/-1}
+.sc{
+  background:var(--carbon);border:1px solid var(--line);
+  border-radius:16px;overflow:hidden;transition:border-color .2s;
+}
+.sc:hover{border-color:var(--line-strong)}
+.sc[data-persona="analyst"]:hover{border-color:rgba(0,229,255,.18)}
+.sc[data-persona="leadership"]:hover{border-color:rgba(200,178,115,.18)}
+.sc[data-persona="engineering"]:hover{border-color:rgba(127,176,191,.18)}
+
+/* card header */
+.sc-hd{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 18px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.015);
+}
+.persona-badge{
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:10px;
+}
+.pb-analyst{background:rgba(0,229,255,.1);color:var(--analyst)}
+.pb-leadership{background:rgba(200,178,115,.1);color:var(--leadership)}
+.pb-engineering{background:rgba(127,176,191,.1);color:var(--engineering)}
+.sc-hd-tool{display:flex;align-items:center;gap:7px;font-weight:700;font-size:15px;color:var(--ink)}
+.sc-hd-desc{margin-left:auto;font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em}
+
+/* ─────────────────────────────────────────────
+   SLACK MOCKUP
+───────────────────────────────────────────── */
+.mock-slack{
+  display:flex;height:390px;overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,'Lato',sans-serif;
+  font-size:13px;background:#1a1d21;color:#d1d2d3;
+  user-select:none;
+}
+.sl-sidebar{width:196px;flex-shrink:0;background:#19171d;display:flex;flex-direction:column}
+.sl-ws{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sl-ws-name{font-size:15px;font-weight:900;color:#fff;line-height:1.1}
+.sl-ws-status{font-size:11px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:4px;margin-top:2px}
+.sl-ws-dot{width:8px;height:8px;border-radius:50%;background:#2bac76;flex-shrink:0}
+.sl-sec{padding:16px 14px 4px;font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.sl-ch{
+  padding:3px 14px;cursor:default;display:flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,.6);font-size:13px;border-radius:0;line-height:1.4;
+}
+.sl-ch.active{background:rgba(255,255,255,.1);color:#fff}
+.sl-ch.unread{color:rgba(255,255,255,.85);font-weight:700}
+.sl-ch-icon{opacity:.55;font-size:12px;flex-shrink:0}
+.sl-badge{background:var(--chevy-red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;margin-left:auto}
+.sl-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.sl-ch-hd{
+  padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:8px;
+}
+.sl-ch-hd-name{font-weight:700;color:#fff;font-size:15px}
+.sl-ch-hd-members{font-size:12px;color:rgba(255,255,255,.4);margin-left:auto}
+.sl-msgs{flex:1;padding:10px 14px;overflow:hidden;display:flex;flex-direction:column;gap:2px}
+.sl-date{text-align:center;font-size:11px;color:rgba(255,255,255,.3);margin:4px 0 8px;display:flex;align-items:center;gap:8px}
+.sl-date::before,.sl-date::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.1)}
+.sl-msg{display:flex;gap:8px;margin-bottom:2px}
+.sl-av{
+  width:32px;height:32px;border-radius:6px;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;
+}
+.sl-av-pw{background:#007a5a}
+.sl-av-k{background:#7c3aed}
+.sl-mb{flex:1;min-width:0}
+.sl-mn{color:#fff;font-weight:700;font-size:13.5px}
+.sl-mn-app{
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);
+  font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;
+}
+.sl-mt{color:rgba(255,255,255,.35);font-size:11px;margin-left:4px}
+.sl-mtxt{color:#d1d2d3;line-height:1.45;font-size:13px;margin-top:1px}
+.sl-block{
+  background:#222529;border-left:4px solid #f2c811;border-radius:4px;
+  padding:10px 12px;margin-top:6px;
+}
+.sl-bl-title{color:#fff;font-weight:700;font-size:14px;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sl-bl-fields{display:flex;gap:24px;margin-bottom:7px;flex-wrap:wrap}
+.sl-bl-f{flex-shrink:0}
+.sl-bl-fl{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.sl-bl-fv{font-size:14px;color:#fff;font-weight:600;margin-top:1px}
+.sl-bl-fv.warn{color:#ff9500}
+.sl-bl-fv.risk{color:#e05555}
+.sl-bl-body{font-size:12px;color:rgba(255,255,255,.6);line-height:1.4;margin-bottom:8px}
+.sl-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sl-btn{
+  padding:5px 13px;border-radius:4px;font-size:13px;font-weight:600;
+  cursor:default;border:none;
+}
+.sl-btn-p{background:#007a5a;color:#fff}
+.sl-btn-s{background:transparent;color:#d1d2d3;border:1px solid rgba(255,255,255,.22)!important}
+.sl-reactions{display:flex;gap:6px;margin-top:6px}
+.sl-rxn{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:2px 8px;font-size:12px;cursor:default;display:flex;align-items:center;gap:4px;
+}
+.sl-rxn-n{color:rgba(255,255,255,.5)}
+
+/* ─────────────────────────────────────────────
+   EXCEL MOCKUP
+───────────────────────────────────────────── */
+.mock-excel{
+  display:flex;flex-direction:column;height:390px;overflow:hidden;
+  background:#fff;font-family:'Segoe UI',sans-serif;font-size:12px;color:#323130;
+  user-select:none;
+}
+.xl-ribbon{
+  background:#217346;color:#fff;padding:0;flex-shrink:0;
+}
+.xl-tabs{display:flex;padding:0 8px;gap:0;border-bottom:1px solid rgba(255,255,255,.15)}
+.xl-tab{
+  padding:7px 14px;font-size:12px;cursor:default;opacity:.75;
+}
+.xl-tab.active{background:rgba(255,255,255,.15);opacity:1;font-weight:600}
+.xl-toolbar{
+  display:flex;align-items:center;gap:12px;padding:4px 12px;
+  background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.1);
+  overflow:hidden;
+}
+.xl-tb-group{display:flex;gap:2px;align-items:center}
+.xl-tb-btn{
+  padding:4px 8px;border-radius:2px;font-size:11px;cursor:default;
+  color:rgba(255,255,255,.85);display:flex;align-items:center;gap:4px;
+}
+.xl-tb-btn:hover{background:rgba(255,255,255,.12)}
+.xl-divider{width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px}
+.xl-body{display:flex;flex:1;min-height:0}
+.xl-sheet{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.xl-formula{
+  display:flex;align-items:center;background:#f8f8f8;border-bottom:1px solid #ddd;
+  padding:3px 8px;gap:6px;font-size:12px;flex-shrink:0;
+}
+.xl-cell-ref{
+  width:52px;text-align:center;border-right:1px solid #ddd;padding-right:8px;
+  color:#555;font-weight:600;
+}
+.xl-fx{font-size:11px;color:#888;margin-right:4px}
+.xl-formula-val{color:#323130;font-family:'Consolas',monospace;font-size:12px}
+.xl-grid{flex:1;overflow:hidden}
+.xl-tbl{border-collapse:collapse;width:100%;font-size:11px}
+.xl-tbl th{
+  background:#f3f2f1;border:1px solid #ddd;padding:3px 7px;
+  font-size:11px;font-weight:600;color:#323130;text-align:left;white-space:nowrap;
+}
+.xl-tbl td{
+  border:1px solid #e8e8e8;padding:3px 7px;color:#323130;white-space:nowrap;
+}
+.xl-tbl tr.xl-sel td{background:#d7e8f6}
+.xl-tbl tr.xl-sel td:first-child{border-left:2px solid #1e88e5}
+.xl-tbl td.num{text-align:right}
+.xl-badge{
+  display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;
+}
+.xl-badge-chal{background:#fff0c8;color:#8a6000}
+.xl-badge-comm{background:#d8f0de;color:#1a6e2e}
+.xl-badge-draft{background:#f0f0f0;color:#666}
+.xl-addin{
+  width:220px;flex-shrink:0;border-left:1px solid #ddd;
+  background:#faf9f8;display:flex;flex-direction:column;
+}
+.xl-ai-hd{
+  background:#217346;color:#fff;padding:10px 12px;
+  display:flex;align-items:center;gap:8px;
+}
+.xl-ai-logo{
+  width:22px;height:22px;background:rgba(255,255,255,.2);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;
+}
+.xl-ai-title{font-weight:700;font-size:13px}
+.xl-ai-sub{font-size:10px;opacity:.7}
+.xl-ai-body{padding:12px;flex:1;overflow:hidden}
+.xl-ai-np{font-weight:700;font-size:13px;color:#323130;margin-bottom:8px}
+.xl-ai-dq-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.xl-ai-dq-ring{position:relative;width:48px;height:48px;flex-shrink:0}
+.xl-ai-dq-ring svg{width:48px;height:48px}
+.xl-ai-dq-val{font-size:20px;font-weight:700;color:#323130}
+.xl-ai-dq-label{font-size:10px;color:#888;line-height:1.2}
+.xl-ai-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #ece;font-size:11px}
+.xl-ai-row:last-of-type{border-bottom:0}
+.xl-ai-key{color:#666}
+.xl-ai-val{font-weight:600;color:#323130}
+.xl-ai-val.warn{color:#d83b00}
+.xl-ai-alert{
+  background:#fff4e5;border:1px solid #ffd599;border-radius:4px;
+  padding:7px 9px;font-size:11px;color:#7a4f00;margin:8px 0;line-height:1.35;
+}
+.xl-ai-btn{
+  display:block;width:100%;background:#217346;color:#fff;border:none;
+  padding:8px;border-radius:4px;font-size:12px;font-weight:700;
+  cursor:default;text-align:center;margin-top:8px;
+}
+
+/* ─────────────────────────────────────────────
+   OUTLOOK MOCKUP
+───────────────────────────────────────────── */
+.mock-outlook{
+  display:flex;flex-direction:column;height:400px;overflow:hidden;
+  background:#f0f4fb;font-family:'Segoe UI',sans-serif;font-size:13px;color:#323130;
+  user-select:none;
+}
+.ol-topbar{
+  background:#0078d4;color:#fff;padding:0 12px;height:40px;
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.ol-logo{font-size:14px;font-weight:700;letter-spacing:-.3px}
+.ol-search{
+  flex:1;max-width:300px;background:rgba(255,255,255,.15);border-radius:4px;
+  padding:5px 10px;font-size:12px;color:rgba(255,255,255,.7);
+}
+.ol-avatar{
+  width:28px;height:28px;border-radius:50%;background:#6264a7;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:auto;
+}
+.ol-body{display:flex;flex:1;min-height:0}
+.ol-nav{
+  width:40px;background:#0f4786;display:flex;flex-direction:column;
+  align-items:center;padding:8px 0;gap:4px;flex-shrink:0;
+}
+.ol-nav-icon{
+  width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;cursor:default;color:rgba(255,255,255,.6);
+}
+.ol-nav-icon.active{background:rgba(255,255,255,.15);color:#fff}
+.ol-sidebar{
+  width:240px;background:#fff;border-right:1px solid #dde3f0;flex-shrink:0;
+  display:flex;flex-direction:column;
+}
+.ol-folder-hd{
+  padding:10px 14px;font-size:12px;font-weight:700;color:#323130;
+  border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;
+}
+.ol-new-btn{
+  background:#0078d4;color:#fff;font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:4px;cursor:default;
+}
+.ol-folder{
+  padding:6px 14px;font-size:12px;color:#323130;display:flex;align-items:center;gap:8px;
+  cursor:default;
+}
+.ol-folder.active{background:#e8f0fe;font-weight:600}
+.ol-folder-ic{font-size:14px;color:#555}
+.ol-f-count{margin-left:auto;background:#0078d4;color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:0 6px}
+.ol-maillist{flex:1;border-right:1px solid #dde3f0;width:280px;flex-shrink:0;overflow:hidden}
+.ol-ml-hd{padding:10px 14px;font-weight:700;font-size:13px;border-bottom:1px solid #f0f0f0;color:#323130}
+.ol-mail{padding:10px 14px;border-bottom:1px solid #f4f4f4;cursor:default;display:flex;flex-direction:column;gap:3px}
+.ol-mail.sel{background:#e8f0fe;border-left:3px solid #0078d4}
+.ol-mail.unread .ol-mail-from{font-weight:700}
+.ol-mail-from{font-size:12px;color:#323130}
+.ol-mail-subj{font-size:12px;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ol-mail.unread .ol-mail-subj{font-weight:600;color:#0078d4}
+.ol-mail-prev{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ol-mail-time{font-size:10px;color:#888;align-self:flex-end}
+.ol-reading{flex:1;background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.ol-rd-hd{padding:14px 20px 10px;border-bottom:1px solid #f0f0f0;flex-shrink:0}
+.ol-rd-subj{font-size:16px;font-weight:700;color:#323130;margin-bottom:8px}
+.ol-rd-meta{display:flex;align-items:center;gap:12px;font-size:12px;color:#555}
+.ol-rd-avatar{
+  width:32px;height:32px;border-radius:50%;background:#007a5a;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;
+}
+.ol-rd-from{font-weight:600;color:#323130;font-size:13px}
+.ol-rd-to{color:#555}
+.ol-rd-time{margin-left:auto;color:#888;font-size:11px}
+.ol-rd-body{padding:16px 20px;flex:1;overflow:hidden;font-size:13px}
+.ol-banner{
+  background:#fff4e4;border:1px solid #ffd29e;border-radius:6px;
+  padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  font-size:13px;color:#6b3c00;
+}
+.ol-banner-icon{font-size:16px;flex-shrink:0}
+.ol-rd-para{color:#333;line-height:1.5;margin-bottom:12px;font-size:13px}
+.ol-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.ol-tbl th{background:#f0f4fb;padding:6px 12px;text-align:left;font-weight:600;color:#323130;border:1px solid #dde3f0}
+.ol-tbl td{padding:7px 12px;border:1px solid #dde3f0;color:#323130}
+.ol-tbl td.num{text-align:right}
+.ol-tbl td.risk{color:#d83b00;font-weight:600}
+.ol-tbl td.good{color:#107c10;font-weight:600}
+.ol-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#0078d4;color:#fff;padding:9px 18px;border-radius:4px;
+  font-size:13px;font-weight:600;cursor:default;
+}
+
+/* ─────────────────────────────────────────────
+   COPILOT MOCKUP
+───────────────────────────────────────────── */
+.mock-copilot{
+  display:flex;flex-direction:column;height:420px;overflow:hidden;
+  background:#1b1b2e;font-family:'Segoe UI',sans-serif;font-size:13px;
+  color:#e8e8f0;user-select:none;
+}
+.cp-hd{
+  background:linear-gradient(135deg,#3b2e8a 0%,#5b3dc4 50%,#7b5cf0 100%);
+  padding:12px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.cp-logo{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,#88f,#66f);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.cp-hd-title{font-weight:700;font-size:15px;color:#fff}
+.cp-hd-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:1px}
+.cp-hd-right{margin-left:auto;display:flex;gap:8px}
+.cp-hd-chip{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,.75);
+}
+.cp-body{flex:1;display:flex;flex-direction:column;padding:16px;gap:12px;overflow:hidden}
+.cp-msg{display:flex;gap:10px;max-width:85%}
+.cp-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.cp-msg-av{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+}
+.cp-av-ai{background:linear-gradient(135deg,#7b5cf0,#5b3dc4)}
+.cp-av-u{background:#6264a7;color:#fff}
+.cp-bubble{
+  padding:10px 14px;border-radius:12px;line-height:1.5;font-size:13px;
+}
+.cp-bubble-user{background:rgba(98,100,167,.35);border:1px solid rgba(98,100,167,.4);color:#e0e0f4}
+.cp-bubble-ai{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#d8d8ee}
+.cp-card{
+  background:rgba(91,61,196,.12);border:1px solid rgba(91,61,196,.3);
+  border-radius:10px;padding:12px 14px;margin-top:6px;
+}
+.cp-card-title{font-weight:700;font-size:13px;color:#b8a4f0;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cp-gates{display:flex;gap:10px;margin-bottom:8px}
+.cp-gate{
+  background:rgba(255,255,255,.06);border-radius:8px;padding:6px 10px;
+  text-align:center;flex:1;font-size:11px;
+}
+.cp-gate-label{color:rgba(255,255,255,.45);margin-bottom:3px}
+.cp-gate-val{font-weight:700;font-size:14px}
+.cp-gate-val.ok{color:var(--green)}
+.cp-gate-val.warn{color:var(--amber)}
+.cp-card-rows{display:flex;flex-direction:column;gap:4px}
+.cp-card-row{display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid rgba(255,255,255,.06);padding:3px 0}
+.cp-card-row:last-child{border-bottom:0}
+.cp-card-key{color:rgba(255,255,255,.5)}
+.cp-card-val{font-weight:600;color:#e0e0f4}
+.cp-card-val.warn{color:var(--amber)}
+.cp-card-val.good{color:var(--green)}
+.cp-link{
+  display:inline-flex;align-items:center;gap:4px;margin-top:8px;
+  color:#a48cf0;font-size:12px;border-bottom:1px solid rgba(164,140,240,.3);
+}
+.cp-footer{
+  padding:10px 16px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;
+  display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.2);
+}
+.cp-input{
+  flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,.4);
+}
+.cp-send{
+  width:32px;height:32px;border-radius:8px;background:rgba(91,61,196,.4);
+  display:flex;align-items:center;justify-content:center;color:#a48cf0;font-size:14px;cursor:default;
+}
+
+/* ─────────────────────────────────────────────
+   WORD MOCKUP
+───────────────────────────────────────────── */
+.mock-word{
+  display:flex;flex-direction:column;height:430px;overflow:hidden;
+  background:#f5f4f0;font-family:'Segoe UI',sans-serif;font-size:13px;color:#323130;
+  user-select:none;
+}
+.wd-ribbon{
+  background:#2b579a;color:#fff;flex-shrink:0;
+}
+.wd-ribbon-tabs{display:flex;padding:0 8px}
+.wd-rtab{
+  padding:7px 14px;font-size:12px;cursor:default;opacity:.7;
+}
+.wd-rtab.active{background:rgba(255,255,255,.12);opacity:1;font-weight:600}
+.wd-toolbar{
+  display:flex;align-items:center;gap:6px;padding:5px 12px;
+  background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.12);
+}
+.wd-tb-btn{
+  padding:3px 8px;border-radius:2px;font-size:11px;color:rgba(255,255,255,.8);cursor:default;
+  display:flex;align-items:center;gap:3px;
+}
+.wd-tb-sep{width:1px;height:18px;background:rgba(255,255,255,.2);margin:0 3px}
+.wd-canvas-wrap{flex:1;overflow:hidden;padding:16px 40px;display:flex;justify-content:center}
+.wd-doc{
+  width:100%;max-width:600px;background:#fff;
+  box-shadow:0 1px 8px rgba(0,0,0,.18);
+  padding:32px 40px;overflow:hidden;
+}
+.wd-doc-eyebrow{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:#2b579a;font-weight:700;border-bottom:2px solid #2b579a;
+  padding-bottom:6px;margin-bottom:14px;
+}
+.wd-doc-title{font-size:20px;font-weight:700;color:#1f1f1f;margin-bottom:4px;line-height:1.2}
+.wd-doc-sub{font-size:11px;color:#888;margin-bottom:16px}
+.wd-doc-section{font-size:12px;font-weight:700;color:#2b579a;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 6px}
+.wd-doc-para{font-size:12px;color:#333;line-height:1.55;margin-bottom:10px}
+.wd-doc-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px}
+.wd-doc-tbl th{background:#edf2f9;padding:5px 8px;text-align:left;font-weight:700;color:#2b579a;border:1px solid #c8d8ec}
+.wd-doc-tbl td{padding:5px 8px;border:1px solid #dde3f0;color:#323130}
+.wd-doc-tbl td.num{text-align:right}
+.wd-doc-tbl td.risk{color:#c7611b;font-weight:600}
+.wd-doc-tbl td.ok{color:#107c10;font-weight:600}
+.wd-doc-list{padding-left:16px;font-size:12px;color:#333;line-height:1.65;margin-bottom:10px}
+.wd-doc-list li{margin-bottom:2px}
+
+/* ─────────────────────────────────────────────
+   POWER BI MOCKUP
+───────────────────────────────────────────── */
+.mock-pbi{
+  display:flex;flex-direction:column;height:460px;overflow:hidden;
+  background:#1a1a1a;font-family:'Segoe UI',sans-serif;font-size:13px;
+  color:#e5e5e5;user-select:none;
+}
+.pbi-topbar{
+  background:#1f1f1f;border-bottom:3px solid #f2c811;
+  padding:0 16px;height:42px;display:flex;align-items:center;gap:14px;flex-shrink:0;
+}
+.pbi-logo{
+  display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:#f2c811;
+}
+.pbi-logo-mark{font-size:18px}
+.pbi-nav{display:flex;gap:2px;margin-left:10px}
+.pbi-ntab{padding:5px 12px;border-radius:4px;font-size:12px;color:rgba(255,255,255,.5);cursor:default}
+.pbi-ntab.active{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+.pbi-hd-title{margin-left:auto;font-size:12px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:8px}
+.pbi-filter-bar{
+  background:#252525;border-bottom:1px solid #333;
+  padding:6px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.pbi-filter-label{font-size:11px;color:rgba(255,255,255,.4)}
+.pbi-chip{
+  background:rgba(242,200,17,.08);border:1px solid rgba(242,200,17,.25);
+  border-radius:12px;padding:2px 10px;font-size:11px;color:#f2c811;
+}
+.pbi-refresh{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3)}
+.pbi-body{flex:1;padding:12px 14px;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.pbi-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0}
+.pbi-kpi{
+  background:#252525;border:1px solid #333;border-radius:6px;
+  padding:12px 14px;
+}
+.pbi-kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.pbi-kpi-val{font-size:26px;font-weight:700;color:#f5f5f5;line-height:1;margin-bottom:4px}
+.pbi-kpi-val.good{color:#23d18b}
+.pbi-kpi-val.warn{color:#ff9500}
+.pbi-kpi-delta{font-size:11px;display:flex;align-items:center;gap:4px}
+.pbi-kpi-delta.up{color:#23d18b}
+.pbi-kpi-delta.dn{color:#e05555}
+.pbi-kpi-delta.neu{color:rgba(255,255,255,.4)}
+.pbi-charts{flex:1;display:grid;grid-template-columns:1.1fr .9fr 0.85fr;gap:10px;min-height:0}
+.pbi-tile{
+  background:#252525;border:1px solid #333;border-radius:6px;
+  padding:12px;display:flex;flex-direction:column;overflow:hidden;
+}
+.pbi-tile-title{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.pbi-chart-area{flex:1;display:flex;align-items:flex-end;gap:6px;overflow:hidden}
+.pbi-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.pbi-bar-label{font-size:9px;color:rgba(255,255,255,.4);text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:100%;text-align:center}
+.pbi-bar{border-radius:2px 2px 0 0;width:100%;transition:height .3s}
+
+/* PBI horizontal bars */
+.pbi-hbars{display:flex;flex-direction:column;gap:6px;flex:1;justify-content:space-around}
+.pbi-hbar-row{display:flex;flex-direction:column;gap:2px}
+.pbi-hbar-name{font-size:10px;color:rgba(255,255,255,.5)}
+.pbi-hbar-track{height:12px;background:#333;border-radius:2px;overflow:hidden;display:flex;align-items:center}
+.pbi-hbar-fill{height:100%;border-radius:2px}
+
+/* PBI gate ring */
+.pbi-ring-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:8px}
+.pbi-gate-items{display:flex;flex-direction:column;gap:5px;width:100%}
+.pbi-gate-row{display:flex;align-items:center;gap:8px;font-size:11px}
+.pbi-gate-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pbi-gate-name{color:rgba(255,255,255,.6);flex:1}
+.pbi-gate-status{font-weight:600}
+
+/* ─────────────────────────────────────────────
+   GLEAN MOCKUP
+───────────────────────────────────────────── */
+.mock-glean{
+  display:flex;flex-direction:column;height:390px;overflow:hidden;
+  background:#fff;font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;color:#1f2937;
+  user-select:none;
+}
+.gl-topbar{
+  background:#fff;border-bottom:1px solid #e5e7eb;padding:0 16px;
+  height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0;
+}
+.gl-logo{
+  display:flex;align-items:center;gap:6px;font-weight:800;font-size:16px;
+  color:#5f3dc4;letter-spacing:-.5px;flex-shrink:0;
+}
+.gl-logo-mark{
+  width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#5b21b6);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:800;
+}
+.gl-search{
+  flex:1;max-width:480px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;
+  padding:7px 14px;font-size:13px;color:#111827;display:flex;align-items:center;gap:8px;
+}
+.gl-search-icon{color:#9ca3af;font-size:14px;flex-shrink:0}
+.gl-search-val{color:#1f2937;font-size:13px}
+.gl-search-cursor{
+  display:inline-block;width:2px;height:14px;background:#5f3dc4;
+  margin-left:1px;vertical-align:middle;animation:blink 1s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.gl-hd-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.gl-av{
+  width:30px;height:30px;border-radius:50%;background:#6d28d9;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;
+}
+.gl-body{display:flex;flex:1;min-height:0}
+.gl-sidebar{
+  width:42px;background:#fafafa;border-right:1px solid #f0f0f0;
+  display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:6px;flex-shrink:0;
+}
+.gl-s-icon{
+  width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;cursor:default;color:#9ca3af;
+}
+.gl-s-icon.active{background:#f3f0ff;color:#7c3aed}
+.gl-results{flex:1;overflow:hidden;padding:12px 0;display:flex;flex-direction:column;gap:0}
+.gl-filters{
+  display:flex;gap:6px;padding:0 14px 10px;flex-wrap:wrap;
+}
+.gl-fc{
+  border:1px solid #e5e7eb;border-radius:12px;padding:3px 10px;
+  font-size:11px;color:#374151;cursor:default;
+}
+.gl-fc.active{background:#f3f0ff;border-color:#c4b5fd;color:#7c3aed;font-weight:600}
+.gl-result{padding:10px 14px;border-bottom:1px solid #f3f4f6;cursor:default}
+.gl-result:hover{background:#f9fafb}
+.gl-result-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.gl-result-src{
+  font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 7px;border-radius:8px;
+}
+.gl-src-hibt{background:#fef3c7;color:#92400e}
+.gl-src-pitwall{background:#f0f9ff;color:#0369a1}
+.gl-src-doc{background:#f0fdf4;color:#166534}
+.gl-result-time{font-size:11px;color:#9ca3af;margin-left:auto}
+.gl-result-title{font-size:13px;font-weight:600;color:#1f2937;margin-bottom:3px;line-height:1.3}
+.gl-result-body{font-size:12px;color:#6b7280;line-height:1.4}
+.gl-highlight{background:#fef9c3;padding:0 2px;border-radius:2px;font-weight:600}
+.gl-entity-panel{
+  width:230px;flex-shrink:0;border-left:1px solid #e5e7eb;
+  background:#fafafa;display:flex;flex-direction:column;overflow:hidden;
+}
+.gl-ep-hd{padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em}
+.gl-ep-entity{padding:10px 14px;border-bottom:1px solid #f0f0f0}
+.gl-ep-type{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.gl-ep-name{font-size:13px;font-weight:700;color:#1f2937;margin-bottom:5px}
+.gl-ep-rows{display:flex;flex-direction:column;gap:3px}
+.gl-ep-row{display:flex;justify-content:space-between;font-size:11px}
+.gl-ep-k{color:#6b7280}
+.gl-ep-v{font-weight:600;color:#1f2937}
+.gl-ep-v.warn{color:#d97706}
+.gl-ep-v.good{color:#059669}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+.pg-footer{
+  border-top:1px solid var(--line);padding:24px 64px;
+  max-width:1400px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--muted);
+}
+.pg-footer a{color:var(--muted-2);transition:color .15s}
+.pg-footer a:hover{color:var(--ink-2)}
+.pg-footer-links{display:flex;gap:20px}
+
+/* hidden for filter */
+.sc.hidden{display:none}
+
+@media(max-width:900px){
+  .sg{grid-template-columns:1fr;padding:0 20px 60px}
+  .hero{padding:48px 20px 32px}
+  .filter-row{padding:0 20px}
+  .pg-footer{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="mark">PW</div>
+      <div>
+        <div class="brand-name">Pit Wall</div>
+        <div class="brand-sub">Nama Forecast Intelligence</div>
+      </div>
+    </div>
+    <nav class="topbar-nav">
+      <a class="t-link" href="demo.html">Demo Script</a>
+      <a class="t-link" href="decisions.html">Decisions</a>
+      <a class="t-link-back" href="index.html">← Back to Index</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Surfaces</div>
+  <h1 class="hero-headline">Pit Wall shows up<br><em>everywhere you work.</em></h1>
+  <p class="hero-lead">One forecast engine. Seven surfaces. Every team member sees the intelligence they need — inside the tool they're already in. No context switching. No copy-paste.</p>
+  <div class="tool-pills">
+    <div class="tool-pill"><span class="dot"></span>Slack</div>
+    <div class="tool-pill"><span class="dot"></span>Excel</div>
+    <div class="tool-pill"><span class="dot"></span>Outlook</div>
+    <div class="tool-pill lead"><span class="dot"></span>Copilot</div>
+    <div class="tool-pill lead"><span class="dot"></span>Word</div>
+    <div class="tool-pill lead"><span class="dot"></span>Power BI</div>
+    <div class="tool-pill eng"><span class="dot"></span>Glean</div>
+  </div>
+</section>
+
+<!-- ── PERSONA FILTER ── -->
+<div class="filter-row">
+  <button class="flt active" data-f="all">All Surfaces</button>
+  <button class="flt analyst" data-f="analyst">Analyst · 3 surfaces</button>
+  <button class="flt leadership" data-f="leadership">Leadership · 4 surfaces</button>
+  <button class="flt engineering" data-f="engineering">Engineering · 1 surface</button>
+</div>
+
+<!-- ── SURFACES GRID ── -->
+<div class="sg">
+
+  <!-- ═══════════ SLACK ═══════════ -->
+  <article class="sc" data-persona="analyst">
+    <div class="sc-hd">
+      <span class="persona-badge pb-analyst">Analyst</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 54 54" fill="none">
+          <rect width="54" height="54" rx="11" fill="#4a154b"/>
+          <path d="M21 27.5a4.5 4.5 0 1 1-9 0V18a4.5 4.5 0 1 1 9 0v9.5Z" fill="#e01e5a"/>
+          <path d="M27.5 33a4.5 4.5 0 1 1 0 9H18a4.5 4.5 0 1 1 0-9h9.5Z" fill="#36c5f0"/>
+          <path d="M33 26.5a4.5 4.5 0 1 1 9 0V36a4.5 4.5 0 1 1-9 0v-9.5Z" fill="#2eb67d"/>
+          <path d="M26.5 21a4.5 4.5 0 1 1 0-9H36a4.5 4.5 0 1 1 0 9h-9.5Z" fill="#ecb22e"/>
+        </svg>
+        Slack
+      </div>
+      <span class="sc-hd-desc">Forecast alerts &amp; inline actions</span>
+    </div>
+    <div class="mock-slack">
+      <!-- sidebar -->
+      <div class="sl-sidebar">
+        <div class="sl-ws">
+          <div class="sl-ws-name">GM NAMA</div>
+          <div class="sl-ws-status"><span class="sl-ws-dot"></span>Active workspace</div>
+        </div>
+        <div class="sl-sec">Channels</div>
+        <div class="sl-ch"><span class="sl-ch-icon">#</span>general</div>
+        <div class="sl-ch"><span class="sl-ch-icon">#</span>nama-cycle-5</div>
+        <div class="sl-ch active"><span class="sl-ch-icon">#</span>pit-wall-alerts<span class="sl-badge">2</span></div>
+        <div class="sl-ch"><span class="sl-ch-icon">#</span>s-op-govops</div>
+        <div class="sl-ch"><span class="sl-ch-icon">#</span>dq-engineering</div>
+        <div class="sl-sec" style="margin-top:4px">Direct Messages</div>
+        <div class="sl-ch"><span style="font-size:10px">●</span>Jim Kyle (SME)</div>
+        <div class="sl-ch"><span style="font-size:10px;color:#888">●</span>Mansoor A.</div>
+      </div>
+      <!-- main -->
+      <div class="sl-main">
+        <div class="sl-ch-hd">
+          <span class="sl-ch-icon" style="color:#fff;opacity:.5">#</span>
+          <span class="sl-ch-hd-name">pit-wall-alerts</span>
+          <span class="sl-ch-hd-members">👥 14 members</span>
+        </div>
+        <div class="sl-msgs">
+          <div class="sl-date">Today</div>
+          <div class="sl-msg">
+            <div class="sl-av sl-av-pw">PW</div>
+            <div class="sl-mb">
+              <span class="sl-mn">Pit Wall<span class="sl-mn-app">App</span></span>
+              <span class="sl-mt">Today at 7:12 AM</span>
+              <div class="sl-block">
+                <div class="sl-bl-title">🚦 Gate 3 Alert — Silverado HD 1500</div>
+                <div class="sl-bl-fields">
+                  <div class="sl-bl-f">
+                    <div class="sl-bl-fl">DQ Score</div>
+                    <div class="sl-bl-fv warn">75 ⚠</div>
+                  </div>
+                  <div class="sl-bl-f">
+                    <div class="sl-bl-fl">MDS</div>
+                    <div class="sl-bl-fv warn">0.72</div>
+                  </div>
+                  <div class="sl-bl-f">
+                    <div class="sl-bl-fl">Deadline</div>
+                    <div class="sl-bl-fv">35h remaining</div>
+                  </div>
+                  <div class="sl-bl-f">
+                    <div class="sl-bl-fl">Divergence</div>
+                    <div class="sl-bl-fv risk">–6.1%</div>
+                  </div>
+                </div>
+                <div class="sl-bl-body">Second Opinion triggered for <strong style="color:#fff">Krisztina G.</strong> — AI bear case is 267,000 vs your 284,200. Review and commit before Gate 3 closes.</div>
+                <div class="sl-btns">
+                  <button class="sl-btn sl-btn-p">Review in Workbench ↗</button>
+                  <button class="sl-btn sl-btn-s">Escalate to SME →</button>
+                </div>
+              </div>
+              <div class="sl-reactions">
+                <div class="sl-rxn">👀 <span class="sl-rxn-n">3</span></div>
+                <div class="sl-rxn">✅ <span class="sl-rxn-n">1</span></div>
+                <div class="sl-rxn" style="opacity:.5">+ Add</div>
+              </div>
+            </div>
+          </div>
+          <div class="sl-msg" style="margin-top:6px">
+            <div class="sl-av sl-av-k">KG</div>
+            <div class="sl-mb">
+              <span class="sl-mn">Krisztina G.</span>
+              <span class="sl-mt">Today at 7:44 AM</span>
+              <div class="sl-mtxt">On it — checking the tariff feed staleness first. 72h stale looks like the main driver.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ OUTLOOK ═══════════ -->
+  <article class="sc" data-persona="analyst">
+    <div class="sc-hd">
+      <span class="persona-badge pb-analyst">Analyst</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#0078d4"/>
+          <path d="M4 7l8 5 8-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="4" y="7" width="16" height="11" rx="1" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        Outlook
+      </div>
+      <span class="sc-hd-desc">Cycle digest &amp; action emails</span>
+    </div>
+    <div class="mock-outlook">
+      <div class="ol-topbar">
+        <div class="ol-logo">Outlook</div>
+        <div class="ol-search">🔍 Search mail and people</div>
+        <div class="ol-avatar">KG</div>
+      </div>
+      <div class="ol-body">
+        <div class="ol-nav">
+          <div class="ol-nav-icon active">✉</div>
+          <div class="ol-nav-icon">📅</div>
+          <div class="ol-nav-icon">👤</div>
+          <div class="ol-nav-icon">✓</div>
+        </div>
+        <div class="ol-sidebar">
+          <div class="ol-folder-hd">Mail <span class="ol-new-btn">+ New</span></div>
+          <div class="ol-folder active"><span class="ol-folder-ic">📥</span>Inbox<span class="ol-f-count">4</span></div>
+          <div class="ol-folder"><span class="ol-folder-ic">⭐</span>Flagged</div>
+          <div class="ol-folder"><span class="ol-folder-ic">📤</span>Sent</div>
+          <div class="ol-folder"><span class="ol-folder-ic">📁</span>NAMA Forecasts</div>
+          <div class="ol-folder"><span class="ol-folder-ic">📁</span>Pit Wall Alerts</div>
+        </div>
+        <div class="ol-maillist">
+          <div class="ol-ml-hd">Inbox</div>
+          <div class="ol-mail sel unread">
+            <div class="ol-mail-from">Pit Wall System</div>
+            <div class="ol-mail-subj">Action Required — Silverado HD Override</div>
+            <div class="ol-mail-prev">Gate 3 blocked. Your review needed before...</div>
+            <div class="ol-mail-time">7:12 AM</div>
+          </div>
+          <div class="ol-mail">
+            <div class="ol-mail-from">Marcus R.</div>
+            <div class="ol-mail-subj">Re: Cycle 5 Championship update</div>
+            <div class="ol-mail-prev">Nice call on the Tahoe — I moved up to #1</div>
+            <div class="ol-mail-time">Yesterday</div>
+          </div>
+          <div class="ol-mail">
+            <div class="ol-mail-from">Pit Wall System</div>
+            <div class="ol-mail-subj">You Were Right — Silverado HD 2500</div>
+            <div class="ol-mail-prev">+12 Championship points awarded · HIBT ref created</div>
+            <div class="ol-mail-time">Yesterday</div>
+          </div>
+        </div>
+        <div class="ol-reading">
+          <div class="ol-rd-hd">
+            <div class="ol-rd-subj">Action Required — Silverado HD Override · Gate 3 Blocked</div>
+            <div class="ol-rd-meta">
+              <div class="ol-rd-avatar">PW</div>
+              <div>
+                <div class="ol-rd-from">Pit Wall System &lt;pitwall@gm-nama.com&gt;</div>
+                <div class="ol-rd-to">To: Krisztina Galvao</div>
+              </div>
+              <div class="ol-rd-time">Today, 7:12 AM</div>
+            </div>
+          </div>
+          <div class="ol-rd-body">
+            <div class="ol-banner">
+              <span class="ol-banner-icon">⚠️</span>
+              <span>Your Silverado HD 1500 forecast requires review before Gate 3 commits — <strong>35h remaining</strong></span>
+            </div>
+            <div class="ol-rd-para">The AI challenger model flagged a <strong>6.1% divergence</strong> from your Cycle 5 forecast. Please review the Second Opinion and submit your decision.</div>
+            <table class="ol-tbl">
+              <tr><th>Your Forecast</th><th>AI Bear Case</th><th>Divergence</th><th>MDS</th></tr>
+              <tr>
+                <td class="num">284,200</td>
+                <td class="num">267,000</td>
+                <td class="num risk">–6.1%</td>
+                <td class="num risk">0.72</td>
+              </tr>
+            </table>
+            <a class="ol-cta">Review in Workbench ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ EXCEL ═══════════ -->
+  <article class="sc" data-persona="analyst">
+    <div class="sc-hd">
+      <span class="persona-badge pb-analyst">Analyst</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#217346"/>
+          <path d="M6 7l4.5 5L6 17h3l3-3.5L15 17h3l-4.5-5L18 7h-3l-3 3.5L9 7H6Z" fill="#fff"/>
+        </svg>
+        Excel
+      </div>
+      <span class="sc-hd-desc">Add-in with live DQ scores</span>
+    </div>
+    <div class="mock-excel">
+      <div class="xl-ribbon">
+        <div class="xl-tabs">
+          <div class="xl-tab">File</div>
+          <div class="xl-tab active">Home</div>
+          <div class="xl-tab">Insert</div>
+          <div class="xl-tab">Formulas</div>
+          <div class="xl-tab">Data</div>
+          <div class="xl-tab">View</div>
+          <div class="xl-tab" style="color:#ffd;border-left:1px solid rgba(255,255,255,.2);margin-left:4px">Pit Wall ▾</div>
+        </div>
+        <div class="xl-toolbar">
+          <div class="xl-tb-group">
+            <div class="xl-tb-btn">⬆ AutoSum</div>
+            <div class="xl-tb-btn">↓ Fill</div>
+            <div class="xl-tb-btn">🖌 Format</div>
+          </div>
+          <div class="xl-divider"></div>
+          <div class="xl-tb-group">
+            <div class="xl-tb-btn">🔤 A</div>
+            <div class="xl-tb-btn">B</div>
+            <div class="xl-tb-btn"><em>I</em></div>
+          </div>
+          <div class="xl-divider"></div>
+          <div class="xl-tb-btn" style="opacity:.9;background:rgba(255,255,255,.15);border-radius:3px">🔄 Sync Pit Wall</div>
+        </div>
+      </div>
+      <div class="xl-body">
+        <div class="xl-sheet">
+          <div class="xl-formula">
+            <div class="xl-cell-ref">B3</div>
+            <div class="xl-fx">fx</div>
+            <div class="xl-formula-val">=284200</div>
+          </div>
+          <div class="xl-grid">
+            <table class="xl-tbl">
+              <tr>
+                <th style="width:28px;background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd"></th>
+                <th style="width:160px">A — Nameplate</th>
+                <th style="width:90px">B — My Forecast</th>
+                <th style="width:90px">C — AI Primary</th>
+                <th style="width:68px">D — Divergence</th>
+                <th style="width:60px">E — DQ</th>
+                <th style="width:88px">F — Status</th>
+              </tr>
+              <tr>
+                <td style="background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd;font-weight:600">2</td>
+                <td>Silverado HD 1500</td>
+                <td class="num">284,200</td>
+                <td class="num">301,400</td>
+                <td class="num" style="color:#d83b00;font-weight:600">–6.1%</td>
+                <td class="num" style="color:#d83b00;font-weight:600">75</td>
+                <td><span class="xl-badge xl-badge-chal">CHALLENGED</span></td>
+              </tr>
+              <tr class="xl-sel">
+                <td style="background:#d0e5f5;text-align:center;color:#1e88e5;font-weight:700;border-right:2px solid #1e88e5">3</td>
+                <td style="font-weight:600">Silverado HD 1500</td>
+                <td class="num" style="font-weight:700">284,200</td>
+                <td class="num">267,000</td>
+                <td class="num" style="color:#d83b00;font-weight:700">–6.1%</td>
+                <td class="num" style="color:#ff9500;font-weight:700">75</td>
+                <td><span class="xl-badge xl-badge-chal">SO PENDING</span></td>
+              </tr>
+              <tr>
+                <td style="background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd;font-weight:600">4</td>
+                <td>Tahoe LTZ</td>
+                <td class="num">112,800</td>
+                <td class="num">110,400</td>
+                <td class="num" style="color:#107c10">+2.2%</td>
+                <td class="num" style="color:#107c10">91</td>
+                <td><span class="xl-badge xl-badge-comm">COMMITTED</span></td>
+              </tr>
+              <tr>
+                <td style="background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd;font-weight:600">5</td>
+                <td>Equinox EV</td>
+                <td class="num">89,400</td>
+                <td class="num">82,100</td>
+                <td class="num" style="color:#d83b00">+8.7%</td>
+                <td class="num" style="color:#d83b00">72</td>
+                <td><span class="xl-badge xl-badge-chal">CHALLENGED</span></td>
+              </tr>
+              <tr>
+                <td style="background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd;font-weight:600">6</td>
+                <td>Colorado Z71</td>
+                <td class="num">67,100</td>
+                <td class="num">68,900</td>
+                <td class="num" style="color:#107c10">–2.5%</td>
+                <td class="num" style="color:#107c10">93</td>
+                <td><span class="xl-badge xl-badge-draft">DRAFT</span></td>
+              </tr>
+              <tr>
+                <td style="background:#f0eeeb;text-align:center;color:#bbb;border-right:2px solid #ddd;font-weight:600">7</td>
+                <td>Blazer EV SS</td>
+                <td class="num">41,600</td>
+                <td class="num">40,900</td>
+                <td class="num" style="color:#107c10">+1.7%</td>
+                <td class="num" style="color:#107c10">85</td>
+                <td><span class="xl-badge xl-badge-draft">DRAFT</span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="xl-addin">
+          <div class="xl-ai-hd">
+            <div class="xl-ai-logo">PW</div>
+            <div>
+              <div class="xl-ai-title">Pit Wall</div>
+              <div class="xl-ai-sub">Excel Add-In · Cycle 5</div>
+            </div>
+          </div>
+          <div class="xl-ai-body">
+            <div class="xl-ai-np">Silverado HD 1500</div>
+            <div class="xl-ai-dq-row">
+              <div class="xl-ai-dq-ring">
+                <svg viewBox="0 0 48 48">
+                  <circle cx="24" cy="24" r="18" fill="none" stroke="#e8e8e8" stroke-width="5"/>
+                  <circle cx="24" cy="24" r="18" fill="none" stroke="#ff9500" stroke-width="5"
+                    stroke-dasharray="85 113" stroke-dashoffset="28" transform="rotate(-90 24 24)"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;top:8px;left:4px">
+                  <div style="font-size:14px;font-weight:800;color:#323130;line-height:1">75</div>
+                  <div style="font-size:8px;color:#888">DQ</div>
+                </div>
+              </div>
+              <div>
+                <div class="xl-ai-dq-val">75</div>
+                <div class="xl-ai-dq-label">DQ Score<br><span style="color:#d83b00">⚠ At Risk</span></div>
+              </div>
+            </div>
+            <div class="xl-ai-row"><span class="xl-ai-key">Gate Status</span><span class="xl-ai-val warn">G3 Blocked</span></div>
+            <div class="xl-ai-row"><span class="xl-ai-key">MDS</span><span class="xl-ai-val warn">0.72</span></div>
+            <div class="xl-ai-row"><span class="xl-ai-key">Your MAPE</span><span class="xl-ai-val" style="color:#107c10">3.1%</span></div>
+            <div class="xl-ai-row"><span class="xl-ai-key">AI Primary</span><span class="xl-ai-val">4.8%</span></div>
+            <div class="xl-ai-alert">⚠ Second Opinion pending — review and submit to HIBT before Gate 3.</div>
+            <div class="xl-ai-btn">Open in Workbench ↗</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ COPILOT ═══════════ -->
+  <article class="sc" data-persona="leadership">
+    <div class="sc-hd">
+      <span class="persona-badge pb-leadership">Leadership</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#5b5fc7"/>
+          <circle cx="12" cy="12" r="7" fill="none" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="3.5" fill="#fff"/>
+        </svg>
+        Microsoft Copilot
+      </div>
+      <span class="sc-hd-desc">AI briefings for VP &amp; S&OP</span>
+    </div>
+    <div class="mock-copilot">
+      <div class="cp-hd">
+        <div class="cp-logo">✦</div>
+        <div>
+          <div class="cp-hd-title">Copilot</div>
+          <div class="cp-hd-sub">Connected to Pit Wall v4.0 · NAMA data</div>
+        </div>
+        <div class="cp-hd-right">
+          <div class="cp-hd-chip">Pit Wall</div>
+          <div class="cp-hd-chip">NAMA Cycle 5</div>
+        </div>
+      </div>
+      <div class="cp-body">
+        <div class="cp-msg user">
+          <div class="cp-av cp-av-u">VP</div>
+          <div class="cp-bubble cp-bubble-user">What's our Gate 3 status across Cycle 5 nameplates? Give me the quick view.</div>
+        </div>
+        <div class="cp-msg" style="max-width:95%">
+          <div class="cp-av cp-av-ai">✦</div>
+          <div>
+            <div class="cp-bubble cp-bubble-ai">
+              Here's the live Gate 3 status from Pit Wall for Cycle 5:
+              <div class="cp-card">
+                <div class="cp-card-title">🚦 NAMA Cycle 5 — Gate 3 Status</div>
+                <div class="cp-gates">
+                  <div class="cp-gate"><div class="cp-gate-label">Gate 1</div><div class="cp-gate-val ok">✓ Clear</div></div>
+                  <div class="cp-gate"><div class="cp-gate-label">Gate 2</div><div class="cp-gate-val ok">✓ Clear</div></div>
+                  <div class="cp-gate"><div class="cp-gate-label">Gate 3</div><div class="cp-gate-val warn">⚠ At Risk</div></div>
+                </div>
+                <div class="cp-card-rows">
+                  <div class="cp-card-row"><span class="cp-card-key">Cycle DQ Score</span><span class="cp-card-val good">88%</span></div>
+                  <div class="cp-card-row"><span class="cp-card-key">Nameplates at Green DQ</span><span class="cp-card-val good">4 of 6</span></div>
+                  <div class="cp-card-row"><span class="cp-card-key">Second Opinions pending</span><span class="cp-card-val warn">2 unresolved</span></div>
+                  <div class="cp-card-row"><span class="cp-card-key">Gate 3 deadline</span><span class="cp-card-val warn">Jun 12 · 35h</span></div>
+                  <div class="cp-card-row"><span class="cp-card-key">Team MAPE vs AI</span><span class="cp-card-val good">–1.7pp better</span></div>
+                </div>
+                <a class="cp-link">Open Leadership View ↗</a>
+              </div>
+              Silverado HD 1500 and Equinox EV have unresolved Second Opinions — Krisztina G. is the owner. Reassign or escalate by Jun 9 to avoid a gate block.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cp-footer">
+        <div class="cp-input">Ask about forecasts, overrides, gate status, analyst performance…</div>
+        <div class="cp-send">➤</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ POWER BI (full width) ═══════════ -->
+  <article class="sc sc-full" data-persona="leadership">
+    <div class="sc-hd">
+      <span class="persona-badge pb-leadership">Leadership</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#f2c811"/>
+          <rect x="5" y="13" width="4" height="6" rx="1" fill="#1f1f1f"/>
+          <rect x="10" y="9" width="4" height="10" rx="1" fill="#1f1f1f"/>
+          <rect x="15" y="5" width="4" height="14" rx="1" fill="#1f1f1f"/>
+        </svg>
+        Power BI
+      </div>
+      <span class="sc-hd-desc">Executive forecast dashboard — live from Pit Wall</span>
+    </div>
+    <div class="mock-pbi">
+      <div class="pbi-topbar">
+        <div class="pbi-logo"><span class="pbi-logo-mark">⚡</span> Power BI</div>
+        <div class="pbi-nav">
+          <div class="pbi-ntab active">Report</div>
+          <div class="pbi-ntab">Data</div>
+          <div class="pbi-ntab">Model</div>
+        </div>
+        <div class="pbi-hd-title">
+          <span>NAMA Cycle 5 · Gate 3 Brief · May 2026</span>
+          <span style="color:#f2c811;font-size:11px">● Live</span>
+        </div>
+      </div>
+      <div class="pbi-filter-bar">
+        <span class="pbi-filter-label">Filters:</span>
+        <div class="pbi-chip">Cycle 5</div>
+        <div class="pbi-chip">Gate 3</div>
+        <div class="pbi-chip">All Nameplates</div>
+        <span class="pbi-refresh">Last refreshed: 4 min ago · Auto-refresh on</span>
+      </div>
+      <div class="pbi-body">
+        <div class="pbi-kpi-row">
+          <div class="pbi-kpi">
+            <div class="pbi-kpi-label">Cycle DQ Score</div>
+            <div class="pbi-kpi-val good">88%</div>
+            <div class="pbi-kpi-delta up">↑ +2pp vs Cycle 4</div>
+          </div>
+          <div class="pbi-kpi">
+            <div class="pbi-kpi-label">Team MAPE vs AI Primary</div>
+            <div class="pbi-kpi-val good">–1.5pp</div>
+            <div class="pbi-kpi-delta up">↑ All 6 analysts beating model</div>
+          </div>
+          <div class="pbi-kpi">
+            <div class="pbi-kpi-label">Override Win Rate</div>
+            <div class="pbi-kpi-val good">78%</div>
+            <div class="pbi-kpi-delta neu">— Stable · Season 4</div>
+          </div>
+          <div class="pbi-kpi">
+            <div class="pbi-kpi-label">SOs Pending · Gate 3</div>
+            <div class="pbi-kpi-val warn">2</div>
+            <div class="pbi-kpi-delta dn">↓ Action needed · 35h</div>
+          </div>
+        </div>
+        <div class="pbi-charts">
+          <!-- Bar chart: MAPE by analyst -->
+          <div class="pbi-tile">
+            <div class="pbi-tile-title">Analyst MAPE — Cycle 5 (lower = better)</div>
+            <div class="pbi-chart-area" style="align-items:flex-end;gap:8px;padding-bottom:20px;position:relative">
+              <svg viewBox="0 0 360 120" style="width:100%;height:100%;overflow:visible">
+                <!-- gridlines -->
+                <line x1="0" y1="0" x2="360" y2="0" stroke="#333" stroke-width="1"/>
+                <line x1="0" y1="30" x2="360" y2="30" stroke="#2a2a2a" stroke-width="1"/>
+                <line x1="0" y1="60" x2="360" y2="60" stroke="#2a2a2a" stroke-width="1"/>
+                <line x1="0" y1="90" x2="360" y2="90" stroke="#2a2a2a" stroke-width="1"/>
+                <line x1="0" y1="120" x2="360" y2="120" stroke="#333" stroke-width="1"/>
+                <!-- Y labels -->
+                <text x="-4" y="4" text-anchor="end" font-size="9" fill="#666">5%</text>
+                <text x="-4" y="94" text-anchor="end" font-size="9" fill="#666">2%</text>
+                <!-- bars: Marcus 2.7, Adriel 3.0, Krisztina 3.1, Yuna 3.4, Dmitri 3.6, Priya 3.9 -->
+                <rect x="8" y="22" width="38" height="98" rx="3" fill="#23d18b"/>
+                <text x="27" y="16" text-anchor="middle" font-size="9" fill="#23d18b">2.7%</text>
+                <text x="27" y="134" text-anchor="middle" font-size="9" fill="#666">Marcus</text>
+                <rect x="68" y="34" width="38" height="86" rx="3" fill="#23d18b"/>
+                <text x="87" y="28" text-anchor="middle" font-size="9" fill="#23d18b">3.0%</text>
+                <text x="87" y="134" text-anchor="middle" font-size="9" fill="#666">Adriel</text>
+                <rect x="128" y="36" width="38" height="84" rx="3" fill="#f2c811"/>
+                <text x="147" y="30" text-anchor="middle" font-size="9" fill="#f2c811">3.1%</text>
+                <text x="147" y="134" text-anchor="middle" font-size="9" fill="#f2c811">Krisztina</text>
+                <rect x="188" y="46" width="38" height="74" rx="3" fill="#ff9500"/>
+                <text x="207" y="40" text-anchor="middle" font-size="9" fill="#ff9500">3.4%</text>
+                <text x="207" y="134" text-anchor="middle" font-size="9" fill="#666">Yuna</text>
+                <rect x="248" y="52" width="38" height="68" rx="3" fill="#ff9500"/>
+                <text x="267" y="46" text-anchor="middle" font-size="9" fill="#ff9500">3.6%</text>
+                <text x="267" y="134" text-anchor="middle" font-size="9" fill="#666">Dmitri</text>
+                <rect x="308" y="62" width="38" height="58" rx="3" fill="#e05555"/>
+                <text x="327" y="56" text-anchor="middle" font-size="9" fill="#e05555">3.9%</text>
+                <text x="327" y="134" text-anchor="middle" font-size="9" fill="#666">Priya</text>
+                <!-- AI primary baseline -->
+                <line x1="0" y1="38" x2="360" y2="38" stroke="rgba(255,255,255,.3)" stroke-width="1" stroke-dasharray="6 4"/>
+                <text x="355" y="34" text-anchor="end" font-size="8" fill="rgba(255,255,255,.4)">AI 4.8%</text>
+              </svg>
+            </div>
+          </div>
+          <!-- Horizontal bar: DQ by nameplate -->
+          <div class="pbi-tile">
+            <div class="pbi-tile-title">DQ Score by Nameplate</div>
+            <div class="pbi-hbars">
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Silverado HD 1500</span><span style="color:#ff9500;font-weight:700">75</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:75%;background:#ff9500"></div></div>
+              </div>
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Tahoe LTZ</span><span style="color:#23d18b;font-weight:700">91</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:91%;background:#23d18b"></div></div>
+              </div>
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Equinox EV</span><span style="color:#e05555;font-weight:700">72</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:72%;background:#e05555"></div></div>
+              </div>
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Colorado Z71</span><span style="color:#23d18b;font-weight:700">93</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:93%;background:#23d18b"></div></div>
+              </div>
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Blazer EV SS</span><span style="color:#23d18b;font-weight:700">85</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:85%;background:#23d18b"></div></div>
+              </div>
+              <div class="pbi-hbar-row">
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.5);margin-bottom:3px"><span>Traverse AWD</span><span style="color:#23d18b;font-weight:700">92</span></div>
+                <div class="pbi-hbar-track"><div class="pbi-hbar-fill" style="width:92%;background:#23d18b"></div></div>
+              </div>
+            </div>
+          </div>
+          <!-- Gate status ring -->
+          <div class="pbi-tile" style="align-items:center">
+            <div class="pbi-tile-title" style="text-align:center;width:100%">Gate Status · Cycle 5</div>
+            <div class="pbi-ring-wrap">
+              <svg viewBox="0 0 120 90" style="width:130px;height:90px">
+                <!-- G1: green full -->
+                <circle cx="60" cy="52" r="36" fill="none" stroke="#1c1c1c" stroke-width="12"/>
+                <circle cx="60" cy="52" r="36" fill="none" stroke="#23d18b" stroke-width="12"
+                  stroke-dasharray="226 0" stroke-dashoffset="56" transform="rotate(-90 60 52)"/>
+                <!-- G2: green partial -->
+                <circle cx="60" cy="52" r="22" fill="none" stroke="#1c1c1c" stroke-width="10"/>
+                <circle cx="60" cy="52" r="22" fill="none" stroke="#23d18b" stroke-width="10"
+                  stroke-dasharray="138 0" stroke-dashoffset="35" transform="rotate(-90 60 52)"/>
+                <!-- G3: amber -->
+                <circle cx="60" cy="52" r="9" fill="none" stroke="#1c1c1c" stroke-width="6"/>
+                <circle cx="60" cy="52" r="9" fill="none" stroke="#ff9500" stroke-width="6"
+                  stroke-dasharray="42 14" stroke-dashoffset="14" transform="rotate(-90 60 52)"/>
+                <text x="60" y="56" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-weight="600">G3</text>
+                <text x="60" y="14" text-anchor="middle" font-size="9" fill="#23d18b" font-weight="700">G1 ✓</text>
+                <text x="20" y="78" text-anchor="middle" font-size="9" fill="#23d18b" font-weight="700">G2 ✓</text>
+                <text x="100" y="78" text-anchor="middle" font-size="9" fill="#ff9500" font-weight="700">G3 ⚠</text>
+              </svg>
+              <div class="pbi-gate-items">
+                <div class="pbi-gate-row">
+                  <div class="pbi-gate-dot" style="background:#23d18b"></div>
+                  <span class="pbi-gate-name">Gate 1 — Baseline</span>
+                  <span class="pbi-gate-status" style="color:#23d18b">Clear ✓</span>
+                </div>
+                <div class="pbi-gate-row">
+                  <div class="pbi-gate-dot" style="background:#23d18b"></div>
+                  <span class="pbi-gate-name">Gate 2 — Committed</span>
+                  <span class="pbi-gate-status" style="color:#23d18b">Clear ✓</span>
+                </div>
+                <div class="pbi-gate-row">
+                  <div class="pbi-gate-dot" style="background:#ff9500"></div>
+                  <span class="pbi-gate-name">Gate 3 — Final</span>
+                  <span class="pbi-gate-status" style="color:#ff9500">At Risk ⚠</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ WORD ═══════════ -->
+  <article class="sc" data-persona="leadership">
+    <div class="sc-hd">
+      <span class="persona-badge pb-leadership">Leadership</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#2b579a"/>
+          <path d="M6 7h12M6 12h12M6 17h8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Word
+      </div>
+      <span class="sc-hd-desc">Auto-generated S&OP executive brief</span>
+    </div>
+    <div class="mock-word">
+      <div class="wd-ribbon">
+        <div class="wd-ribbon-tabs">
+          <div class="wd-rtab">File</div>
+          <div class="wd-rtab active">Home</div>
+          <div class="wd-rtab">Insert</div>
+          <div class="wd-rtab">Layout</div>
+          <div class="wd-rtab">References</div>
+          <div class="wd-rtab" style="color:#ffd;border-left:1px solid rgba(255,255,255,.15);margin-left:4px">Pit Wall ▾</div>
+        </div>
+        <div class="wd-toolbar">
+          <div class="wd-tb-btn">⬅ Undo</div>
+          <div class="wd-tb-sep"></div>
+          <div class="wd-tb-btn" style="font-weight:700">B</div>
+          <div class="wd-tb-btn" style="font-style:italic">I</div>
+          <div class="wd-tb-btn" style="text-decoration:underline">U</div>
+          <div class="wd-tb-sep"></div>
+          <div class="wd-tb-btn">¶ Normal</div>
+          <div class="wd-tb-btn">H1 Heading 1</div>
+          <div class="wd-tb-sep"></div>
+          <div class="wd-tb-btn" style="background:rgba(255,255,255,.15);border-radius:3px;opacity:.9">🔄 Refresh from Pit Wall</div>
+        </div>
+      </div>
+      <div class="wd-canvas-wrap">
+        <div class="wd-doc">
+          <div class="wd-doc-eyebrow">GM NAMA · CONFIDENTIAL · CYCLE 5 · MAY 2026</div>
+          <div class="wd-doc-title">NAMA Cycle 5 — Gate 3 Executive Brief</div>
+          <div class="wd-doc-sub">Prepared by Pit Wall v4.0 · Auto-generated May 27, 2026 · Last updated 7:15 AM</div>
+          <div class="wd-doc-section">Executive Summary</div>
+          <div class="wd-doc-para">The NAMA forecasting team completed Cycle 5 across 6 nameplates. Team MAPE is <strong>3.1%</strong> — <strong>1.7pp better than the AI primary model</strong>. Gate 3 is at risk: two Second Opinions require resolution before Jun 12 (35h remaining).</div>
+          <div class="wd-doc-section">Gate Status by Nameplate</div>
+          <table class="wd-doc-tbl">
+            <tr><th>Nameplate</th><th>Forecast</th><th>DQ</th><th>Gate Status</th><th>Owner</th></tr>
+            <tr><td>Silverado HD 1500</td><td class="num">284,200</td><td class="num risk">75</td><td class="risk">⚠ SO Pending</td><td>Krisztina G.</td></tr>
+            <tr><td>Tahoe LTZ</td><td class="num">112,800</td><td class="num ok">91</td><td class="ok">✓ Committed</td><td>Marcus R.</td></tr>
+            <tr><td>Equinox EV</td><td class="num">89,400</td><td class="num risk">72</td><td class="risk">⚠ SO Pending</td><td>Krisztina G.</td></tr>
+            <tr><td>Colorado Z71</td><td class="num">67,100</td><td class="num ok">93</td><td class="ok">✓ Draft</td><td>Adriel V.</td></tr>
+          </table>
+          <div class="wd-doc-section">Recommended Actions</div>
+          <ul class="wd-doc-list">
+            <li>Krisztina G. to resolve Silverado HD 1500 SO before Jun 9 (3 days ahead of gate)</li>
+            <li>Escalate Equinox EV SO to Jim Kyle (SME) if tariff feed not refreshed by Jun 8</li>
+            <li>Marcus R. approve Tahoe LTZ — DQ 91, no SO pending</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ═══════════ GLEAN ═══════════ -->
+  <article class="sc" data-persona="engineering">
+    <div class="sc-hd">
+      <span class="persona-badge pb-engineering">Engineering</span>
+      <div class="sc-hd-tool">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect width="24" height="24" rx="5" fill="#5f3dc4"/>
+          <circle cx="10.5" cy="10.5" r="5" stroke="#fff" stroke-width="1.8"/>
+          <path d="M14.5 14.5L19 19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Glean
+      </div>
+      <span class="sc-hd-desc">HIBT knowledge search for GovOps</span>
+    </div>
+    <div class="mock-glean">
+      <div class="gl-topbar">
+        <div class="gl-logo">
+          <div class="gl-logo-mark">G</div>
+          glean
+        </div>
+        <div class="gl-search">
+          <span class="gl-search-icon">🔍</span>
+          <span class="gl-search-val">silverado HD gate 3 override 2026</span>
+          <span class="gl-search-cursor"></span>
+        </div>
+        <div class="gl-hd-right">
+          <div style="font-size:11px;color:#9ca3af;display:flex;align-items:center;gap:6px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span>
+            Pit Wall connected
+          </div>
+          <div class="gl-av">MR</div>
+        </div>
+      </div>
+      <div class="gl-body">
+        <div class="gl-sidebar">
+          <div class="gl-s-icon active">🏠</div>
+          <div class="gl-s-icon">🔔</div>
+          <div class="gl-s-icon">📌</div>
+          <div class="gl-s-icon">📂</div>
+        </div>
+        <div class="gl-results">
+          <div class="gl-filters">
+            <div class="gl-fc active">All</div>
+            <div class="gl-fc active">HIBT</div>
+            <div class="gl-fc active">Override</div>
+            <div class="gl-fc">Documents</div>
+            <div class="gl-fc">People</div>
+          </div>
+          <div class="gl-result">
+            <div class="gl-result-top">
+              <span class="gl-result-src gl-src-hibt">HIBT Ledger</span>
+              <span class="gl-result-time">5 min ago</span>
+            </div>
+            <div class="gl-result-title">HIBT-2026-C5-0891 · OVERRIDE — <span class="gl-highlight">Silverado HD</span> 1500</div>
+            <div class="gl-result-body">Krisztina G. · Workbench · "Incentive elasticity confirmed with dealer network. Retail mix 78% vs AI's 65% assumption." <span class="gl-highlight">Gate 3</span> unblocked · MDS 0.72 resolved.</div>
+          </div>
+          <div class="gl-result">
+            <div class="gl-result-top">
+              <span class="gl-result-src gl-src-hibt">HIBT Ledger</span>
+              <span class="gl-result-time">36h ago</span>
+            </div>
+            <div class="gl-result-title">HIBT-2026-C5-0890 · SO_TRIGGER — <span class="gl-highlight">Silverado HD</span> 1500</div>
+            <div class="gl-result-body">System · API · "Auto-triggered above MDS threshold 0.72. Tariff feed 72h stale — risk not captured by primary model." Routed to Krisztina G.</div>
+          </div>
+          <div class="gl-result">
+            <div class="gl-result-top">
+              <span class="gl-result-src gl-src-pitwall">Pit Wall</span>
+              <span class="gl-result-time">2h ago</span>
+            </div>
+            <div class="gl-result-title">Cycle 5 Forecast — <span class="gl-highlight">Silverado HD</span> 1500 · 284,200</div>
+            <div class="gl-result-body">6.1% divergence from AI primary (267,000). Four divergence factors: tariff feed stale (35%), incentive elasticity (28%), fleet demand (22%), competitive pressure F-150 (15%).</div>
+          </div>
+          <div class="gl-result">
+            <div class="gl-result-top">
+              <span class="gl-result-src gl-src-doc">Document</span>
+              <span class="gl-result-time">Yesterday</span>
+            </div>
+            <div class="gl-result-title">Second Opinion Design Spec — MDS Bear-Case Challenger</div>
+            <div class="gl-result-body">GOV-004 · Engineering spec for SO trigger logic. <span class="gl-highlight">Gate 3</span> blocking criteria: MDS ≥ 0.65. Retention: 7 years per HIBT policy.</div>
+          </div>
+        </div>
+        <div class="gl-entity-panel">
+          <div class="gl-ep-hd">Related Entities</div>
+          <div class="gl-ep-entity">
+            <div class="gl-ep-type">Nameplate</div>
+            <div class="gl-ep-name">Silverado HD 1500</div>
+            <div class="gl-ep-rows">
+              <div class="gl-ep-row"><span class="gl-ep-k">Cycle</span><span class="gl-ep-v">5 · Active</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">DQ Score</span><span class="gl-ep-v warn">75 ⚠</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">HIBT Refs</span><span class="gl-ep-v">14 records</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">Last SO</span><span class="gl-ep-v">5 min ago</span></div>
+            </div>
+          </div>
+          <div class="gl-ep-entity">
+            <div class="gl-ep-type">Analyst</div>
+            <div class="gl-ep-name">Krisztina G.</div>
+            <div class="gl-ep-rows">
+              <div class="gl-ep-row"><span class="gl-ep-k">Season Rank</span><span class="gl-ep-v">#3 of 6</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">MAPE</span><span class="gl-ep-v good">3.1%</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">Overrides</span><span class="gl-ep-v">9 / 12</span></div>
+              <div class="gl-ep-row"><span class="gl-ep-k">Pending SOs</span><span class="gl-ep-v warn">2</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</div><!-- /sg -->
+
+<!-- ── FOOTER ── -->
+<footer class="pg-footer" style="max-width:100%;padding:24px 64px">
+  <div style="color:var(--muted-2);font-size:12px">Pit Wall v4.0 · Surfaces overview · NAMA Forecast Intelligence</div>
+  <div class="pg-footer-links">
+    <a href="index.html">Index</a>
+    <a href="demo.html">Demo Script</a>
+    <a href="decisions.html">Decisions</a>
+    <a href="generic/index.html">Generic Demo ↗</a>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.flt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.flt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.f;
+    document.querySelectorAll('.sc').forEach(card => {
+      if (f === 'all' || card.dataset.persona === f) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
